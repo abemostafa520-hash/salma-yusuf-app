@@ -91,16 +91,6 @@
                 </div>
             </div>
 
-            <nav class="hidden md:flex items-center gap-1 bg-amber-50/80 dark:bg-slate-800/80 p-1.5 rounded-full border border-amber-200/60 dark:border-slate-700 overflow-x-auto max-w-[520px]">
-                <button onclick="switchTab('reader')" id="nav-reader" class="px-3 py-1.5 rounded-full text-xs xl:text-sm font-bold transition-all whitespace-nowrap bg-indigo-600 text-white shadow-sm">📖 القصة</button>
-                <button onclick="switchTab('vocab')" id="nav-vocab" class="px-3 py-1.5 rounded-full text-xs xl:text-sm font-bold whitespace-nowrap text-slate-600 dark:text-slate-300 hover:text-indigo-600 transition-all">🔤 الكلمات</button>
-                <button onclick="switchTab('phonics')" id="nav-phonics" class="px-3 py-1.5 rounded-full text-xs xl:text-sm font-bold whitespace-nowrap text-slate-600 dark:text-slate-300 hover:text-indigo-600 transition-all">🔡 الصوتيات</button>
-                <button onclick="switchTab('quiz')" id="nav-quiz" class="px-3 py-1.5 rounded-full text-xs xl:text-sm font-bold whitespace-nowrap text-slate-600 dark:text-slate-300 hover:text-indigo-600 transition-all">❓ الاختبار</button>
-                <button onclick="switchTab('activity')" id="nav-activity" class="px-3 py-1.5 rounded-full text-xs xl:text-sm font-bold whitespace-nowrap text-slate-600 dark:text-slate-300 hover:text-indigo-600 transition-all">🎮 النشاط</button>
-                <button onclick="switchTab('series')" id="nav-series" class="px-3 py-1.5 rounded-full text-xs xl:text-sm font-bold whitespace-nowrap text-slate-600 dark:text-slate-300 hover:text-indigo-600 transition-all">🏆 الأوسمة</button>
-                <button onclick="switchTab('parent')" id="nav-parent" class="px-3 py-1.5 rounded-full text-xs xl:text-sm font-bold whitespace-nowrap text-slate-600 dark:text-slate-300 hover:text-indigo-600 transition-all">👪 أولياء الأمور</button>
-            </nav>
-
             <div class="flex items-center gap-2">
                 <button onclick="toggleSkinPicker()" id="skin-toggle-btn" class="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 p-2.5 rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all border-2" style="border-color: var(--skin-primary);">
                     <span>🎨</span>
@@ -117,6 +107,18 @@
                     <span class="hidden sm:inline">الصوت</span>
                 </button>
             </div>
+        </div>
+
+        <div class="hidden md:flex justify-center pb-3 px-4">
+            <nav class="flex flex-wrap items-center justify-center gap-1 bg-amber-50/80 dark:bg-slate-800/80 p-1.5 rounded-full border border-amber-200/60 dark:border-slate-700">
+                <button onclick="switchTab('reader')" id="nav-reader" class="px-3 py-1.5 rounded-full text-xs xl:text-sm font-bold transition-all whitespace-nowrap bg-indigo-600 text-white shadow-sm">📖 القصة</button>
+                <button onclick="switchTab('vocab')" id="nav-vocab" class="px-3 py-1.5 rounded-full text-xs xl:text-sm font-bold whitespace-nowrap text-slate-600 dark:text-slate-300 hover:text-indigo-600 transition-all">🔤 الكلمات</button>
+                <button onclick="switchTab('phonics')" id="nav-phonics" class="px-3 py-1.5 rounded-full text-xs xl:text-sm font-bold whitespace-nowrap text-slate-600 dark:text-slate-300 hover:text-indigo-600 transition-all">🔡 الصوتيات</button>
+                <button onclick="switchTab('quiz')" id="nav-quiz" class="px-3 py-1.5 rounded-full text-xs xl:text-sm font-bold whitespace-nowrap text-slate-600 dark:text-slate-300 hover:text-indigo-600 transition-all">❓ الاختبار</button>
+                <button onclick="switchTab('activity')" id="nav-activity" class="px-3 py-1.5 rounded-full text-xs xl:text-sm font-bold whitespace-nowrap text-slate-600 dark:text-slate-300 hover:text-indigo-600 transition-all">🎮 النشاط</button>
+                <button onclick="switchTab('series')" id="nav-series" class="px-3 py-1.5 rounded-full text-xs xl:text-sm font-bold whitespace-nowrap text-slate-600 dark:text-slate-300 hover:text-indigo-600 transition-all">🏆 الأوسمة</button>
+                <button onclick="switchTab('parent')" id="nav-parent" class="px-3 py-1.5 rounded-full text-xs xl:text-sm font-bold whitespace-nowrap text-slate-600 dark:text-slate-300 hover:text-indigo-600 transition-all">👪 أولياء الأمور</button>
+            </nav>
         </div>
 
         <div class="md:hidden flex overflow-x-auto gap-2 px-4 py-2 border-t border-amber-100 dark:border-slate-800 bg-amber-50/50 dark:bg-slate-900/50 text-xs">
