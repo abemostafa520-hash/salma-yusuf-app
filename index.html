@@ -151,31 +151,31 @@
                     <span>🏫 1. School</span>
                 </button>
                 <button onclick="selectBook('colors')" id="btn-book-colors" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-violet-700 hover:text-white border border-slate-700">
-                    <span>🎨 1+. Colors</span>
+                    <span>🎨 1+. Colors 🔒</span>
                 </button>
                 <button onclick="selectBook('zoo')" id="btn-book-zoo" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-emerald-700 hover:text-white border border-slate-700">
                     <span>🦁 2. Zoo</span>
                 </button>
                 <button onclick="selectBook('numbers')" id="btn-book-numbers" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-pink-700 hover:text-white border border-slate-700">
-                    <span>🔢 2+. Numbers</span>
+                    <span>🔢 2+. Numbers 🔒</span>
                 </button>
                 <button onclick="selectBook('market')" id="btn-book-market" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-teal-700 hover:text-white border border-slate-700">
                     <span>🛒 3. Supermarket</span>
                 </button>
                 <button onclick="selectBook('clothes')" id="btn-book-clothes" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-cyan-700 hover:text-white border border-slate-700">
-                    <span>👕 3+. Clothes</span>
+                    <span>👕 3+. Clothes 🔒</span>
                 </button>
                 <button onclick="selectBook('family')" id="btn-book-family" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-rose-700 hover:text-white border border-slate-700">
                     <span>👨‍👩‍👧‍👦 4. Family</span>
                 </button>
                 <button onclick="selectBook('house')" id="btn-book-house" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-lime-700 hover:text-white border border-slate-700">
-                    <span>🏠 4+. My House</span>
+                    <span>🏠 4+. My House 🔒</span>
                 </button>
                 <button onclick="selectBook('rain')" id="btn-book-rain" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-sky-700 hover:text-white border border-slate-700">
                     <span>🌧️ 5. Rainy Day</span>
                 </button>
                 <button onclick="selectBook('seasons')" id="btn-book-seasons" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-orange-700 hover:text-white border border-slate-700">
-                    <span>🍂 5+. Seasons</span>
+                    <span>🍂 5+. Seasons 🔒</span>
                 </button>
             </div>
         </div>
@@ -445,6 +445,17 @@
                         </div>
                     </div>
 
+                    <div id="pd-subscription-box" class="rounded-2xl p-4 border flex items-center justify-between gap-3 flex-wrap">
+                        <div class="flex items-center gap-3">
+                            <span class="text-3xl" id="pd-sub-icon">🔒</span>
+                            <div>
+                                <div class="font-bold text-sm" id="pd-sub-title">الاشتراك في الوحدات الإضافية</div>
+                                <div class="text-xs" id="pd-sub-desc">غير مفعّل حاليًا</div>
+                            </div>
+                        </div>
+                        <button onclick="showPaywall(Object.keys(booksDatabase).find(k => booksDatabase[k].isPremium), 'payment')" id="pd-sub-btn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow transition">فعّل الاشتراك</button>
+                    </div>
+
                     <div>
                         <h4 class="font-bold text-slate-800 dark:text-slate-200 mb-3">تفاصيل كل قصة:</h4>
                         <div class="space-y-2" id="pd-books-table"></div>
@@ -487,6 +498,38 @@
         </div>
     </div>
 
+    <div id="paywall-overlay" class="hidden fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4" onclick="closePaywallOnOverlay(event)">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 max-w-md w-full shadow-2xl border border-slate-100 dark:border-slate-800 text-center">
+            <button onclick="closePaywall()" class="float-left text-slate-400 hover:text-slate-700 dark:hover:text-white text-xl leading-none">✕</button>
+            <div class="text-5xl mb-2" id="paywall-book-icon">🔒</div>
+            <h3 class="text-lg font-black text-slate-900 dark:text-white mb-1">وحدة مدفوعة: <span id="paywall-book-title"></span></h3>
+
+            <div id="paywall-login-notice" class="hidden bg-amber-50 dark:bg-slate-800 border border-amber-200 dark:border-slate-700 rounded-xl p-4 my-4 text-sm text-amber-800 dark:text-amber-300 font-bold">
+                سجّل دخولك أولاً من تبويب "أولياء الأمور" 👪 عشان تقدر تشترك وتفتح الوحدات الإضافية.
+            </div>
+
+            <div id="paywall-payment-info" class="hidden text-right">
+                <p class="text-slate-500 dark:text-slate-400 text-sm mb-4 text-center">
+                    الوحدات الإضافية (الألوان، الأرقام، الملابس، المنزل، الفصول) متاحة بالاشتراك الشهري.
+                </p>
+                <div class="bg-emerald-50 dark:bg-slate-800 border border-emerald-200 dark:border-slate-700 rounded-2xl p-4 mb-4 text-center">
+                    <div class="text-2xl font-black text-emerald-700 dark:text-emerald-400" id="paywall-price"></div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 font-bold">شهريًا لكل الوحدات الإضافية</div>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 mb-4 text-sm space-y-2">
+                    <p class="font-bold text-slate-700 dark:text-slate-200">💳 طرق الدفع:</p>
+                    <p class="text-slate-600 dark:text-slate-300">فودافون كاش: <span id="paywall-vf-number" class="font-mono font-bold"></span></p>
+                    <p class="text-slate-600 dark:text-slate-300">إنستاباي: <span id="paywall-instapay" class="font-mono font-bold"></span></p>
+                    <p class="text-slate-500 dark:text-slate-400 text-xs mt-2">حوّل المبلغ، ثم ابعتلنا صورة إثبات الدفع على واتساب وهنفعّل اشتراكك خلال ساعات.</p>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <button onclick="sendPaymentProofWhatsapp()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition text-sm">📲 أرسل إثبات الدفع عبر واتساب</button>
+                    <button onclick="recheckSubscription()" class="w-full py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-xl transition text-sm border border-slate-200 dark:border-slate-700">🔄 دفعت بالفعل؟ تحقق من التفعيل</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <canvas id="certificate-canvas" width="1000" height="700" class="hidden"></canvas>
 
     <script>
@@ -511,6 +554,18 @@
             : null;
 
         let currentChildId = null;
+
+        // ============================================================
+        // 💰 إعدادات الاشتراك والدفع اليدوي — عدّل القيم دي ببياناتك
+        // ============================================================
+        const MONTHLY_PRICE_EGP = 49;                     // السعر الشهري — عدّله كما تشاء
+        const VODAFONE_CASH_NUMBER = '01553830995';        // ✅ متظبط
+        const INSTAPAY_HANDLE = '01553830995';             // ✅ متظبط
+        const WHATSAPP_BUSINESS_NUMBER = '201553830995';   // ✅ متظبط (صيغة دولية بدون + وبدون صفر البداية)
+
+        let userSubscriptionStatus = 'unknown'; // 'unknown' | 'active' | 'inactive'
+        let pendingPremiumBookId = null;
+        let currentParentEmail = '';
 
         const levelsInfo = {
             kg1:      { key: 'kg1',      shortLabel: 'KG1',       fullLabel: 'رياض أطفال - المستوى الأول (KG1)', color: 'bg-pink-500',   ring: 'ring-pink-300' },
@@ -800,259 +855,116 @@
             },
 
             colors: {
-                id: 'colors',
-                themeClass: 'theme-colors',
-                tag: '🎨 وحدة تكميلية • KG1',
-                level: 'kg1',
-                levelBadge: '🎓 KG1 - وحدة إضافية',
-                curriculumNote: '📘 مستوحاة من وحدة الألوان والأشكال الأساسية (Colours & Shapes) في مناهج رياض الأطفال بمصر',
-                title: 'Salma & Yusuf – Colours and Shapes',
-                desc: 'وحدة تكميلية ممتعة! يرسم سلمى ويوسف لوحة ملونة ويتعلمان أسماء الألوان الأساسية والأشكال الهندسية باللغة الإنجليزية.',
-                icon: '🎨',
-                badgeIcon: '🌈',
-                badgeName: 'فنان الألوان',
-                bannerGradient: 'from-violet-900 to-violet-700',
-                buttonActiveBg: 'bg-violet-600',
-                artBorder: 'border-violet-300/80',
-                artBg: 'bg-violet-50/60',
-                pages: [
-                    { page: 1, icon: "🎨", en: "Today, Salma and Yusuf paint pictures in the garden.", ar: "اليوم، يرسم سلمى ويوسف لوحات في الحديقة.", imageDesc: "سلمى ويوسف يجلسان في الحديقة أمام لوحة رسم بيضاء كبيرة.", soundFx: "صوت فرشاة الرسم 🖌️", audioDesc: "نطق تمهيدي واضح" },
-                    { page: 2, icon: "🍎", en: "Look! The apple is red and round.", ar: "انظر! التفاحة حمراء ومستديرة.", imageDesc: "تفاحة حمراء كبيرة مرسومة على اللوحة.", soundFx: "صوت رسم دائرة 🔴", audioDesc: "نطق Red & Round" },
-                    { page: 3, icon: "🍌", en: "The banana is yellow and long.", ar: "الموزة صفراء وطويلة.", imageDesc: "موزة صفراء طويلة بجانب التفاحة.", soundFx: "صوت تلوين 🟡", audioDesc: "نطق Yellow & Long" },
-                    { page: 4, icon: "🟦", en: "Yusuf draws a big blue square.", ar: "يرسم يوسف مربعاً أزرق كبيراً.", imageDesc: "يوسف يرسم مربعاً أزرق بمسطرة.", soundFx: "صوت المسطرة 📏", audioDesc: "نطق Blue Square" },
-                    { page: 5, icon: "🔺", en: "Salma draws a green triangle tree.", ar: "ترسم سلمى شجرة على شكل مثلث أخضر.", imageDesc: "سلمى ترسم شجرة مثلثة الشكل خضراء.", soundFx: "صوت تلوين أخضر 🟢", audioDesc: "نطق Green Triangle" },
-                    { page: 6, icon: "🟠", en: "Look at the orange circle sun in the sky!", ar: "انظر إلى الشمس البرتقالية الدائرية في السماء!", imageDesc: "شمس برتقالية دائرية فوق اللوحة.", soundFx: "صوت أشعة الشمس ☀️", audioDesc: "نطق Orange Circle" },
-                    { page: 7, icon: "🪁", en: "Their kite is purple and pink.", ar: "طائرتهم الورقية لونها بنفسجي ووردي.", imageDesc: "طائرة ورقية ملونة بالبنفسجي والوردي تطير في السماء المرسومة.", soundFx: "صوت الرياح 🎐", audioDesc: "نطق Purple & Pink" },
-                    { page: 8, icon: "🖼️", en: "Salma and Yusuf are proud of their colorful picture!", ar: "سلمى ويوسف فخوران بلوحتهما الملونة!", imageDesc: "سلمى ويوسف يحملان اللوحة النهائية الملونة بفخر.", soundFx: "تصفيق وموسيقى مرحة 🎉", audioDesc: "ختام مبهج" }
-                ],
-                vocab: [
-                    { en: "Red", ar: "أحمر", icon: "🔴" },
-                    { en: "Blue", ar: "أزرق", icon: "🔵" },
-                    { en: "Yellow", ar: "أصفر", icon: "🟡" },
-                    { en: "Green", ar: "أخضر", icon: "🟢" },
-                    { en: "Orange", ar: "برتقالي", icon: "🟠" },
-                    { en: "Purple", ar: "بنفسجي", icon: "🟣" },
-                    { en: "Circle", ar: "دائرة", icon: "⚪" },
-                    { en: "Square", ar: "مربع", icon: "🟦" }
-                ],
-                quiz: [
-                    { q: "1. What color is the apple? (ما لون التفاحة؟)", options: ["Blue", "Red (أحمر)", "Green"], correct: 1 },
-                    { q: "2. What shape is Yusuf's box? (ما شكل صندوق يوسف؟)", options: ["Circle", "Square (مربع)", "Triangle"], correct: 1 },
-                    { q: "3. What color is the banana? (ما لون الموزة؟)", options: ["Yellow (أصفر)", "Purple", "Black"], correct: 0 },
-                    { q: "4. What shape is Salma's tree? (ما شكل شجرة سلمى؟)", options: ["Triangle (مثلث)", "Square", "Circle"], correct: 0 },
-                    { q: "5. What colors is the kite? (ما ألوان الطائرة الورقية؟)", options: ["Purple and Pink (بنفسجي ووردي)", "Red and Blue", "Green and Yellow"], correct: 0 }
-                ],
-                gameItems: [
-                    { id: 1, word: "Red", icon: "🔴", label: "أحمر" },
-                    { id: 2, word: "Circle", icon: "⚪", label: "دائرة" },
-                    { id: 3, word: "Square", icon: "🟦", label: "مربع" },
-                    { id: 4, word: "Triangle", icon: "🔺", label: "مثلث" }
-                ]
+                id: "colors",
+                themeClass: "theme-colors",
+                tag: "🎨 وحدة تكميلية • KG1",
+                level: "kg1",
+                levelBadge: "🎓 KG1 - وحدة إضافية",
+                curriculumNote: "📘 مستوحاة من وحدة الألوان والأشكال الأساسية (Colours & Shapes) في مناهج رياض الأطفال بمصر",
+                title: "Salma & Yusuf – Colours and Shapes",
+                desc: "وحدة تكميلية ممتعة! يرسم سلمى ويوسف لوحة ملونة ويتعلمان أسماء الألوان الأساسية والأشكال الهندسية باللغة الإنجليزية.",
+                icon: "🎨",
+                badgeIcon: "🌈",
+                badgeName: "فنان الألوان",
+                bannerGradient: "from-violet-900 to-violet-700",
+                buttonActiveBg: "bg-violet-600",
+                artBorder: "border-violet-300/80",
+                artBg: "bg-violet-50/60",
+                isPremium: true,
+                pages: [],
+                vocab: [],
+                quiz: [],
+                gameItems: []
             },
-
             numbers: {
-                id: 'numbers',
-                themeClass: 'theme-numbers',
-                tag: '🔢 وحدة تكميلية • KG2',
-                level: 'kg2',
-                levelBadge: '🎓 KG2 - وحدة إضافية',
-                curriculumNote: '📘 مستوحاة من وحدة الأرقام والعدّ (Numbers 1-10) في مناهج رياض الأطفال بمصر',
-                title: 'Salma & Yusuf – Numbers and Toys',
-                desc: 'وحدة تكميلية ممتعة! يتعلم سلمى ويوسف عدّ الأرقام من واحد إلى سبعة من خلال ألعابهما المفضلة.',
-                icon: '🧸',
-                badgeIcon: '🔢',
-                badgeName: 'بطل الأرقام',
-                bannerGradient: 'from-pink-900 to-pink-700',
-                buttonActiveBg: 'bg-pink-600',
-                artBorder: 'border-pink-300/80',
-                artBg: 'bg-pink-50/60',
-                pages: [
-                    { page: 1, icon: "🧸", en: "Yusuf has one big teddy bear.", ar: "يمتلك يوسف دباً دمية كبيراً واحداً.", imageDesc: "يوسف يحتضن دباً كبيراً.", soundFx: "صوت عناق 🧸", audioDesc: "نطق One Teddy Bear" },
-                    { page: 2, icon: "🚗", en: "Salma counts two toy cars.", ar: "تعد سلمى سيارتين لعبة.", imageDesc: "سلمى تمسك بسيارتين صغيرتين.", soundFx: "صوت محرك سيارة لعبة 🚗", audioDesc: "نطق Two Toy Cars" },
-                    { page: 3, icon: "🪆", en: "Look! Three dolls sit on the shelf.", ar: "انظر! ثلاث دمى تجلس على الرف.", imageDesc: "ثلاث دمى ملونة على رف الغرفة.", soundFx: "صوت جرس صغير 🔔", audioDesc: "نطق Three Dolls" },
-                    { page: 4, icon: "🧱", en: "Yusuf builds a tower with four blocks.", ar: "يبني يوسف برجاً بأربع مكعبات.", imageDesc: "يوسف يبني برجاً ملوناً من المكعبات.", soundFx: "صوت وضع المكعبات 🧱", audioDesc: "نطق Four Blocks" },
-                    { page: 5, icon: "🎈", en: "Salma holds five colorful balloons.", ar: "تمسك سلمى بخمسة بالونات ملونة.", imageDesc: "سلمى تمسك بخمسة بالونات ملونة في السماء.", soundFx: "صوت انتفاخ البالون 🎈", audioDesc: "نطق Five Balloons" },
-                    { page: 6, icon: "🧩", en: "They find six puzzle pieces under the bed.", ar: "يجدون ست قطع بازل تحت السرير.", imageDesc: "قطع بازل ملونة متناثرة تحت السرير.", soundFx: "صوت تجميع القطع 🧩", audioDesc: "نطق Six Puzzle Pieces" },
-                    { page: 7, icon: "🪀", en: "Yusuf plays with seven spinning tops.", ar: "يلعب يوسف بسبع دوامات.", imageDesc: "سبع دوامات ملونة تدور على الأرض.", soundFx: "صوت دوران اللعبة 🌀", audioDesc: "نطق Seven Spinning Tops" },
-                    { page: 8, icon: "🥳", en: "Salma and Yusuf tidy up all their toys together.", ar: "يرتب سلمى ويوسف كل ألعابهما معاً.", imageDesc: "سلمى ويوسف يضعان الألعاب في صندوق كبير.", soundFx: "موسيقى مرحة للترتيب 🎶", audioDesc: "ختام تعاوني لطيف" }
-                ],
-                vocab: [
-                    { en: "One", ar: "واحد", icon: "1️⃣" },
-                    { en: "Two", ar: "اثنان", icon: "2️⃣" },
-                    { en: "Three", ar: "ثلاثة", icon: "3️⃣" },
-                    { en: "Four", ar: "أربعة", icon: "4️⃣" },
-                    { en: "Five", ar: "خمسة", icon: "5️⃣" },
-                    { en: "Toy Car", ar: "سيارة لعبة", icon: "🚗" },
-                    { en: "Doll", ar: "دمية", icon: "🪆" },
-                    { en: "Blocks", ar: "مكعبات", icon: "🧱" }
-                ],
-                quiz: [
-                    { q: "1. How many teddy bears does Yusuf have? (كم دباً يمتلك يوسف؟)", options: ["One (واحد)", "Two", "Three"], correct: 0 },
-                    { q: "2. How many toy cars does Salma count? (كم سيارة لعبة عدّت سلمى؟)", options: ["One", "Two (اثنان)", "Three"], correct: 1 },
-                    { q: "3. How many dolls sit on the shelf? (كم دمية على الرف؟)", options: ["Two", "Three (ثلاثة)", "Four"], correct: 1 },
-                    { q: "4. How many blocks does Yusuf use? (كم مكعباً استخدم يوسف؟)", options: ["Three", "Four (أربعة)", "Five"], correct: 1 },
-                    { q: "5. How many balloons does Salma hold? (كم بالوناً تحمل سلمى؟)", options: ["Four", "Five (خمسة)", "Six"], correct: 1 }
-                ],
-                gameItems: [
-                    { id: 1, word: "One", icon: "1️⃣", label: "واحد" },
-                    { id: 2, word: "Two", icon: "2️⃣", label: "اثنان" },
-                    { id: 3, word: "Doll", icon: "🪆", label: "دمية" },
-                    { id: 4, word: "Blocks", icon: "🧱", label: "مكعبات" }
-                ]
+                id: "numbers",
+                themeClass: "theme-numbers",
+                tag: "🔢 وحدة تكميلية • KG2",
+                level: "kg2",
+                levelBadge: "🎓 KG2 - وحدة إضافية",
+                curriculumNote: "📘 مستوحاة من وحدة الأرقام والعدّ (Numbers 1-10) في مناهج رياض الأطفال بمصر",
+                title: "Salma & Yusuf – Numbers and Toys",
+                desc: "وحدة تكميلية ممتعة! يتعلم سلمى ويوسف عدّ الأرقام من واحد إلى سبعة من خلال ألعابهما المفضلة.",
+                icon: "🧸",
+                badgeIcon: "🔢",
+                badgeName: "بطل الأرقام",
+                bannerGradient: "from-pink-900 to-pink-700",
+                buttonActiveBg: "bg-pink-600",
+                artBorder: "border-pink-300/80",
+                artBg: "bg-pink-50/60",
+                isPremium: true,
+                pages: [],
+                vocab: [],
+                quiz: [],
+                gameItems: []
             },
-
             clothes: {
-                id: 'clothes',
-                themeClass: 'theme-clothes',
-                tag: '👕 وحدة تكميلية • الصف الأول',
-                level: 'primary1',
-                levelBadge: '🎓 الصف الأول - وحدة إضافية',
-                curriculumNote: '📘 مستوحاة من وحدة الملابس (Clothes) في منهج Connect Plus للصف الأول الابتدائي',
-                title: 'Salma & Yusuf – My Clothes',
-                desc: 'وحدة تكميلية ممتعة! يتعلم سلمى ويوسف أسماء قطع الملابس المختلفة باللغة الإنجليزية أثناء استعدادهما للخروج.',
-                icon: '👕',
-                badgeIcon: '🧦',
-                badgeName: 'نجم الملابس',
-                bannerGradient: 'from-cyan-900 to-cyan-700',
-                buttonActiveBg: 'bg-cyan-600',
-                artBorder: 'border-cyan-300/80',
-                artBg: 'bg-cyan-50/60',
-                pages: [
-                    { page: 1, icon: "☀️", en: "It is a sunny morning. Salma opens her closet.", ar: "إنه صباح مشمس. تفتح سلمى دولابها.", imageDesc: "سلمى تقف أمام دولاب ملابس مفتوح.", soundFx: "صوت فتح الدولاب 🚪", audioDesc: "نطق تمهيدي" },
-                    { page: 2, icon: "👕", en: "She wears a soft blue shirt.", ar: "ترتدي قميصاً أزرق ناعماً.", imageDesc: "سلمى ترتدي قميصاً أزرق.", soundFx: "صوت ارتداء الملابس 👕", audioDesc: "نطق Blue Shirt" },
-                    { page: 3, icon: "👖", en: "Yusuf puts on his green trousers.", ar: "يرتدي يوسف بنطاله الأخضر.", imageDesc: "يوسف يرتدي بنطالاً أخضر.", soundFx: "صوت إغلاق الحزام 👖", audioDesc: "نطق Green Trousers" },
-                    { page: 4, icon: "👟", en: "Salma ties her white shoes carefully.", ar: "تربط سلمى حذاءها الأبيض بعناية.", imageDesc: "سلمى تربط رباط حذائها الأبيض.", soundFx: "صوت ربط الحذاء 👟", audioDesc: "نطق White Shoes" },
-                    { page: 5, icon: "🧢", en: "Yusuf wears a red cap to play outside.", ar: "يرتدي يوسف قبعة حمراء للعب في الخارج.", imageDesc: "يوسف يرتدي قبعة حمراء.", soundFx: "صوت وضع القبعة 🧢", audioDesc: "نطق Red Cap" },
-                    { page: 6, icon: "🧥", en: "It gets cold, so Salma wears a warm jacket.", ar: "يصبح الجو بارداً، فترتدي سلمى جاكيت دافئاً.", imageDesc: "سلمى ترتدي جاكيت بني دافئ.", soundFx: "صوت هبوب رياح خفيفة 💨", audioDesc: "نطق Warm Jacket" },
-                    { page: 7, icon: "🧣", en: "Yusuf wraps a yellow scarf around his neck.", ar: "يلف يوسف وشاحاً أصفر حول رقبته.", imageDesc: "يوسف يلف وشاحاً أصفر.", soundFx: "صوت لف الوشاح 🧣", audioDesc: "نطق Yellow Scarf" },
-                    { page: 8, icon: "🚪", en: "Now Salma and Yusuf are ready to go outside!", ar: "الآن أصبح سلمى ويوسف جاهزين للخروج!", imageDesc: "سلمى ويوسف يخرجان من الباب بابتسامة.", soundFx: "صوت فتح الباب والخروج 🚪", audioDesc: "ختام نشيط" }
-                ],
-                vocab: [
-                    { en: "Shirt", ar: "قميص", icon: "👕" },
-                    { en: "Trousers", ar: "بنطال", icon: "👖" },
-                    { en: "Shoes", ar: "حذاء", icon: "👟" },
-                    { en: "Cap", ar: "قبعة", icon: "🧢" },
-                    { en: "Jacket", ar: "جاكيت", icon: "🧥" },
-                    { en: "Scarf", ar: "وشاح", icon: "🧣" },
-                    { en: "Closet", ar: "دولاب", icon: "🚪" },
-                    { en: "Sunny", ar: "مشمس", icon: "☀️" }
-                ],
-                quiz: [
-                    { q: "1. What color is Salma's shirt? (ما لون قميص سلمى؟)", options: ["Blue (أزرق)", "Red", "Green"], correct: 0 },
-                    { q: "2. What color are Yusuf's trousers? (ما لون بنطال يوسف؟)", options: ["Blue", "Green (أخضر)", "Yellow"], correct: 1 },
-                    { q: "3. What color are Salma's shoes? (ما لون حذاء سلمى؟)", options: ["White (أبيض)", "Black", "Pink"], correct: 0 },
-                    { q: "4. What does Yusuf wear on his head? (ماذا يرتدي يوسف على رأسه؟)", options: ["Cap (قبعة)", "Scarf", "Jacket"], correct: 0 },
-                    { q: "5. Why does Salma wear a jacket? (لماذا ترتدي سلمى الجاكيت؟)", options: ["It's cold (الجو بارد)", "It's sunny", "It's raining"], correct: 0 }
-                ],
-                gameItems: [
-                    { id: 1, word: "Shirt", icon: "👕", label: "قميص" },
-                    { id: 2, word: "Shoes", icon: "👟", label: "حذاء" },
-                    { id: 3, word: "Cap", icon: "🧢", label: "قبعة" },
-                    { id: 4, word: "Scarf", icon: "🧣", label: "وشاح" }
-                ]
+                id: "clothes",
+                themeClass: "theme-clothes",
+                tag: "👕 وحدة تكميلية • الصف الأول",
+                level: "primary1",
+                levelBadge: "🎓 الصف الأول - وحدة إضافية",
+                curriculumNote: "📘 مستوحاة من وحدة الملابس (Clothes) في منهج Connect Plus للصف الأول الابتدائي",
+                title: "Salma & Yusuf – My Clothes",
+                desc: "وحدة تكميلية ممتعة! يتعلم سلمى ويوسف أسماء قطع الملابس المختلفة باللغة الإنجليزية أثناء استعدادهما للخروج.",
+                icon: "👕",
+                badgeIcon: "🧦",
+                badgeName: "نجم الملابس",
+                bannerGradient: "from-cyan-900 to-cyan-700",
+                buttonActiveBg: "bg-cyan-600",
+                artBorder: "border-cyan-300/80",
+                artBg: "bg-cyan-50/60",
+                isPremium: true,
+                pages: [],
+                vocab: [],
+                quiz: [],
+                gameItems: []
             },
-
             house: {
-                id: 'house',
-                themeClass: 'theme-house',
-                tag: '🏠 وحدة تكميلية • الصف الثاني',
-                level: 'primary2',
-                levelBadge: '🎓 الصف الثاني - وحدة إضافية',
-                curriculumNote: '📘 مستوحاة من وحدة غرف المنزل (Rooms of the House) في منهج Connect Plus للصف الثاني الابتدائي',
-                title: 'Salma & Yusuf – My House',
-                desc: 'وحدة تكميلية ممتعة! جولة داخل منزل سلمى ويوسف للتعرف على أسماء غرف المنزل المختلفة باللغة الإنجليزية.',
-                icon: '🏠',
-                badgeIcon: '🛋️',
-                badgeName: 'صديق المنزل',
-                bannerGradient: 'from-lime-900 to-lime-700',
-                buttonActiveBg: 'bg-lime-600',
-                artBorder: 'border-lime-300/80',
-                artBg: 'bg-lime-50/60',
-                pages: [
-                    { page: 1, icon: "🏠", en: "Welcome to my house! It has many rooms.", ar: "أهلاً بكم في منزلي! يحتوي على غرف كثيرة.", imageDesc: "واجهة منزل سلمى ويوسف الملون.", soundFx: "صوت جرس الباب 🔔", audioDesc: "نطق تمهيدي" },
-                    { page: 2, icon: "🛏️", en: "This is my bedroom. I sleep here.", ar: "هذه غرفة نومي. أنام هنا.", imageDesc: "غرفة نوم سلمى بسرير وردي.", soundFx: "صوت هادئ 🌙", audioDesc: "نطق Bedroom" },
-                    { page: 3, icon: "🍳", en: "This is the kitchen. Mom cooks delicious food here.", ar: "هذا هو المطبخ. تطبخ أمي طعاماً لذيذاً هنا.", imageDesc: "المطبخ والأم تطبخ.", soundFx: "صوت طهي 🍳", audioDesc: "نطق Kitchen" },
-                    { page: 4, icon: "🛋️", en: "We watch TV together in the living room.", ar: "نشاهد التلفاز معاً في غرفة المعيشة.", imageDesc: "العائلة تجلس على الأريكة أمام التلفاز.", soundFx: "صوت تلفاز 📺", audioDesc: "نطق Living Room" },
-                    { page: 5, icon: "🛁", en: "I wash my hands in the bathroom.", ar: "أغسل يدي في الحمام.", imageDesc: "سلمى تغسل يديها في الحمام.", soundFx: "صوت ماء يجري 🚿", audioDesc: "نطق Bathroom" },
-                    { page: 6, icon: "🪟", en: "Look through the window at the garden.", ar: "انظر من النافذة إلى الحديقة.", imageDesc: "يوسف ينظر من النافذة إلى الحديقة الخضراء.", soundFx: "صوت طيور في الحديقة 🐦", audioDesc: "نطق Window & Garden" },
-                    { page: 7, icon: "🪜", en: "Yusuf runs up the stairs to his room.", ar: "يجري يوسف أعلى السلم إلى غرفته.", imageDesc: "يوسف يصعد السلم بسرعة.", soundFx: "صوت خطوات على السلم 🪜", audioDesc: "نطق Stairs" },
-                    { page: 8, icon: "🏡", en: "Our house is small, but full of love.", ar: "منزلنا صغير، لكنه مليء بالحب.", imageDesc: "العائلة كلها تقف أمام المنزل مبتسمة.", soundFx: "موسيقى دافئة 💖", audioDesc: "ختام دافئ" }
-                ],
-                vocab: [
-                    { en: "House", ar: "منزل", icon: "🏠" },
-                    { en: "Bedroom", ar: "غرفة نوم", icon: "🛏️" },
-                    { en: "Kitchen", ar: "مطبخ", icon: "🍳" },
-                    { en: "Living Room", ar: "غرفة المعيشة", icon: "🛋️" },
-                    { en: "Bathroom", ar: "حمام", icon: "🛁" },
-                    { en: "Window", ar: "نافذة", icon: "🪟" },
-                    { en: "Stairs", ar: "سلم", icon: "🪜" },
-                    { en: "Garden", ar: "حديقة", icon: "🌳" }
-                ],
-                quiz: [
-                    { q: "1. Where does Salma sleep? (أين تنام سلمى؟)", options: ["Kitchen", "Bedroom (غرفة نوم)", "Bathroom"], correct: 1 },
-                    { q: "2. Where does Mom cook? (أين تطبخ الأم؟)", options: ["Kitchen (مطبخ)", "Bathroom", "Garden"], correct: 0 },
-                    { q: "3. Where do they watch TV? (أين يشاهدون التلفاز؟)", options: ["Living Room (غرفة المعيشة)", "Bedroom", "Stairs"], correct: 0 },
-                    { q: "4. Where does Salma wash her hands? (أين تغسل سلمى يديها؟)", options: ["Bathroom (حمام)", "Kitchen", "Window"], correct: 0 },
-                    { q: "5. What does Yusuf run up? (ماذا يصعد يوسف بسرعة؟)", options: ["Window", "Stairs (سلم)", "Door"], correct: 1 }
-                ],
-                gameItems: [
-                    { id: 1, word: "Bedroom", icon: "🛏️", label: "غرفة نوم" },
-                    { id: 2, word: "Kitchen", icon: "🍳", label: "مطبخ" },
-                    { id: 3, word: "Bathroom", icon: "🛁", label: "حمام" },
-                    { id: 4, word: "Stairs", icon: "🪜", label: "سلم" }
-                ]
+                id: "house",
+                themeClass: "theme-house",
+                tag: "🏠 وحدة تكميلية • الصف الثاني",
+                level: "primary2",
+                levelBadge: "🎓 الصف الثاني - وحدة إضافية",
+                curriculumNote: "📘 مستوحاة من وحدة غرف المنزل (Rooms of the House) في منهج Connect Plus للصف الثاني الابتدائي",
+                title: "Salma & Yusuf – My House",
+                desc: "وحدة تكميلية ممتعة! جولة داخل منزل سلمى ويوسف للتعرف على أسماء غرف المنزل المختلفة باللغة الإنجليزية.",
+                icon: "🏠",
+                badgeIcon: "🛋️",
+                badgeName: "صديق المنزل",
+                bannerGradient: "from-lime-900 to-lime-700",
+                buttonActiveBg: "bg-lime-600",
+                artBorder: "border-lime-300/80",
+                artBg: "bg-lime-50/60",
+                isPremium: true,
+                pages: [],
+                vocab: [],
+                quiz: [],
+                gameItems: []
+            },
+            seasons: {
+                id: "seasons",
+                themeClass: "theme-seasons",
+                tag: "🍂 وحدة تكميلية • الصف الثالث",
+                level: "primary3",
+                levelBadge: "🎓 الصف الثالث - وحدة إضافية",
+                curriculumNote: "📘 مستوحاة من وحدة الفصول والأشهر (Seasons & Months) في منهج Connect Plus للصف الثالث الابتدائي",
+                title: "Salma & Yusuf – Seasons and Months",
+                desc: "وحدة تكميلية ممتعة! يتعرف سلمى ويوسف على فصول السنة الأربعة وأشهرها المختلفة باللغة الإنجليزية.",
+                icon: "🍂",
+                badgeIcon: "🗓️",
+                badgeName: "خبير الفصول",
+                bannerGradient: "from-orange-900 to-orange-700",
+                buttonActiveBg: "bg-orange-600",
+                artBorder: "border-orange-300/80",
+                artBg: "bg-orange-50/60",
+                isPremium: true,
+                pages: [],
+                vocab: [],
+                quiz: [],
+                gameItems: []
             },
 
-            seasons: {
-                id: 'seasons',
-                themeClass: 'theme-seasons',
-                tag: '🍂 وحدة تكميلية • الصف الثالث',
-                level: 'primary3',
-                levelBadge: '🎓 الصف الثالث - وحدة إضافية',
-                curriculumNote: '📘 مستوحاة من وحدة الفصول والأشهر (Seasons & Months) في منهج Connect Plus للصف الثالث الابتدائي',
-                title: 'Salma & Yusuf – Seasons and Months',
-                desc: 'وحدة تكميلية ممتعة! يتعرف سلمى ويوسف على فصول السنة الأربعة وأشهرها المختلفة باللغة الإنجليزية.',
-                icon: '🍂',
-                badgeIcon: '🗓️',
-                badgeName: 'خبير الفصول',
-                bannerGradient: 'from-orange-900 to-orange-700',
-                buttonActiveBg: 'bg-orange-600',
-                artBorder: 'border-orange-300/80',
-                artBg: 'bg-orange-50/60',
-                pages: [
-                    { page: 1, icon: "🌸", en: "In spring, flowers bloom in March and April.", ar: "في فصل الربيع، تتفتح الزهور في مارس وأبريل.", imageDesc: "حديقة مليئة بالزهور المتفتحة.", soundFx: "صوت طيور الربيع 🐦", audioDesc: "نطق Spring & Flowers" },
-                    { page: 2, icon: "☀️", en: "Summer is hot. We swim in June and July.", ar: "الصيف حار. نسبح في يونيو ويوليو.", imageDesc: "سلمى ويوسف يسبحان في المسبح.", soundFx: "صوت رذاذ ماء 💦", audioDesc: "نطق Summer & Hot" },
-                    { page: 3, icon: "🍂", en: "In autumn, leaves turn orange in October.", ar: "في فصل الخريف، تتحول الأوراق إلى اللون البرتقالي في أكتوبر.", imageDesc: "أوراق الشجر البرتقالية تتساقط.", soundFx: "صوت حفيف الأوراق 🍂", audioDesc: "نطق Autumn & Leaves" },
-                    { page: 4, icon: "❄️", en: "Winter is cold. It snows in December.", ar: "الشتاء بارد. تتساقط الثلوج في ديسمبر.", imageDesc: "سلمى ويوسف يرتديان ملابس شتوية دافئة.", soundFx: "صوت رياح باردة 🌬️", audioDesc: "نطق Winter & Snow" },
-                    { page: 5, icon: "📅", en: "There are twelve months in one year.", ar: "يوجد اثنا عشر شهراً في السنة الواحدة.", imageDesc: "تقويم كبير معلق على الحائط.", soundFx: "صوت تقليب صفحات التقويم 📅", audioDesc: "نطق Twelve Months" },
-                    { page: 6, icon: "🎂", en: "Salma's birthday is in May, in spring.", ar: "عيد ميلاد سلمى في مايو، في فصل الربيع.", imageDesc: "سلمى تحتفل بعيد ميلادها بالورود الربيعية.", soundFx: "أغنية عيد ميلاد 🎉", audioDesc: "نطق Birthday & May" },
-                    { page: 7, icon: "🏫", en: "The school year starts in September.", ar: "يبدأ العام الدراسي في سبتمبر.", imageDesc: "سلمى ويوسف يحملان حقائبهما أمام المدرسة في الخريف.", soundFx: "صوت جرس المدرسة 🔔", audioDesc: "نطق School Year & September" },
-                    { page: 8, icon: "🌍", en: "Every season is beautiful in its own way!", ar: "كل فصل جميل بطريقته الخاصة!", imageDesc: "الفصول الأربعة موضحة حول الكرة الأرضية.", soundFx: "موسيقى ختامية جميلة 🎶", audioDesc: "ختام تأملي جميل" }
-                ],
-                vocab: [
-                    { en: "Spring", ar: "ربيع", icon: "🌸" },
-                    { en: "Summer", ar: "صيف", icon: "☀️" },
-                    { en: "Autumn", ar: "خريف", icon: "🍂" },
-                    { en: "Winter", ar: "شتاء", icon: "❄️" },
-                    { en: "Hot", ar: "حار", icon: "🥵" },
-                    { en: "Cold", ar: "بارد", icon: "🥶" },
-                    { en: "Month", ar: "شهر", icon: "📅" },
-                    { en: "Year", ar: "سنة", icon: "🗓️" }
-                ],
-                quiz: [
-                    { q: "1. Which season has flowers blooming? (في أي فصل تتفتح الزهور؟)", options: ["Winter", "Spring (ربيع)", "Autumn"], correct: 1 },
-                    { q: "2. Which season is hot and good for swimming? (أي فصل حار ومناسب للسباحة؟)", options: ["Summer (صيف)", "Winter", "Autumn"], correct: 0 },
-                    { q: "3. When do leaves turn orange? (متى تتحول الأوراق للون البرتقالي؟)", options: ["Autumn (خريف)", "Spring", "Summer"], correct: 0 },
-                    { q: "4. When does it snow? (متى تتساقط الثلوج؟)", options: ["Summer", "Winter (شتاء)", "Spring"], correct: 1 },
-                    { q: "5. How many months are in a year? (كم شهراً في السنة؟)", options: ["Ten", "Twelve (اثنا عشر)", "Twenty"], correct: 1 }
-                ],
-                gameItems: [
-                    { id: 1, word: "Spring", icon: "🌸", label: "ربيع" },
-                    { id: 2, word: "Summer", icon: "☀️", label: "صيف" },
-                    { id: 3, word: "Autumn", icon: "🍂", label: "خريف" },
-                    { id: 4, word: "Winter", icon: "❄️", label: "شتاء" }
-                ]
-            }
         };
 
         let currentBookId = 'school';
@@ -1197,11 +1109,29 @@
             }
         };
 
-        window.selectBook = function(bookId) {
+        window.selectBook = async function(bookId) {
+            const data = booksDatabase[bookId];
+
+            // بوابة الاشتراك: لو الكتاب مدفوع ومحتواه لسه فاضي
+            if (data.isPremium && data.pages.length === 0) {
+                if (!currentChildId) {
+                    showPaywall(bookId, 'login');
+                    return;
+                }
+                if (userSubscriptionStatus !== 'active') {
+                    showPaywall(bookId, 'payment');
+                    return;
+                }
+                const loaded = await loadPremiumContent(bookId);
+                if (!loaded) {
+                    showPaywall(bookId, 'payment');
+                    return;
+                }
+            }
+
             currentBookId = bookId;
             currentPageIndex = 0;
-            
-            const data = booksDatabase[bookId];
+
             const body = document.getElementById('app-body');
             const darkClass = isDarkMode ? 'dark' : '';
             body.className = "font-sans text-slate-800 dark:text-slate-100 antialiased min-h-screen flex flex-col justify-between selection:bg-amber-200 " + data.themeClass + " " + darkClass;
@@ -1219,6 +1149,16 @@
             });
 
             loadBookData(bookId);
+        };
+
+        window.openBookFromCard = async function(bookId) {
+            const data = booksDatabase[bookId];
+            const wasLocked = data.isPremium && data.pages.length === 0 &&
+                (!currentChildId || userSubscriptionStatus !== 'active');
+            await selectBook(bookId);
+            if (!wasLocked || (data.pages.length > 0)) {
+                switchTab('reader');
+            }
         };
 
         function loadBookData(bookId) {
@@ -1680,8 +1620,8 @@
                         <p class="text-xs text-slate-600 dark:text-slate-300 mt-3 leading-relaxed">${book.desc}</p>
                         <p class="text-[11px] text-indigo-700 dark:text-indigo-300 font-bold mt-2">${book.curriculumNote}</p>
                     </div>
-                    <button onclick="selectBook('${key}'); switchTab('reader');" class="mt-5 w-full py-2.5 ${book.buttonActiveBg} text-white text-xs font-bold rounded-xl shadow transition">
-                        اقرأ وانطلق الآن 📖
+                    <button onclick="openBookFromCard('${key}')" class="mt-5 w-full py-2.5 ${book.buttonActiveBg} text-white text-xs font-bold rounded-xl shadow transition">
+                        ${book.isPremium ? 'افتح الوحدة 🔒' : 'اقرأ وانطلق الآن 📖'}
                     </button>
                 `;
                 booksGrid.appendChild(card);
@@ -1893,10 +1833,12 @@
 
         async function afterParentAuthSuccess(user) {
             parentUnlocked = true;
+            currentParentEmail = user.email || '';
             const child = await getOrCreateChild(user.id);
             currentChildId = child.id;
 
             await loadProgressFromSupabase(currentChildId);
+            await checkSubscriptionStatus(user.id);
 
             document.getElementById('parent-lock-view').classList.add('hidden');
             document.getElementById('parent-dashboard-view').classList.remove('hidden');
@@ -1968,6 +1910,8 @@
             if (isSupabaseConfigured() && supabaseClient) {
                 await supabaseClient.auth.signOut();
                 currentChildId = null;
+                currentParentEmail = '';
+                userSubscriptionStatus = 'unknown';
                 document.getElementById('parent-email-input').value = '';
                 document.getElementById('parent-password-input').value = '';
                 const msgBox = document.getElementById('parent-auth-message');
@@ -1997,6 +1941,29 @@
             const totalScored = scoreValues.reduce((a, b) => a + b, 0);
             const avgPct = totalPossible > 0 ? Math.round((totalScored / totalPossible) * 100) : 0;
             document.getElementById('pd-avg-score').innerText = avgPct + "%";
+
+            const subBox = document.getElementById('pd-subscription-box');
+            const subIcon = document.getElementById('pd-sub-icon');
+            const subTitle = document.getElementById('pd-sub-title');
+            const subDesc = document.getElementById('pd-sub-desc');
+            const subBtn = document.getElementById('pd-sub-btn');
+            if (userSubscriptionStatus === 'active') {
+                subBox.className = "rounded-2xl p-4 border flex items-center justify-between gap-3 flex-wrap bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900";
+                subIcon.innerText = '✅';
+                subTitle.innerText = 'الاشتراك مفعّل';
+                subTitle.className = "font-bold text-sm text-emerald-800 dark:text-emerald-300";
+                subDesc.innerText = 'كل الوحدات الإضافية متاحة الآن';
+                subDesc.className = "text-xs text-emerald-700 dark:text-emerald-400";
+                subBtn.classList.add('hidden');
+            } else {
+                subBox.className = "rounded-2xl p-4 border flex items-center justify-between gap-3 flex-wrap bg-amber-50 dark:bg-slate-800 border-amber-200 dark:border-slate-700";
+                subIcon.innerText = '🔒';
+                subTitle.innerText = 'الاشتراك في الوحدات الإضافية';
+                subTitle.className = "font-bold text-sm text-amber-900 dark:text-amber-300";
+                subDesc.innerText = 'غير مفعّل حاليًا — ' + MONTHLY_PRICE_EGP + ' جنيه شهريًا';
+                subDesc.className = "text-xs text-amber-700 dark:text-amber-400";
+                subBtn.classList.remove('hidden');
+            }
 
             const table = document.getElementById('pd-books-table');
             table.innerHTML = '';
@@ -2110,6 +2077,82 @@
             link.download = 'certificate-' + name.replace(/\s+/g, '-') + '.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
+        };
+
+        // ================= نظام الاشتراك والمحتوى المدفوع =================
+        async function checkSubscriptionStatus(userId) {
+            if (!supabaseClient) { userSubscriptionStatus = 'inactive'; return; }
+            try {
+                const { data } = await supabaseClient.from('subscriptions').select('status, expires_at').eq('user_id', userId).maybeSingle();
+                if (data && data.status === 'active' && (!data.expires_at || new Date(data.expires_at) > new Date())) {
+                    userSubscriptionStatus = 'active';
+                } else {
+                    userSubscriptionStatus = 'inactive';
+                }
+            } catch (e) {
+                userSubscriptionStatus = 'inactive';
+            }
+        }
+
+        async function loadPremiumContent(bookId) {
+            if (!supabaseClient) return false;
+            try {
+                const { data, error } = await supabaseClient.from('premium_stories').select('content').eq('book_id', bookId).maybeSingle();
+                if (data && data.content) {
+                    Object.assign(booksDatabase[bookId], data.content);
+                    return true;
+                }
+            } catch (e) {
+                console.warn('تعذّر تحميل المحتوى المدفوع', e);
+            }
+            return false;
+        }
+
+        window.showPaywall = function(bookId, mode) {
+            const book = booksDatabase[bookId];
+            pendingPremiumBookId = bookId;
+
+            document.getElementById('paywall-book-title').innerText = book.title;
+            document.getElementById('paywall-book-icon').innerText = book.icon;
+            document.getElementById('paywall-price').innerText = MONTHLY_PRICE_EGP + ' جنيه';
+            document.getElementById('paywall-vf-number').innerText = VODAFONE_CASH_NUMBER;
+            document.getElementById('paywall-instapay').innerText = INSTAPAY_HANDLE;
+
+            const showLogin = (mode === 'login');
+            document.getElementById('paywall-login-notice').classList.toggle('hidden', !showLogin);
+            document.getElementById('paywall-payment-info').classList.toggle('hidden', showLogin);
+
+            document.getElementById('paywall-overlay').classList.remove('hidden');
+        };
+
+        window.closePaywall = function() {
+            document.getElementById('paywall-overlay').classList.add('hidden');
+        };
+
+        window.closePaywallOnOverlay = function(e) {
+            if (e.target.id === 'paywall-overlay') closePaywall();
+        };
+
+        window.recheckSubscription = async function() {
+            if (!supabaseClient || !currentChildId) {
+                alert('من فضلك سجّل دخولك الأول من تبويب أولياء الأمور.');
+                return;
+            }
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (user) await checkSubscriptionStatus(user.id);
+
+            if (userSubscriptionStatus === 'active') {
+                closePaywall();
+                if (pendingPremiumBookId) selectBook(pendingPremiumBookId);
+            } else {
+                alert('لسه الاشتراك مش مفعّل. لو دفعت بالفعل، استنى شوية لحد ما يتم التفعيل يدويًا من فريقنا (عادة خلال ساعات قليلة).');
+            }
+        };
+
+        window.sendPaymentProofWhatsapp = function() {
+            const bookTitle = pendingPremiumBookId ? booksDatabase[pendingPremiumBookId].title : '';
+            const msg = 'مرحبًا، عايز أفعّل اشتراك تطبيق Salma & Yusuf.\nبريدي المسجل: ' + (currentParentEmail || '...') + '\nالوحدة المطلوبة: ' + bookTitle + '\n(مرفق صورة إثبات الدفع)';
+            window.open('https://wa.me/' + WHATSAPP_BUSINESS_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
         };
 
         // ================= Personal App Skin (independent of story) =================
