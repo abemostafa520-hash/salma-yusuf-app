@@ -146,38 +146,7 @@
             <div class="flex items-center gap-2 text-xs font-bold text-amber-300">
                 <span>🗺️ اختر مغامرة اليوم من السلسلة الكاملة:</span>
             </div>
-            <div class="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0 scrollbar-none" id="book-selector-bar">
-                <button onclick="selectBook('school')" id="btn-book-school" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap bg-indigo-600 text-white border border-indigo-400 shadow-md">
-                    <span>🏫 1. School</span>
-                </button>
-                <button onclick="selectBook('colors')" id="btn-book-colors" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-violet-700 hover:text-white border border-slate-700">
-                    <span>🎨 1+. Colors 🔒</span>
-                </button>
-                <button onclick="selectBook('zoo')" id="btn-book-zoo" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-emerald-700 hover:text-white border border-slate-700">
-                    <span>🦁 2. Zoo</span>
-                </button>
-                <button onclick="selectBook('numbers')" id="btn-book-numbers" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-pink-700 hover:text-white border border-slate-700">
-                    <span>🔢 2+. Numbers 🔒</span>
-                </button>
-                <button onclick="selectBook('market')" id="btn-book-market" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-teal-700 hover:text-white border border-slate-700">
-                    <span>🛒 3. Supermarket</span>
-                </button>
-                <button onclick="selectBook('clothes')" id="btn-book-clothes" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-cyan-700 hover:text-white border border-slate-700">
-                    <span>👕 3+. Clothes 🔒</span>
-                </button>
-                <button onclick="selectBook('family')" id="btn-book-family" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-rose-700 hover:text-white border border-slate-700">
-                    <span>👨‍👩‍👧‍👦 4. Family</span>
-                </button>
-                <button onclick="selectBook('house')" id="btn-book-house" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-lime-700 hover:text-white border border-slate-700">
-                    <span>🏠 4+. My House 🔒</span>
-                </button>
-                <button onclick="selectBook('rain')" id="btn-book-rain" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-sky-700 hover:text-white border border-slate-700">
-                    <span>🌧️ 5. Rainy Day</span>
-                </button>
-                <button onclick="selectBook('seasons')" id="btn-book-seasons" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-orange-700 hover:text-white border border-slate-700">
-                    <span>🍂 5+. Seasons 🔒</span>
-                </button>
-            </div>
+            <div class="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0 scrollbar-none" id="book-selector-bar"></div>
         </div>
     </div>
 
@@ -965,6 +934,336 @@
                 gameItems: []
             },
 
+            body: {
+                id: "body",
+                themeClass: "theme-body",
+                tag: "🙆 وحدة تكميلية • KG1",
+                level: "kg1",
+                levelBadge: "🎓 KG1 - وحدة إضافية",
+                curriculumNote: "📘 مستوحاة من وحدة جسم الإنسان (My Body) في مناهج رياض الأطفال بمصر",
+                title: "Salma & Yusuf – My Body",
+                desc: "وحدة تكميلية ممتعة! يتعرف سلمى ويوسف على أجزاء الجسم المختلفة أثناء لعبهما الصباحي.",
+                icon: "🙆",
+                badgeIcon: "👀",
+                badgeName: "خبير الجسم",
+                bannerGradient: "from-fuchsia-900 to-fuchsia-700",
+                buttonActiveBg: "bg-fuchsia-600",
+                artBorder: "border-fuchsia-300/80",
+                artBg: "bg-fuchsia-50/60",
+                isPremium: true,
+                pages: [],
+                vocab: [],
+                quiz: [],
+                gameItems: []
+            },
+            pets: {
+                id: "pets",
+                themeClass: "theme-pets",
+                tag: "🐶 وحدة تكميلية • KG1",
+                level: "kg1",
+                levelBadge: "🎓 KG1 - وحدة إضافية",
+                curriculumNote: "📘 مستوحاة من وحدة الحيوانات الأليفة (My Pets) في مناهج رياض الأطفال بمصر",
+                title: "Salma & Yusuf – My Pets",
+                desc: "وحدة تكميلية ممتعة! تعرّف على حيوانات سلمى ويوسف الأليفة المحببة في المنزل.",
+                icon: "🐶",
+                badgeIcon: "🐾",
+                badgeName: "صديق الحيوانات",
+                bannerGradient: "from-yellow-900 to-yellow-700",
+                buttonActiveBg: "bg-yellow-600",
+                artBorder: "border-yellow-300/80",
+                artBg: "bg-yellow-50/60",
+                isPremium: true,
+                pages: [],
+                vocab: [],
+                quiz: [],
+                gameItems: []
+            },
+            playtime: {
+                id: "playtime",
+                themeClass: "theme-playtime",
+                tag: "🛝 وحدة تكميلية • KG1",
+                level: "kg1",
+                levelBadge: "🎓 KG1 - وحدة إضافية",
+                curriculumNote: "📘 مستوحاة من وحدة أوقات اللعب (Playtime) في مناهج رياض الأطفال بمصر",
+                title: "Salma & Yusuf – Playtime Fun",
+                desc: "وحدة تكميلية ممتعة! يوم لعب رائع لسلمى ويوسف في الملعب مع أصدقائهما.",
+                icon: "🛝",
+                badgeIcon: "🎡",
+                badgeName: "بطل الملعب",
+                bannerGradient: "from-red-900 to-red-700",
+                buttonActiveBg: "bg-red-600",
+                artBorder: "border-red-300/80",
+                artBg: "bg-red-50/60",
+                isPremium: true,
+                pages: [],
+                vocab: [],
+                quiz: [],
+                gameItems: []
+            },
+            weather: {
+                id: "weather",
+                themeClass: "theme-weather",
+                tag: "⛅ وحدة تكميلية • KG2",
+                level: "kg2",
+                levelBadge: "🎓 KG2 - وحدة إضافية",
+                curriculumNote: "📘 مستوحاة من وحدة الطقس (Weather Watch) في مناهج رياض الأطفال بمصر",
+                title: "Salma & Yusuf – Weather Watch",
+                desc: "وحدة تكميلية ممتعة! يراقب سلمى ويوسف السماء ويتعلمان عن حالات الطقس المختلفة.",
+                icon: "⛅",
+                badgeIcon: "🌈",
+                badgeName: "مراقب السماء",
+                bannerGradient: "from-cyan-900 to-cyan-700",
+                buttonActiveBg: "bg-cyan-600",
+                artBorder: "border-cyan-300/80",
+                artBg: "bg-cyan-50/60",
+                isPremium: true,
+                pages: [],
+                vocab: [],
+                quiz: [],
+                gameItems: []
+            },
+            feelings: {
+                id: "feelings",
+                themeClass: "theme-feelings",
+                tag: "😊 وحدة تكميلية • KG2",
+                level: "kg2",
+                levelBadge: "🎓 KG2 - وحدة إضافية",
+                curriculumNote: "📘 مستوحاة من وحدة المشاعر (My Feelings) في مناهج رياض الأطفال بمصر",
+                title: "Salma & Yusuf – My Feelings",
+                desc: "وحدة تكميلية ممتعة! يتعلم سلمى ويوسف التعبير عن مشاعرهما المختلفة باللغة الإنجليزية.",
+                icon: "😊",
+                badgeIcon: "💖",
+                badgeName: "خبير المشاعر",
+                bannerGradient: "from-purple-900 to-purple-700",
+                buttonActiveBg: "bg-purple-600",
+                artBorder: "border-purple-300/80",
+                artBg: "bg-purple-50/60",
+                isPremium: true,
+                pages: [],
+                vocab: [],
+                quiz: [],
+                gameItems: []
+            },
+            kitchen: {
+                id: "kitchen",
+                themeClass: "theme-kitchen",
+                tag: "🍳 وحدة تكميلية • KG2",
+                level: "kg2",
+                levelBadge: "🎓 KG2 - وحدة إضافية",
+                curriculumNote: "📘 مستوحاة من وحدة أدوات المطبخ (In the Kitchen) في مناهج رياض الأطفال بمصر",
+                title: "Salma & Yusuf – In the Kitchen",
+                desc: "وحدة تكميلية ممتعة! يساعد سلمى ويوسف أمهما في المطبخ ويتعلمان أسماء أدواته.",
+                icon: "🍳",
+                badgeIcon: "🍽️",
+                badgeName: "طاهي صغير",
+                bannerGradient: "from-red-900 to-red-700",
+                buttonActiveBg: "bg-red-600",
+                artBorder: "border-red-300/80",
+                artBg: "bg-red-50/60",
+                isPremium: true,
+                pages: [],
+                vocab: [],
+                quiz: [],
+                gameItems: []
+            },
+            neighborhood: {
+                id: "neighborhood",
+                themeClass: "theme-neighborhood",
+                tag: "🏘️ وحدة تكميلية • الصف الأول",
+                level: "primary1",
+                levelBadge: "🎓 الصف الأول - وحدة إضافية",
+                curriculumNote: "📘 مستوحاة من وحدة الحي السكني (My Neighborhood) في منهج Connect Plus للصف الأول",
+                title: "Salma & Yusuf – My Neighborhood",
+                desc: "وحدة تكميلية ممتعة! جولة في حي سلمى ويوسف للتعرف على الأماكن المهمة حولهم.",
+                icon: "🏘️",
+                badgeIcon: "🗺️",
+                badgeName: "مستكشف الحي",
+                bannerGradient: "from-blue-900 to-blue-700",
+                buttonActiveBg: "bg-blue-600",
+                artBorder: "border-blue-300/80",
+                artBg: "bg-blue-50/60",
+                isPremium: true,
+                pages: [],
+                vocab: [],
+                quiz: [],
+                gameItems: []
+            },
+            sportsday: {
+                id: "sportsday",
+                themeClass: "theme-sportsday",
+                tag: "🏃 وحدة تكميلية • الصف الأول",
+                level: "primary1",
+                levelBadge: "🎓 الصف الأول - وحدة إضافية",
+                curriculumNote: "📘 مستوحاة من وحدة اليوم الرياضي (Sports Day) في منهج Connect Plus للصف الأول",
+                title: "Salma & Yusuf – Sports Day",
+                desc: "وحدة تكميلية ممتعة! يوم رياضي مليء بالحماس في مدرسة سلمى ويوسف.",
+                icon: "🏃",
+                badgeIcon: "🥇",
+                badgeName: "بطل الرياضة",
+                bannerGradient: "from-amber-900 to-amber-700",
+                buttonActiveBg: "bg-amber-600",
+                artBorder: "border-amber-300/80",
+                artBg: "bg-amber-50/60",
+                isPremium: true,
+                pages: [],
+                vocab: [],
+                quiz: [],
+                gameItems: []
+            },
+            doctor: {
+                id: "doctor",
+                themeClass: "theme-doctor",
+                tag: "🩺 وحدة تكميلية • الصف الأول",
+                level: "primary1",
+                levelBadge: "🎓 الصف الأول - وحدة إضافية",
+                curriculumNote: "📘 مستوحاة من وحدة زيارة الطبيب (At the Doctor) في منهج Connect Plus للصف الأول",
+                title: "Salma & Yusuf – At the Doctor",
+                desc: "وحدة تكميلية ممتعة! زيارة يوسف للطبيب لتعلم أهمية الصحة والعافية.",
+                icon: "🩺",
+                badgeIcon: "❤️‍🩹",
+                badgeName: "صديق الصحة",
+                bannerGradient: "from-sky-900 to-sky-700",
+                buttonActiveBg: "bg-sky-600",
+                artBorder: "border-sky-300/80",
+                artBg: "bg-sky-50/60",
+                isPremium: true,
+                pages: [],
+                vocab: [],
+                quiz: [],
+                gameItems: []
+            },
+            transport: {
+                id: "transport",
+                themeClass: "theme-transport",
+                tag: "🚌 وحدة تكميلية • الصف الثاني",
+                level: "primary2",
+                levelBadge: "🎓 الصف الثاني - وحدة إضافية",
+                curriculumNote: "📘 مستوحاة من وحدة وسائل المواصلات (Transportation) في منهج Connect Plus للصف الثاني",
+                title: "Salma & Yusuf – Transportation",
+                desc: "وحدة تكميلية ممتعة! رحلة سلمى ويوسف يتعرفان فيها على وسائل المواصلات المختلفة.",
+                icon: "🚌",
+                badgeIcon: "🚦",
+                badgeName: "خبير المواصلات",
+                bannerGradient: "from-slate-800 to-slate-600",
+                buttonActiveBg: "bg-slate-600",
+                artBorder: "border-slate-300/80",
+                artBg: "bg-slate-50/60",
+                isPremium: true,
+                pages: [],
+                vocab: [],
+                quiz: [],
+                gameItems: []
+            },
+            jobs: {
+                id: "jobs",
+                themeClass: "theme-jobs",
+                tag: "👷 وحدة تكميلية • الصف الثاني",
+                level: "primary2",
+                levelBadge: "🎓 الصف الثاني - وحدة إضافية",
+                curriculumNote: "📘 مستوحاة من وحدة المهن والوظائف (Jobs & Professions) في منهج Connect Plus للصف الثاني",
+                title: "Salma & Yusuf – Jobs and Professions",
+                desc: "وحدة تكميلية ممتعة! يتعرف سلمى ويوسف على مهن مهمة في مجتمعهم.",
+                icon: "👷",
+                badgeIcon: "🎯",
+                badgeName: "مستكشف المهن",
+                bannerGradient: "from-indigo-900 to-indigo-700",
+                buttonActiveBg: "bg-indigo-600",
+                artBorder: "border-indigo-300/80",
+                artBg: "bg-indigo-50/60",
+                isPremium: true,
+                pages: [],
+                vocab: [],
+                quiz: [],
+                gameItems: []
+            },
+            weekdays: {
+                id: "weekdays",
+                themeClass: "theme-weekdays",
+                tag: "📅 وحدة تكميلية • الصف الثاني",
+                level: "primary2",
+                levelBadge: "🎓 الصف الثاني - وحدة إضافية",
+                curriculumNote: "📘 مستوحاة من وحدة أيام الأسبوع (Days of the Week) في منهج Connect Plus للصف الثاني",
+                title: "Salma & Yusuf – Days of the Week",
+                desc: "وحدة تكميلية ممتعة! يتعلم سلمى ويوسف أيام الأسبوع من خلال جدولهما الأسبوعي.",
+                icon: "📅",
+                badgeIcon: "🗓️",
+                badgeName: "منظّم الأسبوع",
+                bannerGradient: "from-teal-900 to-teal-700",
+                buttonActiveBg: "bg-teal-600",
+                artBorder: "border-teal-300/80",
+                artBg: "bg-teal-50/60",
+                isPremium: true,
+                pages: [],
+                vocab: [],
+                quiz: [],
+                gameItems: []
+            },
+            egypt: {
+                id: "egypt",
+                themeClass: "theme-egypt",
+                tag: "🏛️ وحدة تكميلية • الصف الثالث",
+                level: "primary3",
+                levelBadge: "🎓 الصف الثالث - وحدة إضافية",
+                curriculumNote: "📘 مستوحاة من وحدة التراث المصري القديم (Ancient Egypt) في منهج Connect Plus للصف الثالث",
+                title: "Salma & Yusuf – Ancient Egypt",
+                desc: "وحدة تكميلية ممتعة! رحلة سلمى ويوسف لاكتشاف تاريخ مصر القديمة العريق.",
+                icon: "🏛️",
+                badgeIcon: "🗿",
+                badgeName: "مستكشف التاريخ",
+                bannerGradient: "from-yellow-900 to-amber-800",
+                buttonActiveBg: "bg-amber-700",
+                artBorder: "border-amber-400/80",
+                artBg: "bg-amber-50/60",
+                isPremium: true,
+                pages: [],
+                vocab: [],
+                quiz: [],
+                gameItems: []
+            },
+            healthyhabits: {
+                id: "healthyhabits",
+                themeClass: "theme-healthyhabits",
+                tag: "💪 وحدة تكميلية • الصف الثالث",
+                level: "primary3",
+                levelBadge: "🎓 الصف الثالث - وحدة إضافية",
+                curriculumNote: "📘 مستوحاة من وحدة العادات الصحية (Healthy Habits) في منهج Connect Plus للصف الثالث",
+                title: "Salma & Yusuf – Healthy Habits",
+                desc: "وحدة تكميلية ممتعة! يتعلم سلمى ويوسف عادات صحية بسيطة تجعلهما أقوى.",
+                icon: "💪",
+                badgeIcon: "🥗",
+                badgeName: "بطل الصحة",
+                bannerGradient: "from-green-900 to-green-700",
+                buttonActiveBg: "bg-green-600",
+                artBorder: "border-green-300/80",
+                artBg: "bg-green-50/60",
+                isPremium: true,
+                pages: [],
+                vocab: [],
+                quiz: [],
+                gameItems: []
+            },
+            hobbies: {
+                id: "hobbies",
+                themeClass: "theme-hobbies",
+                tag: "🎨 وحدة تكميلية • الصف الثالث",
+                level: "primary3",
+                levelBadge: "🎓 الصف الثالث - وحدة إضافية",
+                curriculumNote: "📘 مستوحاة من وحدة الهوايات (My Hobbies) في منهج Connect Plus للصف الثالث",
+                title: "Salma & Yusuf – My Hobbies",
+                desc: "وحدة تكميلية ممتعة! يشارك سلمى ويوسف هواياتهما المفضلة معك.",
+                icon: "🎨",
+                badgeIcon: "🌟",
+                badgeName: "صاحب الهوايات",
+                bannerGradient: "from-rose-900 to-pink-700",
+                buttonActiveBg: "bg-pink-600",
+                artBorder: "border-pink-300/80",
+                artBg: "bg-pink-50/60",
+                isPremium: true,
+                pages: [],
+                vocab: [],
+                quiz: [],
+                gameItems: []
+            },
         };
 
         let currentBookId = 'school';
@@ -974,8 +1273,8 @@
         let isDarkMode = false;
         
         let quizAnswers = [];
-        let completedBooks = { school: false, zoo: false, market: false, family: false, rain: false, colors: false, numbers: false, clothes: false, house: false, seasons: false };
-        let bestQuizScores = { school: 0, zoo: 0, market: 0, family: 0, rain: 0, colors: 0, numbers: 0, clothes: 0, house: 0, seasons: 0 };
+        let completedBooks = { school: false, zoo: false, market: false, family: false, rain: false, colors: false, numbers: false, clothes: false, house: false, seasons: false, body: false, pets: false, playtime: false, weather: false, feelings: false, kitchen: false, neighborhood: false, sportsday: false, doctor: false, transport: false, jobs: false, weekdays: false, egypt: false, healthyhabits: false, hobbies: false };
+        let bestQuizScores = { school: 0, zoo: 0, market: 0, family: 0, rain: 0, colors: 0, numbers: 0, clothes: 0, house: 0, seasons: 0, body: 0, pets: 0, playtime: 0, weather: 0, feelings: 0, kitchen: 0, neighborhood: 0, sportsday: 0, doctor: 0, transport: 0, jobs: 0, weekdays: 0, egypt: 0, healthyhabits: 0, hobbies: 0 };
 
         let selectedWordId = null;
         let matchedPairs = [];
@@ -1054,9 +1353,11 @@
         const DEFAULT_PARENT_PIN = '1234';
 
         document.addEventListener('DOMContentLoaded', () => {
+            activeLevelFilter = 'kg1';
             loadBookData(currentBookId);
             renderUniverseView();
             renderLevelFilterBar();
+            renderBookSelectorBar();
             renderPhonicsTabs();
             initParentDashboard();
             initAppSkin();
@@ -1136,17 +1437,7 @@
             const darkClass = isDarkMode ? 'dark' : '';
             body.className = "font-sans text-slate-800 dark:text-slate-100 antialiased min-h-screen flex flex-col justify-between selection:bg-amber-200 " + data.themeClass + " " + darkClass;
 
-            const bookKeys = ['school', 'zoo', 'market', 'family', 'rain', 'colors', 'numbers', 'clothes', 'house', 'seasons'];
-            bookKeys.forEach(key => {
-                const btn = document.getElementById("btn-book-" + key);
-                if (btn) {
-                    if (key === bookId) {
-                        btn.className = "px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap " + data.buttonActiveBg + " text-white border border-white/40 shadow-md transform scale-105";
-                    } else {
-                        btn.className = "px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700";
-                    }
-                }
-            });
+            renderBookSelectorBar();
 
             loadBookData(bookId);
         };
@@ -1637,6 +1928,49 @@
         }
 
         // ================= Curriculum level filter =================
+        const bookShortLabels = {
+            school: 'School', zoo: 'Zoo', market: 'Supermarket', family: 'Family', rain: 'Rainy Day',
+            colors: 'Colors', numbers: 'Numbers', clothes: 'Clothes', house: 'My House', seasons: 'Seasons',
+            body: 'My Body', pets: 'My Pets', playtime: 'Playtime', weather: 'Weather', feelings: 'Feelings', kitchen: 'Kitchen',
+            neighborhood: 'Neighborhood', sportsday: 'Sports Day', doctor: 'At Doctor',
+            transport: 'Transport', jobs: 'Jobs', weekdays: 'Weekdays',
+            egypt: 'Ancient Egypt', healthyhabits: 'Healthy Habits', hobbies: 'Hobbies'
+        };
+        const levelOrderList = ['kg1', 'kg2', 'primary1', 'primary2', 'primary3'];
+
+        function renderBookSelectorBar() {
+            const bar = document.getElementById('book-selector-bar');
+            if (!bar) return;
+            bar.innerHTML = '';
+
+            const sortedKeys = Object.keys(booksDatabase).sort((a, b) => {
+                const la = booksDatabase[a].level, lb = booksDatabase[b].level;
+                if (la !== lb) return levelOrderList.indexOf(la) - levelOrderList.indexOf(lb);
+                const pa = booksDatabase[a].isPremium ? 1 : 0;
+                const pb = booksDatabase[b].isPremium ? 1 : 0;
+                return pa - pb;
+            });
+
+            sortedKeys.forEach(key => {
+                const book = booksDatabase[key];
+                const isActive = key === currentBookId;
+                const btn = document.createElement('button');
+                btn.id = 'btn-book-' + key;
+                btn.onclick = () => selectBook(key);
+                btn.className = "px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap border " +
+                    (isActive
+                        ? book.buttonActiveBg + " text-white border-white/40 shadow-md transform scale-105"
+                        : "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border-slate-700");
+                const lockIcon = book.isPremium ? ' 🔒' : '';
+                btn.innerHTML = '<span>' + book.icon + ' ' + (bookShortLabels[key] || book.title) + lockIcon + '</span>';
+
+                const show = (activeLevelFilter === 'all') || (book.level === activeLevelFilter);
+                btn.style.display = show ? '' : 'none';
+
+                bar.appendChild(btn);
+            });
+        }
+
         function renderLevelFilterBar() {
             const bar = document.getElementById('level-filter-bar');
             if (!bar) return;
@@ -1671,14 +2005,7 @@
         window.setLevelFilter = function(levelKey) {
             activeLevelFilter = levelKey;
             renderLevelFilterBar();
-
-            const selectorBar = document.getElementById('book-selector-bar');
-            Array.from(selectorBar.children).forEach(btn => {
-                const bookKey = btn.id.replace('btn-book-', '');
-                const book = booksDatabase[bookKey];
-                const show = (levelKey === 'all') || (book && book.level === levelKey);
-                btn.style.display = show ? '' : 'none';
-            });
+            renderBookSelectorBar();
         };
 
         // ================= Phonics =================
