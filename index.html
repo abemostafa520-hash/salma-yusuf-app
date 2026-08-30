@@ -143,10 +143,11 @@
 
     <div class="bg-slate-900 text-white py-3 px-4 shadow-inner">
         <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
-            <div class="flex items-center gap-2 text-xs font-bold text-amber-300">
-                <span>🗺️ اختر مغامرة اليوم من السلسلة الكاملة:</span>
+            <div class="flex items-center gap-2 text-xs font-bold text-amber-300 shrink-0">
+                <span>🗺️ اختر مغامرة اليوم:</span>
+                <span id="book-count-badge" class="bg-amber-400 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full">0 قصة</span>
             </div>
-            <div class="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0 scrollbar-none" id="book-selector-bar"></div>
+            <select id="book-selector-dropdown" onchange="selectBook(this.value)" class="w-full md:w-auto md:min-w-[380px] bg-slate-800 border border-slate-700 text-white text-sm font-bold rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-400"></select>
         </div>
     </div>
 
@@ -1939,9 +1940,9 @@
         const levelOrderList = ['kg1', 'kg2', 'primary1', 'primary2', 'primary3'];
 
         function renderBookSelectorBar() {
-            const bar = document.getElementById('book-selector-bar');
-            if (!bar) return;
-            bar.innerHTML = '';
+            const dropdown = document.getElementById('book-selector-dropdown');
+            const countBadge = document.getElementById('book-count-badge');
+            if (!dropdown) return;
 
             const sortedKeys = Object.keys(booksDatabase).sort((a, b) => {
                 const la = booksDatabase[a].level, lb = booksDatabase[b].level;
@@ -1951,24 +1952,27 @@
                 return pa - pb;
             });
 
-            sortedKeys.forEach(key => {
+            const visibleKeys = sortedKeys.filter(key => {
                 const book = booksDatabase[key];
-                const isActive = key === currentBookId;
-                const btn = document.createElement('button');
-                btn.id = 'btn-book-' + key;
-                btn.onclick = () => selectBook(key);
-                btn.className = "px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap border " +
-                    (isActive
-                        ? book.buttonActiveBg + " text-white border-white/40 shadow-md transform scale-105"
-                        : "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border-slate-700");
-                const lockIcon = book.isPremium ? ' 🔒' : '';
-                btn.innerHTML = '<span>' + book.icon + ' ' + (bookShortLabels[key] || book.title) + lockIcon + '</span>';
-
-                const show = (activeLevelFilter === 'all') || (book.level === activeLevelFilter);
-                btn.style.display = show ? '' : 'none';
-
-                bar.appendChild(btn);
+                return (activeLevelFilter === 'all') || (book.level === activeLevelFilter);
             });
+
+            dropdown.innerHTML = visibleKeys.map(key => {
+                const book = booksDatabase[key];
+                const lockIcon = book.isPremium ? ' 🔒' : ' ✅';
+                const label = book.icon + ' ' + book.title.replace('Salma & Yusuf', '').replace('–', '').trim() + lockIcon;
+                return `<option value="${key}">${label}</option>`;
+            }).join('');
+
+            if (visibleKeys.includes(currentBookId)) {
+                dropdown.value = currentBookId;
+            } else if (visibleKeys.length > 0) {
+                dropdown.value = visibleKeys[0];
+            }
+
+            if (countBadge) {
+                countBadge.innerText = visibleKeys.length + ' قصة متاحة';
+            }
         }
 
         function renderLevelFilterBar() {
