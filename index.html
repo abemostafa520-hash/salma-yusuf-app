@@ -1,5 +1,5 @@
- <!DOCTYPE html>
-<!-- BUILD-VERSION: v7-all-free-promo-2026-08-30 -->
+  <!DOCTYPE html>
+<!-- BUILD-VERSION: v9-journey-map-2026-08-31 -->
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -142,13 +142,17 @@
         </div>
     </div>
 
-    <div class="bg-slate-900 text-white py-3 px-4 shadow-inner">
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
-            <div class="flex items-center gap-2 text-xs font-bold text-amber-300 shrink-0">
-                <span>🗺️ اختر مغامرة اليوم:</span>
-                <span id="book-count-badge" class="bg-amber-400 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full">0 قصة</span>
+    <div class="bg-slate-900 text-white py-4 px-4 shadow-inner">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                <div class="flex items-center gap-2 text-xs font-bold text-amber-300 shrink-0">
+                    <span>🗺️ اختر مغامرة اليوم:</span>
+                    <span id="book-count-badge" class="bg-amber-400 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full">0 قصة</span>
+                </div>
+                <select id="book-selector-dropdown" onchange="selectBook(this.value)" class="w-full sm:w-auto sm:min-w-[280px] bg-slate-800 border border-slate-700 text-white text-xs font-bold rounded-xl px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-amber-400">
+                </select>
             </div>
-            <select id="book-selector-dropdown" onchange="selectBook(this.value)" class="w-full md:w-auto md:min-w-[380px] bg-slate-800 border border-slate-700 text-white text-sm font-bold rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-400"></select>
+            <div id="journey-map-container" class="space-y-5"></div>
         </div>
     </div>
 
@@ -191,6 +195,9 @@
                         </button>
                         <button onclick="playCurrentAudio()" id="listen-page-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm px-4 py-1.5 rounded-xl shadow-md transition flex items-center gap-1.5">
                             ▶️ استمع للصفحة
+                        </button>
+                        <button onclick="practiceCurrentPageSpeech(this)" id="mic-page-btn" class="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs sm:text-sm px-4 py-1.5 rounded-xl shadow-md transition flex items-center gap-1.5">
+                            🎤 جرّب تنطقها
                         </button>
                     </div>
                 </div>
@@ -1368,6 +1375,7 @@
             initParentDashboard();
             initAppSkin();
             startReadingTimer();
+            updateMicButtonsAvailability();
         });
 
         // Track approximate reading time in-session (persisted via window.storage)
@@ -1661,6 +1669,116 @@
             }
         }
 
+        // ================= نظام "قول وسمّع" (Speak & Check) =================
+        let speechPracticeCount = 0;
+        let speechPracticeCorrect = 0;
+
+        function isSpeechRecognitionSupported() {
+            return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+        }
+
+        function normalizeSpeech(text) {
+            return text.toLowerCase().replace(/[.,!?"']/g, '').replace(/\s+/g, ' ').trim();
+        }
+
+        let activeRecognition = null;
+
+        function practiceSpeaking(targetText, buttonEl) {
+            if (!isSpeechRecognitionSupported()) {
+                alert('عذرًا، متصفحك الحالي لا يدعم التعرف الصوتي. جرّب على متصفح Google Chrome.');
+                return;
+            }
+            if (activeRecognition) {
+                try { activeRecognition.stop(); } catch (e) {}
+            }
+
+            const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognitionAPI();
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 3;
+
+            const originalHTML = buttonEl.innerHTML;
+            buttonEl.innerHTML = '🔴 بيسمعك...';
+            buttonEl.disabled = true;
+            buttonEl.classList.add('animate-pulse');
+
+            const restoreButton = () => {
+                buttonEl.innerHTML = originalHTML;
+                buttonEl.disabled = false;
+                buttonEl.classList.remove('animate-pulse');
+                activeRecognition = null;
+            };
+
+            recognition.onresult = (event) => {
+                const alternatives = Array.from(event.results[0]).map(r => normalizeSpeech(r.transcript));
+                const target = normalizeSpeech(targetText);
+                const isMatch = alternatives.some(alt =>
+                    alt === target || alt.includes(target) || target.includes(alt)
+                );
+                speechPracticeCount++;
+                if (isMatch) speechPracticeCorrect++;
+                showSpeechFeedback(isMatch);
+            };
+
+            recognition.onerror = (event) => {
+                restoreButton();
+                if (event.error === 'not-allowed' || event.error === 'permission-denied') {
+                    alert('محتاجين إذن استخدام الميكروفون عشان الميزة دي تشتغل. من فضلك اسمح بالوصول للميكروفون من إعدادات المتصفح.');
+                } else if (event.error === 'no-speech') {
+                    showSpeechFeedback(null);
+                }
+            };
+
+            recognition.onend = restoreButton;
+
+            activeRecognition = recognition;
+            try {
+                recognition.start();
+            } catch (e) {
+                restoreButton();
+            }
+        }
+
+        function showSpeechFeedback(isCorrect) {
+            const existing = document.getElementById('speech-feedback-toast');
+            if (existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.id = 'speech-feedback-toast';
+            let bg, text;
+            if (isCorrect === true) {
+                bg = 'bg-emerald-500';
+                text = '🎉 ممتاز! نطق صحيح';
+            } else if (isCorrect === false) {
+                bg = 'bg-amber-500';
+                text = '🔄 قريب! حاول تاني';
+            } else {
+                bg = 'bg-slate-500';
+                text = '🤫 مسمعتش صوت، جرّب تاني';
+            }
+            toast.className = 'fixed top-24 left-1/2 -translate-x-1/2 z-[200] px-6 py-3 rounded-2xl font-black text-white shadow-2xl text-base sm:text-lg whitespace-nowrap';
+            toast.style.backgroundColor = '';
+            toast.classList.add(...bg.split(' '));
+            toast.innerText = text;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2200);
+        }
+
+        window.practiceCurrentPageSpeech = function(buttonEl) {
+            const text = booksDatabase[currentBookId].pages[currentPageIndex].en;
+            practiceSpeaking(text, buttonEl);
+        };
+
+        function updateMicButtonsAvailability() {
+            const micPageBtn = document.getElementById('mic-page-btn');
+            if (micPageBtn && !isSpeechRecognitionSupported()) {
+                micPageBtn.classList.add('opacity-40', 'cursor-not-allowed');
+                micPageBtn.title = 'متصفحك الحالي لا يدعم التعرف الصوتي، جرّب Chrome';
+                micPageBtn.onclick = () => alert('عذرًا، متصفحك الحالي لا يدعم التعرف الصوتي. جرّب على Google Chrome للحصول على هذه الميزة.');
+            }
+        }
+
         window.playCurrentAudio = function() {
             const text = booksDatabase[currentBookId].pages[currentPageIndex].en;
             speakText(text);
@@ -1674,17 +1792,30 @@
             document.getElementById('vocab-title').innerText = "🔤 مفردات قصة (" + currentBook.title + ")";
             document.getElementById('vocab-count-badge').innerText = currentBook.vocab.length + " كلمات رئيسية";
 
-            currentBook.vocab.forEach(item => {
+            currentBook.vocab.forEach((item, idx) => {
                 const card = document.createElement('div');
-                card.className = currentBook.artBg + " dark:bg-slate-800/80 hover:brightness-95 border " + currentBook.artBorder + " dark:border-slate-700 rounded-2xl p-4 flex flex-col items-center text-center cursor-pointer transition transform hover:-translate-y-1 shadow-sm";
-                card.onclick = () => speakText(item.en);
+                card.className = currentBook.artBg + " dark:bg-slate-800/80 hover:brightness-95 border " + currentBook.artBorder + " dark:border-slate-700 rounded-2xl p-4 flex flex-col items-center text-center cursor-pointer transition transform hover:-translate-y-1 shadow-sm relative";
+                card.onclick = (e) => { if (e.target.closest('.mic-btn')) return; speakText(item.en); };
+                const micId = 'vocab-mic-' + idx;
                 card.innerHTML = `
                     <div class="text-4xl mb-2">${item.icon}</div>
                     <div class="font-english font-bold text-lg text-slate-900 dark:text-white">${item.en}</div>
                     <div class="text-xs text-slate-600 dark:text-slate-300 font-bold mt-1">${item.ar}</div>
-                    <span class="mt-3 text-[11px] bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 px-2.5 py-0.5 rounded-full border border-amber-200 dark:border-slate-700 font-bold shadow-xs">🔊 استمع</span>
+                    <div class="flex items-center gap-1.5 mt-3">
+                        <span class="text-[11px] bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 px-2.5 py-0.5 rounded-full border border-amber-200 dark:border-slate-700 font-bold shadow-xs">🔊 استمع</span>
+                        <button id="${micId}" class="mic-btn text-[11px] bg-rose-50 dark:bg-slate-900 text-rose-700 dark:text-rose-300 px-2.5 py-0.5 rounded-full border border-rose-200 dark:border-slate-700 font-bold shadow-xs hover:bg-rose-100 transition">🎤 قول الكلمة</button>
+                    </div>
                 `;
                 grid.appendChild(card);
+
+                const micBtn = card.querySelector('#' + micId);
+                if (!isSpeechRecognitionSupported()) {
+                    micBtn.classList.add('opacity-40', 'cursor-not-allowed');
+                    micBtn.title = 'متصفحك الحالي لا يدعم التعرف الصوتي، جرّب Chrome';
+                    micBtn.onclick = (e) => { e.stopPropagation(); alert('عذرًا، متصفحك الحالي لا يدعم التعرف الصوتي. جرّب على Google Chrome للحصول على هذه الميزة.'); };
+                } else {
+                    micBtn.onclick = (e) => { e.stopPropagation(); practiceSpeaking(item.en, micBtn); };
+                }
             });
         }
 
@@ -1978,6 +2109,82 @@
             if (countBadge) {
                 countBadge.textContent = visibleKeys.length + ' قصة متاحة';
             }
+
+            renderJourneyMap();
+        }
+
+        function renderJourneyMap() {
+            const container = document.getElementById('journey-map-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const sortedKeys = Object.keys(booksDatabase).sort((a, b) => {
+                const la = booksDatabase[a].level, lb = booksDatabase[b].level;
+                if (la !== lb) return levelOrderList.indexOf(la) - levelOrderList.indexOf(lb);
+                const pa = booksDatabase[a].isPremium ? 1 : 0;
+                const pb = booksDatabase[b].isPremium ? 1 : 0;
+                return pa - pb;
+            });
+
+            const visibleLevels = activeLevelFilter === 'all' ? levelOrderList : [activeLevelFilter];
+
+            visibleLevels.forEach(levelKey => {
+                const levelBooks = sortedKeys.filter(k => booksDatabase[k].level === levelKey);
+                if (levelBooks.length === 0) return;
+                const lvlInfo = levelsInfo[levelKey];
+
+                const chapter = document.createElement('div');
+                chapter.className = 'space-y-2';
+
+                if (activeLevelFilter === 'all') {
+                    const header = document.createElement('div');
+                    header.className = 'flex items-center gap-2 text-[11px] font-bold text-slate-300 px-1';
+                    header.innerHTML = '<span class="w-2 h-2 rounded-full ' + lvlInfo.color + '"></span><span>' + lvlInfo.fullLabel + '</span>';
+                    chapter.appendChild(header);
+                }
+
+                const path = document.createElement('div');
+                path.className = 'flex items-center gap-1.5 overflow-x-auto pb-3 pt-1 px-1 scrollbar-none';
+
+                levelBooks.forEach((key, idx) => {
+                    const book = booksDatabase[key];
+                    const isActive = key === currentBookId;
+                    const isDone = !!completedBooks[key];
+                    const waveOffset = idx % 2 === 1 ? '-translate-y-3' : 'translate-y-0';
+
+                    const nodeWrap = document.createElement('div');
+                    nodeWrap.className = 'flex flex-col items-center shrink-0 transition-transform duration-300 ' + waveOffset;
+
+                    const circleClasses = isActive
+                        ? book.buttonActiveBg + ' border-white scale-110 shadow-lg shadow-black/30 ring-2 ring-white/50'
+                        : (isDone ? 'bg-emerald-600 border-emerald-300' : 'bg-slate-700 border-slate-600 hover:border-slate-400 hover:scale-105');
+
+                    const btn = document.createElement('button');
+                    btn.onclick = () => selectBook(key);
+                    btn.className = 'flex flex-col items-center gap-1 group';
+                    btn.innerHTML =
+                        '<div class="relative">' +
+                            '<div class="w-14 h-14 rounded-full flex items-center justify-center text-2xl border-4 transition-all ' + circleClasses + '">' +
+                                book.icon +
+                            '</div>' +
+                            (isDone ? '<span class="absolute -top-1.5 -right-1.5 bg-amber-400 text-slate-900 text-[10px] rounded-full w-5 h-5 flex items-center justify-center font-black shadow">⭐</span>' : '') +
+                            (book.isPremium ? '<span class="absolute -bottom-1 -right-1 text-sm">🔒</span>' : '') +
+                        '</div>' +
+                        '<span class="text-[9px] font-bold ' + (isActive ? 'text-white' : 'text-slate-400') + ' max-w-[64px] truncate text-center">' + (bookShortLabels[key] || book.title) + '</span>';
+
+                    nodeWrap.appendChild(btn);
+                    path.appendChild(nodeWrap);
+
+                    if (idx < levelBooks.length - 1) {
+                        const connector = document.createElement('div');
+                        connector.className = 'h-1 flex-1 min-w-[20px] rounded-full ' + (isDone ? 'bg-emerald-500' : 'bg-slate-700');
+                        path.appendChild(connector);
+                    }
+                });
+
+                chapter.appendChild(path);
+                container.appendChild(chapter);
+            });
         }
 
         function renderLevelFilterBar() {
