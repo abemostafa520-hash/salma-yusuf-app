@@ -1,5 +1,5 @@
  <!DOCTYPE html>
-<!-- BUILD-VERSION: v10-achievement-cards-2026-08-31 -->
+<!-- BUILD-VERSION: v11-quiz-timing-speech-rate-fix-2026-09-01 -->
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -107,6 +107,12 @@
                     <span id="audio-icon">🔊</span>
                     <span class="hidden sm:inline">الصوت</span>
                 </button>
+
+                <div class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-1 gap-0.5" title="سرعة نطق القصص">
+                    <button onclick="setSpeechRate(0.75)" id="speed-slow-btn" class="px-2 py-1.5 rounded-lg text-sm transition-all" title="بطيء">🐢</button>
+                    <button onclick="setSpeechRate(1.0)" id="speed-normal-btn" class="px-2 py-1.5 rounded-lg text-sm transition-all" title="عادي">🚶</button>
+                    <button onclick="setSpeechRate(1.25)" id="speed-fast-btn" class="px-2 py-1.5 rounded-lg text-sm transition-all" title="سريع قليلًا">🐇</button>
+                </div>
             </div>
         </div>
 
@@ -335,6 +341,34 @@
                         <span>🏆</span> أوسمة وشارات الإنجاز الخاصة بك عبر السلسلة:
                     </h4>
                     <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center" id="badges-grid"></div>
+                </div>
+
+                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-slate-800 dark:to-slate-800/80 rounded-2xl p-6 border border-indigo-200 dark:border-slate-700 mb-8">
+                    <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+                        <h4 class="font-black text-indigo-900 dark:text-indigo-300 text-lg flex items-center gap-2">
+                            <span>🎨</span> شخصيتي ومتجر الإكسسوارات
+                        </h4>
+                        <span id="avatar-coins-badge" class="bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-300 text-xs font-black px-3 py-1.5 rounded-full border border-indigo-200 dark:border-slate-700">🪙 0 نقطة قابلة للاستخدام</span>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-indigo-100 dark:border-slate-700 mb-5 flex items-center justify-center gap-3">
+                        <div id="avatar-preview" class="flex items-center gap-2 text-5xl sm:text-6xl"></div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="font-bold text-sm text-slate-700 dark:text-slate-200 mb-2">👤 اختر شخصيتك (مجانًا):</h5>
+                        <div class="flex items-center gap-2 flex-wrap" id="avatar-base-picker"></div>
+                    </div>
+
+                    <div class="mb-2">
+                        <h5 class="font-bold text-sm text-slate-700 dark:text-slate-200 mb-2">🎩 القبعات:</h5>
+                        <div class="grid grid-cols-3 sm:grid-cols-5 gap-2" id="avatar-shop-hats"></div>
+                    </div>
+
+                    <div class="mt-4">
+                        <h5 class="font-bold text-sm text-slate-700 dark:text-slate-200 mb-2">🐾 الرفقاء:</h5>
+                        <div class="grid grid-cols-3 sm:grid-cols-5 gap-2" id="avatar-shop-pets"></div>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="all-books-grid"></div>
@@ -583,6 +617,36 @@
             ocean:    { name: 'المحيط الأزرق', emoji: '🌊', primary: '#0ea5e9', secondary: '#14b8a6', soft: '#f0f9ff', text: '#075985', bg: '#F2FAFD' }
         };
         let activeSkin = 'golden';
+
+        // ------- نظام الأفاتار ومتجر الإكسسوارات -------
+        const avatarBaseOptions = [
+            { id: 'kid_boy', emoji: '🧒', name: 'طفل' },
+            { id: 'kid_girl', emoji: '👧', name: 'طفلة' },
+            { id: 'bear', emoji: '🐻', name: 'دبدوب' },
+            { id: 'fox', emoji: '🦊', name: 'ثعلب' },
+            { id: 'rabbit', emoji: '🐰', name: 'أرنب' },
+            { id: 'lion', emoji: '🦁', name: 'أسد' }
+        ];
+        const avatarShopHats = [
+            { id: 'hat_cap', emoji: '🧢', name: 'كاب رياضي', cost: 10 },
+            { id: 'hat_party', emoji: '🎉', name: 'قبعة حفلة', cost: 15 },
+            { id: 'hat_grad', emoji: '🎓', name: 'قبعة تخرج', cost: 20 },
+            { id: 'hat_crown', emoji: '👑', name: 'تاج ملكي', cost: 30 },
+            { id: 'hat_wizard', emoji: '🧙', name: 'قبعة ساحر', cost: 25 }
+        ];
+        const avatarShopPets = [
+            { id: 'pet_butterfly', emoji: '🦋', name: 'فراشة', cost: 15 },
+            { id: 'pet_dog', emoji: '🐶', name: 'كلب وفي', cost: 25 },
+            { id: 'pet_cat', emoji: '🐱', name: 'قطة مرحة', cost: 25 },
+            { id: 'pet_bird', emoji: '🐦', name: 'عصفور', cost: 20 },
+            { id: 'pet_dragon', emoji: '🐉', name: 'تنين صغير', cost: 40 }
+        ];
+
+        let avatarBase = 'kid_boy';
+        let avatarHat = null;
+        let avatarPet = null;
+        let avatarOwnedItems = [];
+        let avatarSpentCoins = 0;
 
         const booksDatabase = {
             school: {
@@ -1297,6 +1361,7 @@
         let currentPageIndex = 0;
         let showTranslation = true;
         let audioEnabled = true;
+        let speechRate = 1.0;
         let isDarkMode = false;
         
         let quizAnswers = [];
@@ -1390,6 +1455,8 @@
             initAppSkin();
             startReadingTimer();
             updateMicButtonsAvailability();
+            initAvatarSystem();
+            initSpeechRate();
         });
 
         // Track approximate reading time in-session (persisted via window.storage)
@@ -1428,13 +1495,13 @@
             if (isDarkMode) {
                 body.classList.add('dark');
                 document.documentElement.classList.add('dark');
-                icon.innerText = '☀️';
-                label.innerText = 'الفاتح';
+                icon.textContent = '☀️';
+                label.textContent = 'الفاتح';
             } else {
                 body.classList.remove('dark');
                 document.documentElement.classList.remove('dark');
-                icon.innerText = '🌙';
-                label.innerText = 'الداكن';
+                icon.textContent = '🌙';
+                label.textContent = 'الداكن';
             }
         };
 
@@ -1484,13 +1551,13 @@
             const data = booksDatabase[bookId];
 
             document.getElementById('hero-banner').className = "bg-gradient-to-r " + data.bannerGradient + " text-white rounded-3xl p-6 sm:p-8 mb-8 shadow-xl relative overflow-hidden transition-all duration-500";
-            document.getElementById('hero-book-tag').innerText = data.tag;
-            document.getElementById('hero-level-badge').innerText = data.levelBadge;
-            document.getElementById('hero-curriculum-note').innerText = data.curriculumNote;
-            document.getElementById('hero-title').innerText = data.title;
-            document.getElementById('hero-desc').innerText = data.desc;
-            document.getElementById('hero-icon').innerText = data.icon;
-            document.getElementById('hero-pages-count').innerText = data.pages.length + " صفحات تفاعلية";
+            document.getElementById('hero-book-tag').textContent = data.tag;
+            document.getElementById('hero-level-badge').textContent = data.levelBadge;
+            document.getElementById('hero-curriculum-note').textContent = data.curriculumNote;
+            document.getElementById('hero-title').textContent = data.title;
+            document.getElementById('hero-desc').textContent = data.desc;
+            document.getElementById('hero-icon').textContent = data.icon;
+            document.getElementById('hero-pages-count').textContent = data.pages.length + " صفحات تفاعلية";
 
             quizAnswers = Array(data.quiz.length).fill(null);
             selectedWordId = null;
@@ -1546,13 +1613,13 @@
             const currentBook = booksDatabase[currentBookId];
             const data = currentBook.pages[currentPageIndex];
             
-            document.getElementById('page-indicator').innerText = "صفحة " + data.page + " من " + currentBook.pages.length;
-            document.getElementById('page-art-icon').innerText = data.icon;
-            document.getElementById('page-sound-fx').innerText = data.soundFx;
-            document.getElementById('page-image-desc').innerText = data.imageDesc;
-            document.getElementById('page-english').innerText = data.en;
-            document.getElementById('page-arabic').innerText = data.ar;
-            document.getElementById('page-audio-desc').innerText = data.audioDesc;
+            document.getElementById('page-indicator').textContent = "صفحة " + data.page + " من " + currentBook.pages.length;
+            document.getElementById('page-art-icon').textContent = data.icon;
+            document.getElementById('page-sound-fx').textContent = data.soundFx;
+            document.getElementById('page-image-desc').textContent = data.imageDesc;
+            document.getElementById('page-english').textContent = data.en;
+            document.getElementById('page-arabic').textContent = data.ar;
+            document.getElementById('page-audio-desc').textContent = data.audioDesc;
 
             const artCard = document.getElementById('art-card-container');
             artCard.className = "w-full h-64 sm:h-72 rounded-3xl " + currentBook.artBg + " dark:bg-slate-800 border-4 " + currentBook.artBorder + " dark:border-slate-700 p-6 flex flex-col items-center justify-center text-center relative overflow-hidden shadow-inner group";
@@ -1618,10 +1685,10 @@
             const btn = document.getElementById('trans-toggle-btn');
             if (showTranslation) {
                 container.classList.remove('hidden');
-                btn.innerText = '👁️ إخفاء الترجمة';
+                btn.textContent = '👁️ إخفاء الترجمة';
             } else {
                 container.classList.add('hidden');
-                btn.innerText = '👁️ إظهار الترجمة';
+                btn.textContent = '👁️ إظهار الترجمة';
             }
         };
 
@@ -1631,12 +1698,39 @@
             const icon = document.getElementById('audio-icon');
             if (audioEnabled) {
                 btn.className = "bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 text-amber-800 dark:text-amber-300 p-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all border border-amber-200 dark:border-slate-700";
-                icon.innerText = "🔊";
+                icon.textContent = "🔊";
             } else {
                 btn.className = "bg-slate-100 dark:bg-slate-800 text-slate-500 p-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all border border-slate-200 dark:border-slate-700";
-                icon.innerText = "🔇";
+                icon.textContent = "🔇";
             }
         };
+
+        window.setSpeechRate = function(rate) {
+            speechRate = rate;
+            safeStorageSet('settings:speechRate', String(rate));
+            updateSpeechRateButtons();
+        };
+
+        function updateSpeechRateButtons() {
+            const buttons = {
+                0.75: document.getElementById('speed-slow-btn'),
+                1: document.getElementById('speed-normal-btn'),
+                1.25: document.getElementById('speed-fast-btn')
+            };
+            Object.keys(buttons).forEach(rateKey => {
+                const btn = buttons[rateKey];
+                if (!btn) return;
+                const isActive = Math.abs(parseFloat(rateKey) - speechRate) < 0.01;
+                btn.className = "px-2 py-1.5 rounded-lg text-sm transition-all " +
+                    (isActive ? "bg-white dark:bg-slate-700 shadow-sm scale-110" : "opacity-50 hover:opacity-80");
+            });
+        }
+
+        async function initSpeechRate() {
+            const stored = await safeStorageGet('settings:speechRate');
+            if (stored) speechRate = parseFloat(stored);
+            updateSpeechRateButtons();
+        }
 
         function playFallbackSound() {
             try {
@@ -1666,7 +1760,7 @@
                     window.speechSynthesis.cancel();
                     const utterance = new SpeechSynthesisUtterance(text);
                     utterance.lang = 'en-US';
-                    utterance.rate = 0.85;
+                    utterance.rate = speechRate;
                     
                     utterance.onerror = (e) => {
                         console.warn("SpeechSynthesis error caught safely:", e);
@@ -1774,7 +1868,7 @@
             toast.className = 'fixed top-24 left-1/2 -translate-x-1/2 z-[200] px-6 py-3 rounded-2xl font-black text-white shadow-2xl text-base sm:text-lg whitespace-nowrap';
             toast.style.backgroundColor = '';
             toast.classList.add(...bg.split(' '));
-            toast.innerText = text;
+            toast.textContent = text;
             document.body.appendChild(toast);
             setTimeout(() => toast.remove(), 2200);
         }
@@ -1803,8 +1897,8 @@
             const currentBook = booksDatabase[currentBookId];
             grid.innerHTML = '';
 
-            document.getElementById('vocab-title').innerText = "🔤 مفردات قصة (" + currentBook.title + ")";
-            document.getElementById('vocab-count-badge').innerText = currentBook.vocab.length + " كلمات رئيسية";
+            document.getElementById('vocab-title').textContent = "🔤 مفردات قصة (" + currentBook.title + ")";
+            document.getElementById('vocab-count-badge').textContent = currentBook.vocab.length + " كلمات رئيسية";
 
             currentBook.vocab.forEach((item, idx) => {
                 const card = document.createElement('div');
@@ -1838,7 +1932,7 @@
             const currentBook = booksDatabase[currentBookId];
             container.innerHTML = '';
 
-            document.getElementById('quiz-title').innerText = "❓ اختبار قصة (" + currentBook.title + ")";
+            document.getElementById('quiz-title').textContent = "❓ اختبار قصة (" + currentBook.title + ")";
 
             currentBook.quiz.forEach((item, qIdx) => {
                 const qBox = document.createElement('div');
@@ -1890,7 +1984,13 @@
             quizAnswers.forEach((ans, idx) => {
                 if (ans === currentBook.quiz[idx].correct) score++;
             });
-            document.getElementById('quiz-score-badge').innerText = "النتيجة: " + score + " / " + currentBook.quiz.length;
+            document.getElementById('quiz-score-badge').textContent = "النتيجة: " + score + " / " + currentBook.quiz.length;
+
+            // منستنى لحد ما الطفل يجاوب على كل الأسئلة قبل ما نحسب الإنجاز والنتيجة النهائية
+            const allQuestionsAnswered = quizAnswers.every(ans => ans !== null);
+            if (!allQuestionsAnswered) {
+                return;
+            }
 
             if (score > (bestQuizScores[currentBookId] || 0)) {
                 bestQuizScores[currentBookId] = score;
@@ -1910,6 +2010,7 @@
 
             recalculateTotalStars();
             refreshParentDashboardIfUnlocked();
+            renderAvatarSystem();
         }
 
         function recalculateTotalStars() {
@@ -1919,7 +2020,7 @@
                 if (completedBooks[key]) totalStars += 10;
             });
 
-            document.getElementById('global-stars-count').innerText = totalStars + " / " + (Object.keys(booksDatabase).length * 10) + " نجمة ⭐";
+            document.getElementById('global-stars-count').textContent = totalStars + " / " + (Object.keys(booksDatabase).length * 10) + " نجمة ⭐";
             renderUniverseView();
         }
 
@@ -1935,7 +2036,7 @@
             const picsContainer = document.getElementById('game-pics-container');
             const statusBox = document.getElementById('game-status');
 
-            document.getElementById('activity-title').innerText = "🎮 لعبة توصيل كلمات (" + currentBook.title + ")";
+            document.getElementById('activity-title').textContent = "🎮 لعبة توصيل كلمات (" + currentBook.title + ")";
 
             wordsContainer.innerHTML = '';
             picsContainer.innerHTML = '';
@@ -1987,10 +2088,10 @@
 
             if (matchedPairs.length === currentBook.gameItems.length) {
                 statusBox.className = "mt-8 p-4 rounded-2xl bg-emerald-500 text-white text-center font-black text-lg shadow-lg";
-                statusBox.innerText = "🎉 رائع جداً! أتممت نشاط التوصيل لقصة (" + currentBook.title + ") بنجاح!";
+                statusBox.textContent = "🎉 رائع جداً! أتممت نشاط التوصيل لقصة (" + currentBook.title + ") بنجاح!";
             } else {
                 statusBox.className = "mt-8 p-4 rounded-2xl bg-amber-50 dark:bg-slate-800 border border-amber-200 dark:border-slate-700 text-center font-bold text-amber-900 dark:text-amber-300";
-                statusBox.innerText = selectedWordId 
+                statusBox.textContent = selectedWordId 
                     ? "اختر الان الصورة المناسبة للكلمة المحددّة!" 
                     : "انقر على كلمة بالإنجليزية ثم اختر صورتها المناسبة! (" + matchedPairs.length + " / " + currentBook.gameItems.length + ")";
             }
@@ -2006,7 +2107,7 @@
             if (!selectedWordId) {
                 const statusBox = document.getElementById('game-status');
                 statusBox.className = "mt-8 p-4 rounded-2xl bg-amber-100 dark:bg-slate-800 border border-amber-300 dark:border-slate-700 text-center font-bold text-amber-900 dark:text-amber-300";
-                statusBox.innerText = "⚠️ من فضلك اختر الكلمة بالإنكليزية أولاً!";
+                statusBox.textContent = "⚠️ من فضلك اختر الكلمة بالإنكليزية أولاً!";
                 return;
             }
 
@@ -2017,7 +2118,7 @@
             } else {
                 const statusBox = document.getElementById('game-status');
                 statusBox.className = "mt-8 p-4 rounded-2xl bg-red-100 dark:bg-red-950/80 border border-red-300 dark:border-red-800 text-center font-bold text-red-900 dark:text-red-200";
-                statusBox.innerText = "❌ محاولة خاطئة، جرب مرة أخرى!";
+                statusBox.textContent = "❌ محاولة خاطئة، جرب مرة أخرى!";
                 setTimeout(() => {
                     selectedWordId = null;
                     renderMatchingGame();
@@ -2220,7 +2321,7 @@
             } else {
                 allBtn.classList.add('bg-slate-800', 'text-slate-300', 'hover:bg-slate-700');
             }
-            allBtn.innerText = "🌟 كل المستويات";
+            allBtn.textContent = "🌟 كل المستويات";
             bar.appendChild(allBtn);
 
             Object.values(levelsInfo).forEach(lvl => {
@@ -2231,7 +2332,7 @@
                 btn.onclick = () => setLevelFilter(lvl.key);
                 btn.className = "px-3 py-1 rounded-lg text-[11px] font-black whitespace-nowrap transition flex items-center gap-1 " +
                     (isActive ? lvl.color + " text-white" : (isCurrentBook ? "bg-slate-700 text-white ring-1 " + lvl.ring : "bg-slate-800 text-slate-300 hover:bg-slate-700"));
-                btn.innerText = lvl.shortLabel;
+                btn.textContent = lvl.shortLabel;
                 bar.appendChild(btn);
             });
         }
@@ -2255,7 +2356,7 @@
                 btn.onclick = () => { activePhonicsLevel = levelKey; renderPhonicsGrid(); renderPhonicsTabs(); };
                 btn.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-black whitespace-nowrap transition " +
                     (isActive ? lvl.color + " text-white shadow-md" : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700");
-                btn.innerText = lvl.shortLabel + " (" + lvl.fullLabel + ")";
+                btn.textContent = lvl.shortLabel + " (" + lvl.fullLabel + ")";
                 tabsBar.appendChild(btn);
             });
 
@@ -2269,7 +2370,7 @@
             if (!grid) return;
 
             const levelData = phonicsData[activePhonicsLevel];
-            titleEl.innerText = "🔤 " + levelData.label;
+            titleEl.textContent = "🔤 " + levelData.label;
             grid.innerHTML = '';
 
             let masteredCount = 0;
@@ -2296,7 +2397,7 @@
                 grid.appendChild(card);
             });
 
-            progressBadge.innerText = masteredCount + " / " + levelData.items.length + " صوت تم إتقانه";
+            progressBadge.textContent = masteredCount + " / " + levelData.items.length + " صوت تم إتقانه";
         }
 
         // ================= Parent dashboard =================
@@ -2340,7 +2441,7 @@
                 document.getElementById('parent-lock-view').classList.add('hidden');
                 document.getElementById('parent-dashboard-view').classList.remove('hidden');
                 document.getElementById('parent-pin-error').classList.add('hidden');
-                document.getElementById('pd-lock-btn').innerText = '🔒 قفل';
+                document.getElementById('pd-lock-btn').textContent = '🔒 قفل';
                 renderParentDashboard();
             } else {
                 document.getElementById('parent-pin-error').classList.remove('hidden');
@@ -2356,14 +2457,14 @@
             msgBox.classList.remove('hidden', 'text-rose-600', 'text-emerald-600');
 
             if (!email || password.length < 6) {
-                msgBox.innerText = 'من فضلك أدخل بريدًا صحيحًا وكلمة مرور 6 أحرف على الأقل.';
+                msgBox.textContent = 'من فضلك أدخل بريدًا صحيحًا وكلمة مرور 6 أحرف على الأقل.';
                 msgBox.classList.add('text-rose-600');
                 return;
             }
 
             const { data, error } = await supabaseClient.auth.signUp({ email, password });
             if (error) {
-                msgBox.innerText = 'خطأ: ' + error.message;
+                msgBox.textContent = 'خطأ: ' + error.message;
                 msgBox.classList.add('text-rose-600');
                 return;
             }
@@ -2371,7 +2472,7 @@
             if (data.session) {
                 await afterParentAuthSuccess(data.user);
             } else {
-                msgBox.innerText = '✅ تم إنشاء الحساب! تحقق من بريدك الإلكتروني لتأكيده ثم سجّل دخولك.';
+                msgBox.textContent = '✅ تم إنشاء الحساب! تحقق من بريدك الإلكتروني لتأكيده ثم سجّل دخولك.';
                 msgBox.classList.add('text-emerald-600');
             }
         };
@@ -2385,7 +2486,7 @@
 
             const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
             if (error) {
-                msgBox.innerText = 'خطأ في تسجيل الدخول: ' + error.message;
+                msgBox.textContent = 'خطأ في تسجيل الدخول: ' + error.message;
                 msgBox.classList.add('text-rose-600');
                 return;
             }
@@ -2403,7 +2504,7 @@
 
             document.getElementById('parent-lock-view').classList.add('hidden');
             document.getElementById('parent-dashboard-view').classList.remove('hidden');
-            document.getElementById('pd-lock-btn').innerText = '🚪 تسجيل الخروج';
+            document.getElementById('pd-lock-btn').textContent = '🚪 تسجيل الخروج';
             renderParentDashboard();
         }
 
@@ -2493,15 +2594,15 @@
             const totalStars = Object.keys(booksDatabase).filter(k => completedBooks[k]).length * 10;
             const booksCompletedCount = Object.keys(booksDatabase).filter(k => completedBooks[k]).length;
 
-            document.getElementById('pd-total-stars').innerText = totalStars + " / " + (Object.keys(booksDatabase).length * 10);
-            document.getElementById('pd-books-completed').innerText = booksCompletedCount + " / " + Object.keys(booksDatabase).length;
-            document.getElementById('pd-time-spent').innerText = Math.round(totalReadingMinutes) + " دقيقة";
+            document.getElementById('pd-total-stars').textContent = totalStars + " / " + (Object.keys(booksDatabase).length * 10);
+            document.getElementById('pd-books-completed').textContent = booksCompletedCount + " / " + Object.keys(booksDatabase).length;
+            document.getElementById('pd-time-spent').textContent = Math.round(totalReadingMinutes) + " دقيقة";
 
             const scoreValues = Object.values(bestQuizScores);
             const totalPossible = Object.keys(booksDatabase).length * 5;
             const totalScored = scoreValues.reduce((a, b) => a + b, 0);
             const avgPct = totalPossible > 0 ? Math.round((totalScored / totalPossible) * 100) : 0;
-            document.getElementById('pd-avg-score').innerText = avgPct + "%";
+            document.getElementById('pd-avg-score').textContent = avgPct + "%";
 
             const subBox = document.getElementById('pd-subscription-box');
             const subIcon = document.getElementById('pd-sub-icon');
@@ -2510,26 +2611,26 @@
             const subBtn = document.getElementById('pd-sub-btn');
             if (FREE_PROMOTIONAL_PERIOD) {
                 subBox.className = "rounded-2xl p-4 border flex items-center justify-between gap-3 flex-wrap bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900";
-                subIcon.innerText = '🎁';
-                subTitle.innerText = 'كل القصص مجانية حاليًا!';
+                subIcon.textContent = '🎁';
+                subTitle.textContent = 'كل القصص مجانية حاليًا!';
                 subTitle.className = "font-bold text-sm text-emerald-800 dark:text-emerald-300";
-                subDesc.innerText = 'استمتعوا بكل الـ25 قصة مجانًا خلال فترة الإطلاق 🎉';
+                subDesc.textContent = 'استمتعوا بكل الـ25 قصة مجانًا خلال فترة الإطلاق 🎉';
                 subDesc.className = "text-xs text-emerald-700 dark:text-emerald-400";
                 subBtn.classList.add('hidden');
             } else if (userSubscriptionStatus === 'active') {
                 subBox.className = "rounded-2xl p-4 border flex items-center justify-between gap-3 flex-wrap bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900";
-                subIcon.innerText = '✅';
-                subTitle.innerText = 'الاشتراك مفعّل';
+                subIcon.textContent = '✅';
+                subTitle.textContent = 'الاشتراك مفعّل';
                 subTitle.className = "font-bold text-sm text-emerald-800 dark:text-emerald-300";
-                subDesc.innerText = 'كل الوحدات الإضافية متاحة الآن';
+                subDesc.textContent = 'كل الوحدات الإضافية متاحة الآن';
                 subDesc.className = "text-xs text-emerald-700 dark:text-emerald-400";
                 subBtn.classList.add('hidden');
             } else {
                 subBox.className = "rounded-2xl p-4 border flex items-center justify-between gap-3 flex-wrap bg-amber-50 dark:bg-slate-800 border-amber-200 dark:border-slate-700";
-                subIcon.innerText = '🔒';
-                subTitle.innerText = 'الاشتراك في الوحدات الإضافية';
+                subIcon.textContent = '🔒';
+                subTitle.textContent = 'الاشتراك في الوحدات الإضافية';
                 subTitle.className = "font-bold text-sm text-amber-900 dark:text-amber-300";
-                subDesc.innerText = 'غير مفعّل حاليًا — ' + MONTHLY_PRICE_EGP + ' جنيه شهريًا';
+                subDesc.textContent = 'غير مفعّل حاليًا — ' + MONTHLY_PRICE_EGP + ' جنيه شهريًا';
                 subDesc.className = "text-xs text-amber-700 dark:text-amber-400";
                 subBtn.classList.remove('hidden');
             }
@@ -2654,7 +2755,7 @@
         function showAchievementCelebration(bookId, score) {
             const book = booksDatabase[bookId];
             pendingAchievementBookId = bookId;
-            document.getElementById('achievement-icon').innerText = book.icon;
+            document.getElementById('achievement-icon').textContent = book.icon;
             document.getElementById('achievement-message').textContent =
                 'أتم طفلك قصة "' + book.title.replace('Salma & Yusuf', '').replace('–', '').trim() + '" بنتيجة ' + score + ' من 5! 🌟';
             document.getElementById('achievement-overlay').classList.remove('hidden');
@@ -2823,11 +2924,11 @@
             const book = booksDatabase[bookId];
             pendingPremiumBookId = bookId;
 
-            document.getElementById('paywall-book-title').innerText = book.title;
-            document.getElementById('paywall-book-icon').innerText = book.icon;
-            document.getElementById('paywall-price').innerText = MONTHLY_PRICE_EGP + ' جنيه';
-            document.getElementById('paywall-vf-number').innerText = VODAFONE_CASH_NUMBER;
-            document.getElementById('paywall-instapay').innerText = INSTAPAY_HANDLE;
+            document.getElementById('paywall-book-title').textContent = book.title;
+            document.getElementById('paywall-book-icon').textContent = book.icon;
+            document.getElementById('paywall-price').textContent = MONTHLY_PRICE_EGP + ' جنيه';
+            document.getElementById('paywall-vf-number').textContent = VODAFONE_CASH_NUMBER;
+            document.getElementById('paywall-instapay').textContent = INSTAPAY_HANDLE;
 
             const showLogin = (mode === 'login');
             document.getElementById('paywall-login-notice').classList.toggle('hidden', !showLogin);
@@ -2872,6 +2973,128 @@
             if (stored && appSkins[stored]) activeSkin = stored;
             applySkin(activeSkin);
             renderSkinSwatches();
+        }
+
+        // ================= نظام الأفاتار ومتجر الإكسسوارات =================
+        async function initAvatarSystem() {
+            const storedBase = await safeStorageGet('avatar:base');
+            if (storedBase) avatarBase = storedBase;
+
+            const storedHat = await safeStorageGet('avatar:hat');
+            if (storedHat) avatarHat = storedHat === 'null' ? null : storedHat;
+
+            const storedPet = await safeStorageGet('avatar:pet');
+            if (storedPet) avatarPet = storedPet === 'null' ? null : storedPet;
+
+            const storedOwned = await safeStorageGet('avatar:owned');
+            if (storedOwned) {
+                try { avatarOwnedItems = JSON.parse(storedOwned); } catch (e) { avatarOwnedItems = []; }
+            }
+
+            const storedSpent = await safeStorageGet('avatar:spentCoins');
+            if (storedSpent) avatarSpentCoins = parseInt(storedSpent) || 0;
+
+            renderAvatarSystem();
+        }
+
+        function getAvailableCoins() {
+            const totalStars = Object.keys(booksDatabase).filter(k => completedBooks[k]).length * 10;
+            return Math.max(0, totalStars - avatarSpentCoins);
+        }
+
+        function renderAvatarPreview() {
+            const preview = document.getElementById('avatar-preview');
+            if (!preview) return;
+            const baseItem = avatarBaseOptions.find(b => b.id === avatarBase) || avatarBaseOptions[0];
+            const hatItem = avatarShopHats.find(h => h.id === avatarHat);
+            const petItem = avatarShopPets.find(p => p.id === avatarPet);
+
+            preview.innerHTML =
+                (hatItem ? '<span>' + hatItem.emoji + '</span>' : '') +
+                '<span>' + baseItem.emoji + '</span>' +
+                (petItem ? '<span>' + petItem.emoji + '</span>' : '');
+        }
+
+        function renderAvatarBasePicker() {
+            const container = document.getElementById('avatar-base-picker');
+            if (!container) return;
+            container.innerHTML = '';
+            avatarBaseOptions.forEach(opt => {
+                const isActive = opt.id === avatarBase;
+                const btn = document.createElement('button');
+                btn.onclick = async () => { avatarBase = opt.id; await safeStorageSet('avatar:base', opt.id); renderAvatarSystem(); };
+                btn.className = 'text-3xl p-2 rounded-xl border-2 transition ' +
+                    (isActive ? 'border-indigo-500 bg-indigo-100 dark:bg-indigo-900/40 scale-110' : 'border-transparent bg-slate-100 dark:bg-slate-800 hover:border-slate-300');
+                btn.textContent = opt.emoji;
+                btn.title = opt.name;
+                container.appendChild(btn);
+            });
+        }
+
+        function renderAvatarShopSection(containerId, items, slotVar, slotKey) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = '';
+            const availableCoins = getAvailableCoins();
+
+            items.forEach(item => {
+                const isOwned = avatarOwnedItems.includes(item.id);
+                const isEquipped = slotVar === item.id;
+                const canAfford = availableCoins >= item.cost;
+
+                const card = document.createElement('button');
+                card.className = 'flex flex-col items-center gap-1 p-2.5 rounded-xl border-2 transition text-center ' +
+                    (isEquipped ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30' :
+                     isOwned ? 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-indigo-300' :
+                     canAfford ? 'border-amber-300 bg-amber-50 dark:bg-slate-800 hover:border-amber-400' :
+                     'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 opacity-60');
+
+                card.innerHTML =
+                    '<span class="text-2xl">' + item.emoji + '</span>' +
+                    '<span class="text-[10px] font-bold text-slate-700 dark:text-slate-200">' + item.name + '</span>' +
+                    (isEquipped ? '<span class="text-[9px] font-black text-emerald-600 dark:text-emerald-400">✓ مجهّز</span>' :
+                     isOwned ? '<span class="text-[9px] font-black text-indigo-600 dark:text-indigo-400">تجهيز</span>' :
+                     '<span class="text-[9px] font-black ' + (canAfford ? 'text-amber-700 dark:text-amber-400' : 'text-slate-400') + '">🪙 ' + item.cost + '</span>');
+
+                card.onclick = () => handleAvatarItemClick(item, slotKey, isOwned, isEquipped, canAfford);
+                container.appendChild(card);
+            });
+        }
+
+        async function handleAvatarItemClick(item, slotKey, isOwned, isEquipped, canAfford) {
+            if (isEquipped) {
+                // إلغاء التجهيز بالضغط تاني
+                if (slotKey === 'hat') avatarHat = null; else avatarPet = null;
+                await safeStorageSet('avatar:' + slotKey, 'null');
+                renderAvatarSystem();
+                return;
+            }
+            if (isOwned) {
+                if (slotKey === 'hat') avatarHat = item.id; else avatarPet = item.id;
+                await safeStorageSet('avatar:' + slotKey, item.id);
+                renderAvatarSystem();
+                return;
+            }
+            if (!canAfford) {
+                alert('محتاج نجوم أكتر! كمّل قصص جديدة عشان تجمع نقاط كفاية (محتاج ' + item.cost + ' 🪙).');
+                return;
+            }
+            avatarSpentCoins += item.cost;
+            avatarOwnedItems.push(item.id);
+            if (slotKey === 'hat') avatarHat = item.id; else avatarPet = item.id;
+            await safeStorageSet('avatar:spentCoins', String(avatarSpentCoins));
+            await safeStorageSet('avatar:owned', JSON.stringify(avatarOwnedItems));
+            await safeStorageSet('avatar:' + slotKey, item.id);
+            renderAvatarSystem();
+        }
+
+        function renderAvatarSystem() {
+            const coinsBadge = document.getElementById('avatar-coins-badge');
+            if (coinsBadge) coinsBadge.textContent = '🪙 ' + getAvailableCoins() + ' نقطة قابلة للاستخدام';
+            renderAvatarPreview();
+            renderAvatarBasePicker();
+            renderAvatarShopSection('avatar-shop-hats', avatarShopHats, avatarHat, 'hat');
+            renderAvatarShopSection('avatar-shop-pets', avatarShopPets, avatarPet, 'pet');
         }
 
         function applySkin(skinKey) {
