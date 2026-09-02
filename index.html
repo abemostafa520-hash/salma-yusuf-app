@@ -1,5 +1,5 @@
-  <!DOCTYPE html>
-<!-- BUILD-VERSION: v9-journey-map-2026-08-31 -->
+ <!DOCTYPE html>
+<!-- BUILD-VERSION: v10-achievement-cards-2026-08-31 -->
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -394,7 +394,8 @@
                             <h3 class="text-2xl font-black text-slate-900 dark:text-white">👪 تقرير تقدّم الطفل</h3>
                             <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">نظرة شاملة على أداء طفلك عبر جميع القصص والاختبارات.</p>
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <button onclick="shareProgressCard()" class="px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition flex items-center gap-1.5">🖼️ بطاقة مصوّرة</button>
                             <button onclick="shareWhatsappReport()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition flex items-center gap-1.5">📲 مشاركة عبر واتساب</button>
                             <button onclick="lockParentDashboard()" id="pd-lock-btn" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-bold rounded-xl transition border border-slate-200 dark:border-slate-700">🔒 قفل</button>
                         </div>
@@ -508,6 +509,19 @@
         </div>
     </div>
 
+    <div id="achievement-overlay" class="hidden fixed inset-0 bg-black/60 z-[70] flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 max-w-sm w-full shadow-2xl text-center border-4 border-amber-300">
+            <div class="text-6xl mb-3 animate-bounce" id="achievement-icon">🎉</div>
+            <h3 class="text-xl font-black text-slate-900 dark:text-white mb-1">قصة مكتملة!</h3>
+            <p id="achievement-message" class="text-slate-500 dark:text-slate-400 text-sm mb-5"></p>
+            <div class="flex flex-col gap-2">
+                <button onclick="shareAchievementCard()" class="w-full py-3 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white font-bold rounded-xl shadow-md transition text-sm">🖼️ شارك إنجاز طفلك</button>
+                <button onclick="closeAchievementOverlay()" class="w-full py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-xl transition text-sm">متابعة القراءة 📖</button>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="achievement-canvas" width="1080" height="1080" class="hidden"></canvas>
     <canvas id="certificate-canvas" width="1000" height="700" class="hidden"></canvas>
 
     <script>
@@ -1884,8 +1898,12 @@
             }
 
             if (score >= 4) {
+                const wasAlreadyCompleted = !!completedBooks[currentBookId];
                 completedBooks[currentBookId] = true;
                 safeStorageSet('parent-dashboard:completed', JSON.stringify(completedBooks));
+                if (!wasAlreadyCompleted) {
+                    showAchievementCelebration(currentBookId, score);
+                }
             }
 
             syncProgressToSupabase(currentBookId);
@@ -2628,6 +2646,148 @@
             link.download = 'certificate-' + name.replace(/\s+/g, '-') + '.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
+        };
+
+        // ================= بطاقة الإنجاز المصوّرة القابلة للمشاركة =================
+        let pendingAchievementBookId = null;
+
+        function showAchievementCelebration(bookId, score) {
+            const book = booksDatabase[bookId];
+            pendingAchievementBookId = bookId;
+            document.getElementById('achievement-icon').innerText = book.icon;
+            document.getElementById('achievement-message').textContent =
+                'أتم طفلك قصة "' + book.title.replace('Salma & Yusuf', '').replace('–', '').trim() + '" بنتيجة ' + score + ' من 5! 🌟';
+            document.getElementById('achievement-overlay').classList.remove('hidden');
+        }
+
+        window.closeAchievementOverlay = function() {
+            document.getElementById('achievement-overlay').classList.add('hidden');
+        };
+
+        function drawStarsRow(ctx, x, y, count, maxStars, size) {
+            for (let i = 0; i < maxStars; i++) {
+                ctx.font = size + 'px Arial';
+                ctx.fillStyle = i < count ? '#f59e0b' : '#e5e7eb';
+                ctx.fillText('⭐', x + i * (size + 4), y);
+            }
+        }
+
+        function renderAchievementCanvas(mode) {
+            const canvas = document.getElementById('achievement-canvas');
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width, h = canvas.height;
+
+            const totalStars = Object.keys(booksDatabase).filter(k => completedBooks[k]).length * 10;
+            const maxStars = Object.keys(booksDatabase).length * 10;
+            const booksCompletedCount = Object.keys(booksDatabase).filter(k => completedBooks[k]).length;
+
+            let bgFrom = '#4f46e5', bgTo = '#7c3aed', bigIcon = '🌟', headline = 'إنجاز رائع!', subline = '';
+
+            if (mode === 'book' && pendingAchievementBookId) {
+                const book = booksDatabase[pendingAchievementBookId];
+                bigIcon = book.icon;
+                headline = 'قصة مكتملة!';
+                subline = book.title.replace('Salma & Yusuf', '').replace('–', '').trim();
+                const skin = appSkins[activeSkin] || appSkins.golden;
+                bgFrom = skin.primary; bgTo = skin.secondary;
+            } else {
+                headline = 'تقرير التقدّم';
+                subline = booksCompletedCount + ' من ' + Object.keys(booksDatabase).length + ' قصة مكتملة';
+                const skin = appSkins[activeSkin] || appSkins.golden;
+                bgFrom = skin.primary; bgTo = skin.secondary;
+            }
+
+            const grad = ctx.createLinearGradient(0, 0, w, h);
+            grad.addColorStop(0, bgFrom);
+            grad.addColorStop(1, bgTo);
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, w, h);
+
+            // زخرفة دوائر شفافة
+            ctx.fillStyle = 'rgba(255,255,255,0.08)';
+            ctx.beginPath(); ctx.arc(w * 0.85, h * 0.12, 140, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(w * 0.1, h * 0.9, 180, 0, Math.PI * 2); ctx.fill();
+
+            // بطاقة بيضاء في المنتصف
+            const cardX = 60, cardY = 140, cardW = w - 120, cardH = h - 340;
+            ctx.fillStyle = 'rgba(255,255,255,0.97)';
+            ctx.beginPath();
+            ctx.roundRect ? ctx.roundRect(cardX, cardY, cardW, cardH, 40) : ctx.rect(cardX, cardY, cardW, cardH);
+            ctx.fill();
+
+            ctx.textAlign = 'center';
+
+            // شعار التطبيق أعلى الصورة
+            ctx.font = 'bold 34px Arial';
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText('🌟 Salma & Yusuf 🌟', w / 2, 80);
+
+            // الأيقونة الكبيرة
+            ctx.font = '140px Arial';
+            ctx.fillText(bigIcon, w / 2, cardY + 170);
+
+            // العنوان
+            ctx.font = 'bold 52px Arial';
+            ctx.fillStyle = '#1e293b';
+            ctx.fillText(headline, w / 2, cardY + 250);
+
+            // العنوان الفرعي (اسم القصة أو نسبة التقدم)
+            ctx.font = 'bold 30px Arial';
+            ctx.fillStyle = '#475569';
+            ctx.fillText(subline, w / 2, cardY + 300);
+
+            // صف النجوم (رمزي من 5)
+            const starCount = mode === 'book' ? 5 : Math.min(5, Math.round((totalStars / maxStars) * 5));
+            const starsWidth = 5 * 44;
+            drawStarsRow(ctx, w / 2 - starsWidth / 2 + 10, cardY + 380, starCount, 5, 40);
+
+            // إجمالي النجوم
+            ctx.font = 'bold 34px Arial';
+            ctx.fillStyle = '#d97706';
+            ctx.fillText('⭐ ' + totalStars + ' / ' + maxStars + ' نجمة إجمالية', w / 2, cardY + 450);
+
+            // تذييل
+            ctx.font = 'bold 22px Arial';
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText('English Adventures • سلسلة مغامرات تعليمية', w / 2, h - 60);
+
+            return canvas;
+        }
+
+        async function shareOrDownloadCanvas(canvas, filename, shareText) {
+            canvas.toBlob(async (blob) => {
+                if (!blob) return;
+                const file = new File([blob], filename, { type: 'image/png' });
+
+                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({ files: [file], title: 'Salma & Yusuf', text: shareText });
+                        return;
+                    } catch (e) {
+                        // المستخدم لغى المشاركة أو حصل خطأ، هننزّل الصورة بدل ما نوقف
+                    }
+                }
+
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                setTimeout(() => {
+                    alert('تم تنزيل الصورة! افتح واتساب أو فيسبوك وأرفقها من معرض الصور لمشاركتها 📤');
+                }, 300);
+            }, 'image/png');
+        }
+
+        window.shareAchievementCard = function() {
+            const canvas = renderAchievementCanvas('book');
+            const bookTitle = pendingAchievementBookId ? booksDatabase[pendingAchievementBookId].title : '';
+            shareOrDownloadCanvas(canvas, 'achievement-' + pendingAchievementBookId + '.png', 'أكمل طفلي قصة ' + bookTitle + ' في تطبيق Salma & Yusuf! 🎉');
+            closeAchievementOverlay();
+        };
+
+        window.shareProgressCard = function() {
+            const canvas = renderAchievementCanvas('progress');
+            shareOrDownloadCanvas(canvas, 'progress-report.png', 'تقرير تقدّم طفلي في تطبيق Salma & Yusuf التعليمي! 🌟');
         };
 
         // ================= نظام الاشتراك والمحتوى المدفوع =================
