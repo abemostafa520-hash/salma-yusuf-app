@@ -1,5 +1,5 @@
  <!DOCTYPE html>
-<!-- BUILD-VERSION: v11-quiz-timing-speech-rate-fix-2026-09-01 -->
+<!-- BUILD-VERSION: v12-daily-streak-2026-09-01 -->
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -90,6 +90,11 @@
                     <div class="text-[10px] text-amber-800 dark:text-amber-300 font-bold uppercase tracking-wider">مجموع النجوم</div>
                     <div class="text-sm font-black text-amber-900 dark:text-amber-200" id="global-stars-count">0 / 100 نجمة</div>
                 </div>
+            </div>
+
+            <div class="hidden md:flex items-center gap-2 bg-rose-50 dark:bg-slate-800 px-3 py-1.5 rounded-2xl border border-rose-200 dark:border-slate-700">
+                <span class="text-xl">🔥</span>
+                <span id="streak-badge" class="text-xs font-black text-rose-700 dark:text-rose-300">0 يوم</span>
             </div>
 
             <div class="flex items-center gap-2">
@@ -435,7 +440,7 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
                         <div class="bg-amber-50 dark:bg-slate-800 border border-amber-200 dark:border-slate-700 rounded-2xl p-4 text-center">
                             <div class="text-3xl mb-1">⭐</div>
                             <div id="pd-total-stars" class="text-xl font-black text-amber-900 dark:text-amber-300">0 / 100</div>
@@ -455,6 +460,11 @@
                             <div class="text-3xl mb-1">🎯</div>
                             <div id="pd-avg-score" class="text-xl font-black text-rose-900 dark:text-rose-300">0%</div>
                             <div class="text-[11px] text-slate-500 dark:text-slate-400 font-bold mt-1">متوسط نتائج الاختبارات</div>
+                        </div>
+                        <div class="bg-orange-50 dark:bg-slate-800 border border-orange-200 dark:border-slate-700 rounded-2xl p-4 text-center">
+                            <div class="text-3xl mb-1">🔥</div>
+                            <div id="pd-streak-count" class="text-xl font-black text-orange-900 dark:text-orange-300">0 يوم</div>
+                            <div class="text-[11px] text-slate-500 dark:text-slate-400 font-bold mt-1">أيام متتالية</div>
                         </div>
                     </div>
 
@@ -647,6 +657,10 @@
         let avatarPet = null;
         let avatarOwnedItems = [];
         let avatarSpentCoins = 0;
+
+        // ------- نظام الـ Streak اليومي -------
+        let currentStreak = 0;
+        const streakMilestones = [3, 7, 14, 30, 60, 100];
 
         const booksDatabase = {
             school: {
@@ -1457,6 +1471,7 @@
             updateMicButtonsAvailability();
             initAvatarSystem();
             initSpeechRate();
+            initStreakSystem();
         });
 
         // Track approximate reading time in-session (persisted via window.storage)
@@ -2751,10 +2766,12 @@
 
         // ================= بطاقة الإنجاز المصوّرة القابلة للمشاركة =================
         let pendingAchievementBookId = null;
+        let pendingStreakMilestone = null;
 
         function showAchievementCelebration(bookId, score) {
             const book = booksDatabase[bookId];
             pendingAchievementBookId = bookId;
+            pendingStreakMilestone = null;
             document.getElementById('achievement-icon').textContent = book.icon;
             document.getElementById('achievement-message').textContent =
                 'أتم طفلك قصة "' + book.title.replace('Salma & Yusuf', '').replace('–', '').trim() + '" بنتيجة ' + score + ' من 5! 🌟';
@@ -2763,6 +2780,8 @@
 
         window.closeAchievementOverlay = function() {
             document.getElementById('achievement-overlay').classList.add('hidden');
+            pendingAchievementBookId = null;
+            pendingStreakMilestone = null;
         };
 
         function drawStarsRow(ctx, x, y, count, maxStars, size) {
@@ -2791,6 +2810,11 @@
                 subline = book.title.replace('Salma & Yusuf', '').replace('–', '').trim();
                 const skin = appSkins[activeSkin] || appSkins.golden;
                 bgFrom = skin.primary; bgTo = skin.secondary;
+            } else if (mode === 'streak' && pendingStreakMilestone) {
+                bigIcon = '🔥';
+                headline = pendingStreakMilestone + ' يوم متتالي!';
+                subline = 'استمرارية رائعة في التعلّم كل يوم';
+                bgFrom = '#f97316'; bgTo = '#dc2626';
             } else {
                 headline = 'تقرير التقدّم';
                 subline = booksCompletedCount + ' من ' + Object.keys(booksDatabase).length + ' قصة مكتملة';
@@ -2880,9 +2904,14 @@
         }
 
         window.shareAchievementCard = function() {
-            const canvas = renderAchievementCanvas('book');
-            const bookTitle = pendingAchievementBookId ? booksDatabase[pendingAchievementBookId].title : '';
-            shareOrDownloadCanvas(canvas, 'achievement-' + pendingAchievementBookId + '.png', 'أكمل طفلي قصة ' + bookTitle + ' في تطبيق Salma & Yusuf! 🎉');
+            if (pendingStreakMilestone) {
+                const canvas = renderAchievementCanvas('streak');
+                shareOrDownloadCanvas(canvas, 'streak-' + pendingStreakMilestone + '-days.png', 'طفلي مستمر في التعلّم منذ ' + pendingStreakMilestone + ' يوم متتالي في تطبيق Salma & Yusuf! 🔥');
+            } else {
+                const canvas = renderAchievementCanvas('book');
+                const bookTitle = pendingAchievementBookId ? booksDatabase[pendingAchievementBookId].title : '';
+                shareOrDownloadCanvas(canvas, 'achievement-' + pendingAchievementBookId + '.png', 'أكمل طفلي قصة ' + bookTitle + ' في تطبيق Salma & Yusuf! 🎉');
+            }
             closeAchievementOverlay();
         };
 
@@ -3095,6 +3124,73 @@
             renderAvatarBasePicker();
             renderAvatarShopSection('avatar-shop-hats', avatarShopHats, avatarHat, 'hat');
             renderAvatarShopSection('avatar-shop-pets', avatarShopPets, avatarPet, 'pet');
+        }
+
+        // ================= نظام الـ Streak اليومي =================
+        function getTodayDateString() {
+            const d = new Date();
+            return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        }
+
+        function daysBetweenDateStrings(dateStr1, dateStr2) {
+            const d1 = new Date(dateStr1 + 'T00:00:00');
+            const d2 = new Date(dateStr2 + 'T00:00:00');
+            return Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
+        }
+
+        async function initStreakSystem() {
+            const todayStr = getTodayDateString();
+            const storedLastActive = await safeStorageGet('streak:lastActiveDate');
+            const storedStreak = await safeStorageGet('streak:count');
+            const storedMilestonesRaw = await safeStorageGet('streak:celebratedMilestones');
+
+            currentStreak = storedStreak ? parseInt(storedStreak) : 0;
+            let celebratedMilestones = [];
+            if (storedMilestonesRaw) {
+                try { celebratedMilestones = JSON.parse(storedMilestonesRaw); } catch (e) { celebratedMilestones = []; }
+            }
+
+            if (!storedLastActive) {
+                currentStreak = 1;
+            } else if (storedLastActive === todayStr) {
+                // الطفل فتح التطبيق قبل كده النهارده، منغيّرش العداد
+            } else {
+                const diff = daysBetweenDateStrings(storedLastActive, todayStr);
+                if (diff === 1) {
+                    currentStreak += 1;
+                } else if (diff > 1) {
+                    currentStreak = 1; // انقطع التتابع، نبدأ من جديد
+                }
+            }
+
+            await safeStorageSet('streak:lastActiveDate', todayStr);
+            await safeStorageSet('streak:count', String(currentStreak));
+
+            renderStreakBadge();
+
+            const hitMilestone = streakMilestones.find(m => m === currentStreak && !celebratedMilestones.includes(m));
+            if (hitMilestone) {
+                celebratedMilestones.push(hitMilestone);
+                await safeStorageSet('streak:celebratedMilestones', JSON.stringify(celebratedMilestones));
+                showStreakMilestoneCelebration(hitMilestone);
+            }
+        }
+
+        function renderStreakBadge() {
+            const headerBadge = document.getElementById('streak-badge');
+            if (headerBadge) headerBadge.textContent = currentStreak + (currentStreak === 1 ? ' يوم' : ' أيام متتالية');
+
+            const dashboardBadge = document.getElementById('pd-streak-count');
+            if (dashboardBadge) dashboardBadge.textContent = currentStreak + (currentStreak === 1 ? ' يوم' : ' يوم');
+        }
+
+        function showStreakMilestoneCelebration(days) {
+            pendingStreakMilestone = days;
+            pendingAchievementBookId = null;
+            document.getElementById('achievement-icon').textContent = '🔥';
+            document.getElementById('achievement-message').textContent =
+                'واو! طفلك بيستخدم التطبيق منذ ' + days + ' يوم متتالي! استمرارية رائعة 🎉';
+            document.getElementById('achievement-overlay').classList.remove('hidden');
         }
 
         function applySkin(skinKey) {
