@@ -1,5 +1,5 @@
  <!DOCTYPE html>
-<!-- BUILD-VERSION: v12-daily-streak-2026-09-01 -->
+<!-- BUILD-VERSION: v14-autoplay-mic-proximity-2026-09-05 -->
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -234,7 +234,13 @@
                     <div class="md:col-span-7 flex flex-col justify-between h-full space-y-6">
                         <div class="space-y-4">
                             <div id="english-box" class="bg-indigo-50/70 dark:bg-slate-800/80 p-5 rounded-2xl border border-indigo-100 dark:border-slate-700 transition-colors">
-                                <span class="text-xs font-extrabold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest block mb-1">English 🇬🇧</span>
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-xs font-extrabold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">English 🇬🇧</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <button onclick="playCurrentAudio()" class="bg-emerald-600 hover:bg-emerald-700 text-white w-8 h-8 rounded-full shadow-md transition flex items-center justify-center text-sm" title="استمع للصفحة">🔊</button>
+                                        <button onclick="practiceCurrentPageSpeech(this)" class="bg-rose-600 hover:bg-rose-700 text-white w-8 h-8 rounded-full shadow-md transition flex items-center justify-center text-sm" title="جرّب تنطقها">🎤</button>
+                                    </div>
+                                </div>
                                 <p id="page-english" class="text-2xl sm:text-3xl font-english font-bold text-slate-950 dark:text-white leading-relaxed">
                                     Salma wakes up early. It is the first day of school!
                                 </p>
@@ -271,6 +277,17 @@
         </section>
 
         <section id="section-vocab" class="hidden space-y-6">
+            <div id="review-words-box" class="hidden bg-gradient-to-r from-rose-50 to-orange-50 dark:from-slate-800 dark:to-slate-800/80 rounded-3xl p-6 border border-rose-200 dark:border-slate-700">
+                <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+                    <h3 class="text-lg font-black text-rose-900 dark:text-rose-300 flex items-center gap-2">
+                        <span>🔄</span> كلمات تحتاج مراجعة
+                    </h3>
+                    <span id="review-words-count" class="bg-white dark:bg-slate-900 text-rose-700 dark:text-rose-300 text-xs font-black px-3 py-1 rounded-full border border-rose-200 dark:border-slate-700"></span>
+                </div>
+                <p class="text-xs text-rose-700 dark:text-rose-400 font-bold mb-4">دي الكلمات اللي طفلك واجه صعوبة فيها، جرّبوا تسمعوها وتنطقوها مع بعض كام مرة كمان!</p>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3" id="review-words-grid"></div>
+            </div>
+
             <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-amber-100 dark:border-slate-800 shadow-xl shadow-amber-900/5 dark:shadow-none">
                 <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-100 dark:border-slate-800">
                     <div>
@@ -661,6 +678,10 @@
         // ------- نظام الـ Streak اليومي -------
         let currentStreak = 0;
         const streakMilestones = [3, 7, 14, 30, 60, 100];
+
+        // ------- نظام الكلمات المحتاجة مراجعة -------
+        let struggledWords = {};
+        const STRUGGLE_THRESHOLD_TO_MASTER = 1;
 
         const booksDatabase = {
             school: {
@@ -1472,6 +1493,7 @@
             initAvatarSystem();
             initSpeechRate();
             initStreakSystem();
+            initReviewWordsSystem();
         });
 
         // Track approximate reading time in-session (persisted via window.storage)
@@ -1643,6 +1665,8 @@
             document.getElementById('next-btn').disabled = currentPageIndex === currentBook.pages.length - 1;
 
             updateDots();
+
+            if (audioEnabled) playCurrentAudio();
         }
 
         function renderPageDots() {
@@ -1676,7 +1700,6 @@
             if (currentPageIndex < currentBook.pages.length - 1) {
                 currentPageIndex++;
                 renderStoryPage();
-                if (audioEnabled) playCurrentAudio();
             }
         };
 
@@ -1684,14 +1707,12 @@
             if (currentPageIndex > 0) {
                 currentPageIndex--;
                 renderStoryPage();
-                if (audioEnabled) playCurrentAudio();
             }
         };
 
         function goToPage(index) {
             currentPageIndex = index;
             renderStoryPage();
-            if (audioEnabled) playCurrentAudio();
         }
 
         window.toggleTranslation = function() {
@@ -1806,7 +1827,7 @@
 
         let activeRecognition = null;
 
-        function practiceSpeaking(targetText, buttonEl) {
+        function practiceSpeaking(targetText, buttonEl, onResult) {
             if (!isSpeechRecognitionSupported()) {
                 alert('عذرًا، متصفحك الحالي لا يدعم التعرف الصوتي. جرّب على متصفح Google Chrome.');
                 return;
@@ -1842,6 +1863,7 @@
                 speechPracticeCount++;
                 if (isMatch) speechPracticeCorrect++;
                 showSpeechFeedback(isMatch);
+                if (typeof onResult === 'function') onResult(isMatch);
             };
 
             recognition.onerror = (event) => {
@@ -1937,7 +1959,16 @@
                     micBtn.title = 'متصفحك الحالي لا يدعم التعرف الصوتي، جرّب Chrome';
                     micBtn.onclick = (e) => { e.stopPropagation(); alert('عذرًا، متصفحك الحالي لا يدعم التعرف الصوتي. جرّب على Google Chrome للحصول على هذه الميزة.'); };
                 } else {
-                    micBtn.onclick = (e) => { e.stopPropagation(); practiceSpeaking(item.en, micBtn); };
+                    micBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        practiceSpeaking(item.en, micBtn, (isMatch) => {
+                            if (isMatch) {
+                                recordWordMastery(currentBookId, item.en);
+                            } else {
+                                recordWordStruggle(currentBookId, item.en, item.ar, item.icon);
+                            }
+                        });
+                    };
                 }
             });
         }
@@ -2128,12 +2159,19 @@
 
             if (selectedWordId === pictureId) {
                 matchedPairs.push(pictureId);
+                const matchedItem = booksDatabase[currentBookId].gameItems.find(g => g.id === pictureId);
+                if (matchedItem) recordWordMastery(currentBookId, matchedItem.word);
                 selectedWordId = null;
                 renderMatchingGame();
             } else {
                 const statusBox = document.getElementById('game-status');
                 statusBox.className = "mt-8 p-4 rounded-2xl bg-red-100 dark:bg-red-950/80 border border-red-300 dark:border-red-800 text-center font-bold text-red-900 dark:text-red-200";
                 statusBox.textContent = "❌ محاولة خاطئة، جرب مرة أخرى!";
+                const strugglingItem = booksDatabase[currentBookId].gameItems.find(g => g.id === selectedWordId);
+                if (strugglingItem) {
+                    const vocabMatch = booksDatabase[currentBookId].vocab.find(v => v.en === strugglingItem.word);
+                    recordWordStruggle(currentBookId, strugglingItem.word, strugglingItem.label, vocabMatch ? vocabMatch.icon : strugglingItem.icon);
+                }
                 setTimeout(() => {
                     selectedWordId = null;
                     renderMatchingGame();
@@ -3191,6 +3229,89 @@
             document.getElementById('achievement-message').textContent =
                 'واو! طفلك بيستخدم التطبيق منذ ' + days + ' يوم متتالي! استمرارية رائعة 🎉';
             document.getElementById('achievement-overlay').classList.remove('hidden');
+        }
+
+        // ================= نظام الكلمات المحتاجة مراجعة =================
+        async function initReviewWordsSystem() {
+            const stored = await safeStorageGet('review:struggledWords');
+            if (stored) {
+                try { struggledWords = JSON.parse(stored); } catch (e) { struggledWords = {}; }
+            }
+            renderReviewWordsBox();
+        }
+
+        async function persistStruggledWords() {
+            await safeStorageSet('review:struggledWords', JSON.stringify(struggledWords));
+        }
+
+        async function recordWordStruggle(bookId, wordEn, wordAr, icon) {
+            const key = bookId + '::' + wordEn;
+            if (!struggledWords[key]) {
+                struggledWords[key] = { en: wordEn, ar: wordAr, icon: icon, bookId: bookId, count: 0 };
+            }
+            struggledWords[key].count += 1;
+            struggledWords[key].lastMissedAt = Date.now();
+            await persistStruggledWords();
+            renderReviewWordsBox();
+        }
+
+        async function recordWordMastery(bookId, wordEn) {
+            const key = bookId + '::' + wordEn;
+            if (struggledWords[key]) {
+                delete struggledWords[key];
+                await persistStruggledWords();
+                renderReviewWordsBox();
+            }
+        }
+
+        function renderReviewWordsBox() {
+            const box = document.getElementById('review-words-box');
+            const grid = document.getElementById('review-words-grid');
+            const countBadge = document.getElementById('review-words-count');
+            if (!box || !grid) return;
+
+            const words = Object.values(struggledWords).sort((a, b) => (b.count - a.count));
+
+            if (words.length === 0) {
+                box.classList.add('hidden');
+                return;
+            }
+            box.classList.remove('hidden');
+            countBadge.textContent = words.length + (words.length === 1 ? ' كلمة' : ' كلمات');
+
+            grid.innerHTML = '';
+            words.forEach(w => {
+                const card = document.createElement('div');
+                card.className = 'bg-white dark:bg-slate-900 border border-rose-200 dark:border-slate-700 rounded-2xl p-3 flex flex-col items-center text-center gap-1.5 shadow-sm';
+                card.innerHTML =
+                    '<div class="text-3xl">' + w.icon + '</div>' +
+                    '<div class="font-english font-bold text-sm text-slate-900 dark:text-white">' + w.en + '</div>' +
+                    '<div class="text-[11px] text-slate-500 dark:text-slate-400 font-bold">' + w.ar + '</div>' +
+                    '<div class="flex items-center gap-1 mt-1">' +
+                        '<button data-action="listen" class="text-[10px] bg-amber-50 dark:bg-slate-800 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded-full border border-amber-200 dark:border-slate-700 font-bold">🔊</button>' +
+                        '<button data-action="mic" class="text-[10px] bg-rose-50 dark:bg-slate-800 text-rose-700 dark:text-rose-300 px-2 py-0.5 rounded-full border border-rose-200 dark:border-slate-700 font-bold">🎤</button>' +
+                    '</div>';
+
+                card.querySelector('[data-action="listen"]').onclick = () => speakText(w.en);
+
+                const micBtn = card.querySelector('[data-action="mic"]');
+                if (!isSpeechRecognitionSupported()) {
+                    micBtn.classList.add('opacity-40', 'cursor-not-allowed');
+                    micBtn.onclick = () => alert('عذرًا، متصفحك الحالي لا يدعم التعرف الصوتي. جرّب على Google Chrome.');
+                } else {
+                    micBtn.onclick = () => {
+                        practiceSpeaking(w.en, micBtn, (isMatch) => {
+                            if (isMatch) {
+                                recordWordMastery(w.bookId, w.en);
+                            } else {
+                                recordWordStruggle(w.bookId, w.en, w.ar, w.icon);
+                            }
+                        });
+                    };
+                }
+
+                grid.appendChild(card);
+            });
         }
 
         function applySkin(skinKey) {
