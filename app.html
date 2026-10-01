@@ -2353,9 +2353,15 @@
                     chapter.appendChild(header);
                 }
 
-                const path = document.createElement('div');
-                path.className = 'flex items-center gap-1.5 overflow-x-auto pb-3 pt-1 px-1 scrollbar-none';
+                const pathId = 'journey-path-' + levelKey;
+                const scrollWrap = document.createElement('div');
+                scrollWrap.className = 'relative';
 
+                const path = document.createElement('div');
+                path.id = pathId;
+                path.className = 'flex items-center gap-1.5 overflow-x-auto pb-3 pt-1 px-10 scrollbar-none scroll-smooth';
+
+                let activeNodeWrap = null;
                 levelBooks.forEach((key, idx) => {
                     const book = booksDatabase[key];
                     const isActive = key === currentBookId;
@@ -2384,6 +2390,7 @@
 
                     nodeWrap.appendChild(btn);
                     path.appendChild(nodeWrap);
+                    if (isActive) activeNodeWrap = nodeWrap;
 
                     if (idx < levelBooks.length - 1) {
                         const connector = document.createElement('div');
@@ -2392,8 +2399,36 @@
                     }
                 });
 
-                chapter.appendChild(path);
+                scrollWrap.appendChild(path);
+
+                if (levelBooks.length > 4) {
+                    // زرار "اللي قبل" بيرجّع لبداية الصف (يمين)، وزرار "اللي بعد" بيكمّل للقصص الجديدة (شمال)
+                    const prevBtn = document.createElement('button');
+                    prevBtn.type = 'button';
+                    prevBtn.onclick = () => document.getElementById(pathId).scrollBy({ left: 180, behavior: 'smooth' });
+                    prevBtn.className = 'absolute top-1/2 -translate-y-1/2 end-0 z-10 w-8 h-8 rounded-full bg-slate-900/90 border border-slate-600 text-amber-300 flex items-center justify-center shadow-lg hover:bg-slate-800';
+                    prevBtn.title = 'القصص اللي قبل';
+                    prevBtn.innerHTML = '▶';
+                    scrollWrap.appendChild(prevBtn);
+
+                    const nextBtn = document.createElement('button');
+                    nextBtn.type = 'button';
+                    nextBtn.onclick = () => document.getElementById(pathId).scrollBy({ left: -180, behavior: 'smooth' });
+                    nextBtn.className = 'absolute top-1/2 -translate-y-1/2 start-0 z-10 w-8 h-8 rounded-full bg-slate-900/90 border border-slate-600 text-amber-300 flex items-center justify-center shadow-lg hover:bg-slate-800';
+                    nextBtn.title = 'القصص اللي بعد';
+                    nextBtn.innerHTML = '◀';
+                    scrollWrap.appendChild(nextBtn);
+                }
+
+                chapter.appendChild(scrollWrap);
                 container.appendChild(chapter);
+
+                if (activeNodeWrap) {
+                    const nodeToCenter = activeNodeWrap;
+                    requestAnimationFrame(() => {
+                        nodeToCenter.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' });
+                    });
+                }
             });
         }
 
