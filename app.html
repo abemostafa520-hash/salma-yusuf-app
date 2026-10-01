@@ -366,7 +366,7 @@
                 <div class="mb-8 text-center max-w-2xl mx-auto">
                     <span class="bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 font-bold px-3 py-1 rounded-full text-xs uppercase">العلامة التجارية الكاملة</span>
                     <h3 class="text-3xl font-black text-slate-900 dark:text-white mt-2">Salma & Yusuf – English Adventures</h3>
-                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-2">عالم تفاعلي متكامل يضم كافة مغامرات سلمى ويوسف الـ 25 المتاحة بالكامل مع نظام أوسمة تشجيعية للأطفال!</p>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-2">عالم تفاعلي متكامل يضم كافة مغامرات سلمى ويوسف الـ 29 المتاحة بالكامل مع نظام أوسمة تشجيعية للأطفال!</p>
                 </div>
 
                 <div class="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-slate-800 dark:to-slate-800/80 rounded-2xl p-6 border border-amber-200 dark:border-slate-700 mb-8">
@@ -534,7 +534,7 @@
     <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 mt-12">
         <div class="max-w-6xl mx-auto px-4 text-center text-xs space-y-2">
             <p class="font-bold text-slate-300">سلسلة مغامرات سلمى ويوسف (Salma & Yusuf – English Adventures Hub)</p>
-            <p>تطبيق تفاعلي موحّد يضم 25 قصة ووحدة تعليمية كاملة تغطي KG1 حتى الصف الثالث الابتدائي، لتعزيز مهارات الأطفال في اللغة الإنجليزية.</p>
+            <p>تطبيق تفاعلي موحّد يضم 29 قصة ووحدة تعليمية كاملة تغطي KG1 حتى الصف الثالث الابتدائي، لتعزيز مهارات الأطفال في اللغة الإنجليزية.</p>
         </div>
     </footer>
 
@@ -1211,6 +1211,57 @@
                 quiz: [{"q": "1. What does Salma put on the table? (ماذا تضع سلمى على الطاولة؟)", "options": ["A plate (طبق)", "A chair", "A pot"], "correct": 0}, {"q": "2. What does Yusuf use to mix the soup? (بماذا يحرك يوسف الشوربة؟)", "options": ["A spoon (ملعقة)", "A fork", "A cup"], "correct": 0}, {"q": "3. What does Salma eat her salad with? (بماذا تأكل سلمى سلطتها؟)", "options": ["A pot", "A fork (شوكة)", "A plate"], "correct": 1}, {"q": "4. What color is Yusuf's cup? (ما لون كوب يوسف؟)", "options": ["Blue (أزرق)", "Green", "Red"], "correct": 0}, {"q": "5. Where does Mom cook the food? (أين تطبخ الأم الطعام؟)", "options": ["On a plate", "In a big pot (قدر كبير)", "In a cup"], "correct": 1}],
                 gameItems: [{"id": 1, "word": "Plate", "icon": "🍽️", "label": "طبق"}, {"id": 2, "word": "Spoon", "icon": "🥄", "label": "ملعقة"}, {"id": 3, "word": "Cup", "icon": "🥛", "label": "كوب"}, {"id": 4, "word": "Chair", "icon": "🪑", "label": "كرسي"}]
             },
+            farm: {
+                id: "farm",
+                themeClass: "theme-farm",
+                tag: "🚜 وحدة تكميلية • الصف الأول",
+                level: "primary1",
+                levelBadge: "🎓 الصف الأول - وحدة إضافية",
+                curriculumNote: "📘 يدعم منهج Connect Plus 1 - وحدة The World Around Me (المزرعة وحيوانات المزرعة)",
+                title: "Salma & Yusuf – A Day on the Farm",
+                desc: "وحدة تكميلية ممتعة! زيارة سلمى ويوسف لمزرعة كبيرة للتعرف على حيوانات المزرعة والمزارع ومنتجاتها الطازجة.",
+                icon: "🚜",
+                badgeIcon: "🐄",
+                badgeName: "صديق المزرعة",
+                bannerGradient: "from-green-900 to-lime-700",
+                buttonActiveBg: "bg-green-600",
+                artBorder: "border-green-300/80",
+                artBg: "bg-green-50/60",
+                isPremium: true,
+                pages: [
+                    { page: 1, icon: "🚜", en: "Today, Salma and Yusuf visit a big farm.", ar: "اليوم، يزور سلمى ويوسف مزرعة كبيرة.", imageDesc: "سلمى ويوسف يقفان عند بوابة مزرعة خضراء واسعة.", soundFx: "صوت أصوات حيوانات المزرعة 🐓", audioDesc: "نطق تمهيدي واضح" },
+                    { page: 2, icon: "🐄", en: "Look! The cow gives us fresh milk.", ar: "انظر! تعطينا البقرة حليباً طازجاً.", imageDesc: "بقرة بيضاء وسوداء تقف بجانب دلو حليب.", soundFx: "صوت خوار البقرة 🐄", audioDesc: "نطق Cow & Milk" },
+                    { page: 3, icon: "🐓", en: "The hen lays brown eggs every morning.", ar: "تضع الدجاجة بيضاً بنياً كل صباح.", imageDesc: "دجاجة بنية بجانب سلة بيض في عش من القش.", soundFx: "صوت نقيق الدجاجة 🐓", audioDesc: "نطق Hen & Egg" },
+                    { page: 4, icon: "🐑", en: "The sheep has soft white wool.", ar: "لدى الخروف صوف أبيض ناعم.", imageDesc: "خروف أبيض صوفه كثيف يرعى العشب.", soundFx: "صوت ثغاء الخروف 🐑", audioDesc: "نطق Sheep & Wool" },
+                    { page: 5, icon: "🐴", en: "Yusuf rides a friendly brown horse.", ar: "يركب يوسف حصاناً بنياً ودوداً.", imageDesc: "يوسف يركب حصاناً بنياً بابتسامة سعيدة.", soundFx: "صوت صهيل الحصان 🐴", audioDesc: "نطق Horse & Ride" },
+                    { page: 6, icon: "🚜", en: "The farmer drives his tractor in the field.", ar: "يقود المزارع جراره في الحقل.", imageDesc: "مزارع يقود جراراً أصفر في حقل واسع.", soundFx: "صوت محرك الجرار 🚜", audioDesc: "نطق Farmer & Tractor" },
+                    { page: 7, icon: "🌾", en: "The farmer grows wheat and vegetables.", ar: "يزرع المزارع القمح والخضروات.", imageDesc: "حقل قمح ذهبي بجانب صفوف من الخضروات الخضراء.", soundFx: "صوت حفيف سنابل القمح 🌾", audioDesc: "نطق Grow & Wheat" },
+                    { page: 8, icon: "👋", en: "Salma and Yusuf say goodbye to the happy animals.", ar: "يودّع سلمى ويوسف الحيوانات السعيدة.", imageDesc: "سلمى ويوسف يلوحان للحيوانات عند باب المزرعة وقت الغروب.", soundFx: "موسيقى ختامية هادئة 🎶", audioDesc: "ختام دافئ لرحلة المزرعة" }
+                ],
+                vocab: [
+                    { en: "Farm", ar: "مزرعة", icon: "🚜" },
+                    { en: "Cow", ar: "بقرة", icon: "🐄" },
+                    { en: "Milk", ar: "حليب", icon: "🥛" },
+                    { en: "Hen", ar: "دجاجة", icon: "🐓" },
+                    { en: "Egg", ar: "بيضة", icon: "🥚" },
+                    { en: "Sheep", ar: "خروف", icon: "🐑" },
+                    { en: "Horse", ar: "حصان", icon: "🐴" },
+                    { en: "Farmer", ar: "مزارع", icon: "👨‍🌾" }
+                ],
+                quiz: [
+                    { q: "1. What does the cow give us? (ماذا تعطينا البقرة؟)", options: ["Milk (حليب)", "Eggs", "Wool"], correct: 0 },
+                    { q: "2. What does the hen lay? (ماذا تضع الدجاجة؟)", options: ["Milk", "Eggs (بيض)", "Wool"], correct: 1 },
+                    { q: "3. Which animal has soft wool? (أي حيوان لديه صوف ناعم؟)", options: ["Sheep (الخروف)", "Horse", "Cow"], correct: 0 },
+                    { q: "4. What does Yusuf ride? (ماذا يركب يوسف؟)", options: ["A cow", "A hen", "A horse (حصاناً)"], correct: 2 },
+                    { q: "5. What does the farmer drive? (ماذا يقود المزارع؟)", options: ["A tractor (جراراً)", "A car", "A boat"], correct: 0 }
+                ],
+                gameItems: [
+                    { id: 1, word: "Cow", icon: "🐄", label: "بقرة" },
+                    { id: 2, word: "Hen", icon: "🐓", label: "دجاجة" },
+                    { id: 3, word: "Sheep", icon: "🐑", label: "خروف" },
+                    { id: 4, word: "Horse", icon: "🐴", label: "حصان" }
+                ]
+            },
             neighborhood: {
                 id: "neighborhood",
                 themeClass: "theme-neighborhood",
@@ -1299,6 +1350,57 @@
                 quiz: [{"q": "1. What does Dad drive to visit Grandma? (بماذا يقود الأب لزيارة الجدة؟)", "options": ["The family car (سيارة العائلة)", "A boat", "A bicycle"], "correct": 0}, {"q": "2. What do Salma and Yusuf ride to school? (بماذا يذهب سلمى ويوسف للمدرسة؟)", "options": ["An airplane", "A train", "The yellow bus (الحافلة الصفراء)"], "correct": 2}, {"q": "3. What do they take to visit their cousins? (بماذا يذهبون لزيارة أبناء عمهم؟)", "options": ["A fast train (قطار سريع)", "A bicycle", "A car"], "correct": 0}, {"q": "4. What did the family fly on last summer? (بماذا سافرت العائلة الصيف الماضي؟)", "options": ["A bus", "A boat", "An airplane (طائرة)"], "correct": 2}, {"q": "5. What light do we wait for before crossing? (أي إشارة ننتظر قبل العبور؟)", "options": ["The green light (الإشارة الخضراء)", "No light", "The red light"], "correct": 0}],
                 gameItems: [{"id": 1, "word": "Car", "icon": "🚗", "label": "سيارة"}, {"id": 2, "word": "Train", "icon": "🚆", "label": "قطار"}, {"id": 3, "word": "Airplane", "icon": "✈️", "label": "طائرة"}, {"id": 4, "word": "Boat", "icon": "🚢", "label": "قارب"}]
             },
+            itsme: {
+                id: "itsme",
+                themeClass: "theme-itsme",
+                tag: "🙋 وحدة تكميلية • KG1",
+                level: "kg1",
+                levelBadge: "🎓 KG1 - وحدة إضافية",
+                curriculumNote: "📘 يدعم منهج Connect KG1 - الوحدة الأولى It's Me (التحيات والتعريف بالنفس)",
+                title: "Salma & Yusuf – It's Me!",
+                desc: "وحدة تكميلية ممتعة! تتعرّف سلمى على نفسها: اسمها، عمرها، شكلها، ومشاعرها، وتقول مرحباً ووداعاً بالإنجليزية.",
+                icon: "🙋",
+                badgeIcon: "👋",
+                badgeName: "نجم التحية",
+                bannerGradient: "from-cyan-900 to-sky-700",
+                buttonActiveBg: "bg-sky-600",
+                artBorder: "border-sky-300/80",
+                artBg: "bg-sky-50/60",
+                isPremium: true,
+                pages: [
+                    { page: 1, icon: "👋", en: "Hello! My name is Salma.", ar: "مرحباً! اسمي سلمى.", imageDesc: "سلمى تلوّح بيدها وتبتسم للكاميرا.", soundFx: "صوت تصفيق ترحيبي 👋", audioDesc: "نطق واضح وبطيء لعبارة التحية" },
+                    { page: 2, icon: "🎂", en: "I am six years old today!", ar: "عمري ستة سنوات اليوم!", imageDesc: "كعكة عيد ميلاد عليها ست شمعات مضاءة.", soundFx: "صوت نفخ الشموع 🎂", audioDesc: "نطق الأرقام مع كلمة Years Old" },
+                    { page: 3, icon: "🙋‍♀️", en: "I have black hair and brown eyes.", ar: "لدي شعر أسود وعينان بنيتان.", imageDesc: "سلمى تنظر في المرآة وتشير لشعرها وعينيها.", soundFx: "صوت مرآة تلمع ✨", audioDesc: "نطق Black Hair & Brown Eyes" },
+                    { page: 4, icon: "😊", en: "I am happy today. How are you?", ar: "أنا سعيدة اليوم. كيف حالك؟", imageDesc: "سلمى تبتسم ابتسامة كبيرة وسعيدة.", soundFx: "صوت ضحكة لطيفة 😊", audioDesc: "نطق Happy وسؤال How Are You" },
+                    { page: 5, icon: "🖐️", en: "I can count my fingers. One, two, three, four, five!", ar: "أستطيع عدّ أصابعي. واحد، اثنان، ثلاثة، أربعة، خمسة!", imageDesc: "سلمى ترفع يدها وتعد أصابعها الخمسة.", soundFx: "صوت عدّ متتابع 🔢", audioDesc: "نطق الأرقام من واحد لخمسة بوضوح" },
+                    { page: 6, icon: "🍎", en: "I like red apples very much.", ar: "أحب التفاح الأحمر كثيراً.", imageDesc: "سلمى تمسك تفاحة حمراء وتبتسم.", soundFx: "صوت قرمشة تفاحة 🍎", audioDesc: "نطق I Like & Red Apples" },
+                    { page: 7, icon: "👨‍👩‍👧‍👦", en: "This is my family. I love them so much.", ar: "هذه عائلتي. أحبهم كثيراً.", imageDesc: "سلمى تقف بجانب صورة عائلية صغيرة وتبتسم.", soundFx: "موسيقى عائلية دافئة 💖", audioDesc: "نطق My Family & I Love Them" },
+                    { page: 8, icon: "👋", en: "Goodbye! See you soon!", ar: "إلى اللقاء! أراك قريباً!", imageDesc: "سلمى تلوّح بالوداع والشمس تغرب خلفها.", soundFx: "موسيقى ختامية هادئة 🎶", audioDesc: "نطق Goodbye & See You Soon" }
+                ],
+                vocab: [
+                    { en: "Hello", ar: "مرحباً", icon: "👋" },
+                    { en: "My Name Is", ar: "اسمي", icon: "🙋" },
+                    { en: "Years Old", ar: "سنوات العمر", icon: "🎂" },
+                    { en: "Happy", ar: "سعيد", icon: "😊" },
+                    { en: "Count", ar: "يعدّ", icon: "🔢" },
+                    { en: "Apple", ar: "تفاحة", icon: "🍎" },
+                    { en: "Family", ar: "عائلة", icon: "👨‍👩‍👧‍👦" },
+                    { en: "Goodbye", ar: "إلى اللقاء", icon: "👋" }
+                ],
+                quiz: [
+                    { q: "1. What is her name? (ما اسمها؟)", options: ["Yusuf", "Salma", "Mona"], correct: 1 },
+                    { q: "2. How old is Salma? (كم عمر سلمى؟)", options: ["Five", "Six (ستة)", "Seven"], correct: 1 },
+                    { q: "3. What color is her hair? (ما لون شعرها؟)", options: ["Black (أسود)", "Yellow", "Red"], correct: 0 },
+                    { q: "4. How many fingers does she count? (كم إصبعاً تعدّ؟)", options: ["Three", "Five (خمسة)", "Ten"], correct: 1 },
+                    { q: "5. What fruit does Salma like? (أي فاكهة تحب سلمى؟)", options: ["Banana", "Orange", "Red apples (تفاح أحمر)"], correct: 2 }
+                ],
+                gameItems: [
+                    { id: 1, word: "Hello", icon: "👋", label: "مرحباً" },
+                    { id: 2, word: "Happy", icon: "😊", label: "سعيد" },
+                    { id: 3, word: "Apple", icon: "🍎", label: "تفاحة" },
+                    { id: 4, word: "Family", icon: "👨‍👩‍👧‍👦", label: "عائلة" }
+                ]
+            },
             jobs: {
                 id: "jobs",
                 themeClass: "theme-jobs",
@@ -1321,6 +1423,57 @@
                 quiz: [{"q": "1. What does Miss Mona teach? (ماذا تعلّم الأستاذة منى؟)", "options": ["Swimming", "Cooking", "Reading and writing (القراءة والكتابة)"], "correct": 2}, {"q": "2. What does Dr. Hana do? (ماذا تفعل الدكتورة هناء؟)", "options": ["Builds buildings", "Flies airplanes", "Helps sick people (تساعد المرضى)"], "correct": 2}, {"q": "3. What does Uncle Sami build? (ماذا يبني العم سامي؟)", "options": ["Bridges and buildings (جسور ومباني)", "Vegetables", "Airplanes"], "correct": 0}, {"q": "4. What does Farmer Kareem grow? (ماذا يزرع المزارع كريم؟)", "options": ["Vegetables and fruits (خضروات وفواكه)", "Buildings", "Books"], "correct": 0}, {"q": "5. What does Officer Adel keep safe? (ما الذي يحافظ عليه الضابط عادل؟)", "options": ["Our streets (شوارعنا)", "The farm", "The school"], "correct": 0}],
                 gameItems: [{"id": 1, "word": "Teacher", "icon": "👩‍🏫", "label": "معلمة"}, {"id": 2, "word": "Doctor", "icon": "🧑‍⚕️", "label": "طبيبة"}, {"id": 3, "word": "Farmer", "icon": "👨‍🌾", "label": "مزارع"}, {"id": 4, "word": "Pilot", "icon": "👨‍✈️", "label": "طيار"}]
             },
+            dailyroutine: {
+                id: "dailyroutine",
+                themeClass: "theme-dailyroutine",
+                tag: "⏰ وحدة تكميلية • الصف الثاني",
+                level: "primary2",
+                levelBadge: "🎓 الصف الثاني - وحدة إضافية",
+                curriculumNote: "📘 يدعم منهج Connect Plus 2 - وحدة A Day in My Life (الروتين اليومي بصيغة المضارع البسيط)",
+                title: "Salma & Yusuf – A Day in My Life",
+                desc: "وحدة تكميلية ممتعة! يوم كامل في حياة سلمى من الاستيقاظ للنوم، لتعلّم أفعال الروتين اليومي بصيغة المضارع البسيط.",
+                icon: "⏰",
+                badgeIcon: "⏰",
+                badgeName: "بطل الروتين اليومي",
+                bannerGradient: "from-blue-900 to-indigo-700",
+                buttonActiveBg: "bg-blue-600",
+                artBorder: "border-blue-300/80",
+                artBg: "bg-blue-50/60",
+                isPremium: true,
+                pages: [
+                    { page: 1, icon: "⏰", en: "Every day, Salma wakes up at seven o'clock.", ar: "كل يوم، تستيقظ سلمى الساعة السابعة.", imageDesc: "ساعة منبّه على الساعة السابعة بجانب سرير سلمى.", soundFx: "صوت رنين المنبه ⏰", audioDesc: "نطق Wake Up & Seven O'clock" },
+                    { page: 2, icon: "🪥", en: "She brushes her teeth and washes her face.", ar: "تنظف أسنانها وتغسل وجهها.", imageDesc: "سلمى تقف أمام المرآة وتنظف أسنانها.", soundFx: "صوت تنظيف الأسنان 🪥", audioDesc: "نطق Brush Teeth & Wash Face" },
+                    { page: 3, icon: "🥣", en: "Salma eats breakfast with her family.", ar: "تتناول سلمى الإفطار مع عائلتها.", imageDesc: "سلمى تجلس مع عائلتها على طاولة الإفطار.", soundFx: "صوت ملاعق وأطباق 🥣", audioDesc: "نطق Eat Breakfast" },
+                    { page: 4, icon: "🚌", en: "Then, she goes to school by bus.", ar: "بعد ذلك، تذهب إلى المدرسة بالحافلة.", imageDesc: "سلمى تصعد سلالم الحافلة المدرسية الصفراء.", soundFx: "صوت محرك الحافلة 🚌", audioDesc: "نطق Go To School By Bus" },
+                    { page: 5, icon: "📚", en: "After school, Salma does her homework.", ar: "بعد المدرسة، تؤدي سلمى واجبها المدرسي.", imageDesc: "سلمى تجلس على مكتبها وتكتب في كراستها.", soundFx: "صوت قلم على ورق ✏️", audioDesc: "نطق Do Homework" },
+                    { page: 6, icon: "⚽", en: "In the afternoon, she plays with her brother Yusuf.", ar: "في فترة بعد الظهر، تلعب مع أخيها يوسف.", imageDesc: "سلمى ويوسف يلعبان بالكرة في الحديقة.", soundFx: "صوت ضحكات ولعب ⚽", audioDesc: "نطق Play & In the Afternoon" },
+                    { page: 7, icon: "🍽️", en: "At night, the family has dinner together.", ar: "في الليل، تتناول العائلة العشاء معاً.", imageDesc: "العائلة كلها تجلس حول طاولة العشاء ليلاً.", soundFx: "صوت أواني الطعام 🍽️", audioDesc: "نطق Have Dinner & At Night" },
+                    { page: 8, icon: "🛏️", en: "Salma goes to bed at eight o'clock. Good night!", ar: "تذهب سلمى إلى الفراش الساعة الثامنة. تصبحين على خير!", imageDesc: "سلمى نائمة بهدوء في سريرها والقمر يضيء النافذة.", soundFx: "موسيقى هادئة لليل 🌙", audioDesc: "نطق Go To Bed & Good Night" }
+                ],
+                vocab: [
+                    { en: "Wake Up", ar: "يستيقظ", icon: "⏰" },
+                    { en: "Brush Teeth", ar: "ينظف أسنانه", icon: "🪥" },
+                    { en: "Breakfast", ar: "إفطار", icon: "🥣" },
+                    { en: "Go To School", ar: "يذهب للمدرسة", icon: "🚌" },
+                    { en: "Homework", ar: "واجب مدرسي", icon: "📚" },
+                    { en: "Play", ar: "يلعب", icon: "⚽" },
+                    { en: "Dinner", ar: "عشاء", icon: "🍽️" },
+                    { en: "Go To Bed", ar: "يذهب للفراش", icon: "🛏️" }
+                ],
+                quiz: [
+                    { q: "1. What time does Salma wake up? (في أي ساعة تستيقظ سلمى؟)", options: ["Six o'clock", "Seven o'clock (السابعة)", "Nine o'clock"], correct: 1 },
+                    { q: "2. What does she do before breakfast? (ماذا تفعل قبل الإفطار؟)", options: ["Brushes her teeth (تنظف أسنانها)", "Plays football", "Does homework"], correct: 0 },
+                    { q: "3. How does Salma go to school? (كيف تذهب سلمى للمدرسة؟)", options: ["By car", "By bus (بالحافلة)", "On foot"], correct: 1 },
+                    { q: "4. When does Salma do her homework? (متى تؤدي سلمى واجبها؟)", options: ["Before breakfast", "At night", "After school (بعد المدرسة)"], correct: 2 },
+                    { q: "5. What time does Salma go to bed? (في أي ساعة تذهب للفراش؟)", options: ["Ten o'clock", "Eight o'clock (الثامنة)", "Noon"], correct: 1 }
+                ],
+                gameItems: [
+                    { id: 1, word: "Wake Up", icon: "⏰", label: "يستيقظ" },
+                    { id: 2, word: "Breakfast", icon: "🥣", label: "إفطار" },
+                    { id: 3, word: "Homework", icon: "📚", label: "واجب" },
+                    { id: 4, word: "Dinner", icon: "🍽️", label: "عشاء" }
+                ]
+            },
             weekdays: {
                 id: "weekdays",
                 themeClass: "theme-weekdays",
@@ -1342,6 +1495,57 @@
                 vocab: [{"en": "Friday", "ar": "الجمعة", "icon": "🕌"}, {"en": "Saturday", "ar": "السبت", "icon": "📅"}, {"en": "Sunday", "ar": "الأحد", "icon": "📅"}, {"en": "Monday", "ar": "الاثنين", "icon": "⚽"}, {"en": "Tuesday", "ar": "الثلاثاء", "icon": "🎨"}, {"en": "Wednesday", "ar": "الأربعاء", "icon": "📚"}, {"en": "Thursday", "ar": "الخميس", "icon": "🎉"}, {"en": "Week", "ar": "أسبوع", "icon": "🗓️"}],
                 quiz: [{"q": "1. How many days are in a week? (كم يوماً في الأسبوع؟)", "options": ["Ten", "Seven (سبعة)", "Five"], "correct": 1}, {"q": "2. What does the family do on Friday? (ماذا تفعل العائلة يوم الجمعة؟)", "options": ["Play football", "Go to school", "Visit the mosque (زيارة المسجد)"], "correct": 2}, {"q": "3. What does Yusuf practice on Monday? (ماذا يتدرب عليه يوسف يوم الاثنين؟)", "options": ["Art", "Reading", "Football (كرة القدم)"], "correct": 2}, {"q": "4. What class does Salma love on Tuesday? (ما الحصة التي تحبها سلمى يوم الثلاثاء؟)", "options": ["Music class", "Sports class", "Art class (حصة الرسم)"], "correct": 2}, {"q": "5. Where do they go on Wednesday? (أين يذهبون يوم الأربعاء؟)", "options": ["The zoo", "The library (المكتبة)", "The beach"], "correct": 1}],
                 gameItems: [{"id": 1, "word": "Friday", "icon": "🕌", "label": "الجمعة"}, {"id": 2, "word": "Monday", "icon": "⚽", "label": "الاثنين"}, {"id": 3, "word": "Tuesday", "icon": "🎨", "label": "الثلاثاء"}, {"id": 4, "word": "Week", "icon": "🗓️", "label": "أسبوع"}]
+            },
+            bodysystems: {
+                id: "bodysystems",
+                themeClass: "theme-bodysystems",
+                tag: "❤️ وحدة تكميلية • الصف الثالث",
+                level: "primary3",
+                levelBadge: "🎓 الصف الثالث - وحدة إضافية",
+                curriculumNote: "📘 يدعم منهج Connect Plus 3 - وحدة Body Matters (الهيكل العظمي، العضلات، والدورة الدموية)",
+                title: "Salma & Yusuf – Inside My Body",
+                desc: "وحدة تكميلية متقدمة! رحلة داخل جسم الإنسان لاكتشاف العظام والعضلات والقلب والرئتين، وكيف يعملون معاً كل يوم.",
+                icon: "❤️",
+                badgeIcon: "🫀",
+                badgeName: "عالم الجسم الصغير",
+                bannerGradient: "from-red-900 to-orange-700",
+                buttonActiveBg: "bg-red-600",
+                artBorder: "border-orange-300/80",
+                artBg: "bg-orange-50/60",
+                isPremium: true,
+                pages: [
+                    { page: 1, icon: "🦴", en: "Our body has many bones. They are called the skeleton.", ar: "يحتوي جسمنا على عظام كثيرة. تسمى الهيكل العظمي.", imageDesc: "رسم توضيحي بسيط للهيكل العظمي داخل جسم طفل.", soundFx: "صوت طقطقة خفيفة 🦴", audioDesc: "نطق Bones & Skeleton" },
+                    { page: 2, icon: "💪", en: "Muscles help us move, run, and jump.", ar: "تساعدنا العضلات على الحركة والجري والقفز.", imageDesc: "يوسف يجري ويقفز في الملعب بنشاط.", soundFx: "صوت خطوات جري 🏃", audioDesc: "نطق Muscles & Move" },
+                    { page: 3, icon: "❤️", en: "The heart pumps blood all around our body.", ar: "يضخ القلب الدم في جميع أنحاء الجسم.", imageDesc: "رسم قلب كبير وشرايين ملونة تمتد في الجسم.", soundFx: "صوت نبضات قلب 💓", audioDesc: "نطق Heart & Blood" },
+                    { page: 4, icon: "🫁", en: "Our lungs help us breathe in and out.", ar: "تساعدنا الرئتان على الشهيق والزفير.", imageDesc: "سلمى تأخذ نفساً عميقاً في الهواء الطلق.", soundFx: "صوت شهيق وزفير هادئ 🫁", audioDesc: "نطق Lungs & Breathe" },
+                    { page: 5, icon: "🧠", en: "The brain controls everything we do.", ar: "يتحكم المخ في كل ما نقوم به.", imageDesc: "رسم للمخ داخل رأس سلمى وهي تفكر في حل مسألة.", soundFx: "صوت تفكير وإضاءة فكرة 💡", audioDesc: "نطق Brain & Control" },
+                    { page: 6, icon: "🍽️", en: "The stomach digests the food we eat.", ar: "تهضم المعدة الطعام الذي نأكله.", imageDesc: "يوسف يأكل وجبة صحية على طاولة الطعام.", soundFx: "صوت هضم هادئ 🍽️", audioDesc: "نطق Stomach & Digest" },
+                    { page: 7, icon: "🏃", en: "Exercise every day keeps our heart strong and healthy.", ar: "التمرين كل يوم يحافظ على قلب قوي وصحي.", imageDesc: "سلمى ويوسف يمارسان الرياضة معاً في الحديقة.", soundFx: "موسيقى رياضية نشيطة 🎶", audioDesc: "نطق Exercise & Strong Heart" },
+                    { page: 8, icon: "🩺", en: "We take care of our amazing body every day!", ar: "نعتني بجسمنا الرائع كل يوم!", imageDesc: "سلمى ويوسف يبتسمان بصحة وحيوية.", soundFx: "موسيقى ختامية مبهجة 🎶", audioDesc: "ختام إيجابي عن الصحة" }
+                ],
+                vocab: [
+                    { en: "Bones", ar: "عظام", icon: "🦴" },
+                    { en: "Muscles", ar: "عضلات", icon: "💪" },
+                    { en: "Heart", ar: "قلب", icon: "❤️" },
+                    { en: "Blood", ar: "دم", icon: "🩸" },
+                    { en: "Lungs", ar: "رئتان", icon: "🫁" },
+                    { en: "Brain", ar: "مخ", icon: "🧠" },
+                    { en: "Stomach", ar: "معدة", icon: "🍽️" },
+                    { en: "Exercise", ar: "تمرين", icon: "🏃" }
+                ],
+                quiz: [
+                    { q: "1. What do we call all the bones together? (ماذا نسمي كل العظام معاً؟)", options: ["Muscles", "The skeleton (الهيكل العظمي)", "The brain"], correct: 1 },
+                    { q: "2. What do muscles help us do? (بماذا تساعدنا العضلات؟)", options: ["Move and jump (الحركة والقفز)", "Digest food", "Think"], correct: 0 },
+                    { q: "3. What does the heart do? (ماذا يفعل القلب؟)", options: ["Digests food", "Pumps blood (يضخ الدم)", "Helps us breathe"], correct: 1 },
+                    { q: "4. What do the lungs help us do? (بماذا تساعدنا الرئتان؟)", options: ["Breathe (التنفس)", "Walk", "Hear"], correct: 0 },
+                    { q: "5. What keeps our heart strong? (ما الذي يحافظ على قوة القلب؟)", options: ["Sitting all day", "Exercise (التمرين)", "Watching TV"], correct: 1 }
+                ],
+                gameItems: [
+                    { id: 1, word: "Heart", icon: "❤️", label: "قلب" },
+                    { id: 2, word: "Bones", icon: "🦴", label: "عظام" },
+                    { id: 3, word: "Lungs", icon: "🫁", label: "رئتان" },
+                    { id: 4, word: "Brain", icon: "🧠", label: "مخ" }
+                ]
             },
             egypt: {
                 id: "egypt",
@@ -1419,8 +1623,8 @@
         let isDarkMode = false;
         
         let quizAnswers = [];
-        let completedBooks = { school: false, zoo: false, market: false, family: false, rain: false, colors: false, numbers: false, clothes: false, house: false, seasons: false, body: false, pets: false, playtime: false, weather: false, feelings: false, kitchen: false, neighborhood: false, sportsday: false, doctor: false, transport: false, jobs: false, weekdays: false, egypt: false, healthyhabits: false, hobbies: false };
-        let bestQuizScores = { school: 0, zoo: 0, market: 0, family: 0, rain: 0, colors: 0, numbers: 0, clothes: 0, house: 0, seasons: 0, body: 0, pets: 0, playtime: 0, weather: 0, feelings: 0, kitchen: 0, neighborhood: 0, sportsday: 0, doctor: 0, transport: 0, jobs: 0, weekdays: 0, egypt: 0, healthyhabits: 0, hobbies: 0 };
+        let completedBooks = { school: false, zoo: false, market: false, family: false, rain: false, colors: false, numbers: false, clothes: false, house: false, seasons: false, body: false, pets: false, playtime: false, weather: false, feelings: false, kitchen: false, neighborhood: false, sportsday: false, doctor: false, transport: false, jobs: false, weekdays: false, egypt: false, healthyhabits: false, hobbies: false, itsme: false, dailyroutine: false, bodysystems: false, farm: false };
+        let bestQuizScores = { school: 0, zoo: 0, market: 0, family: 0, rain: 0, colors: 0, numbers: 0, clothes: 0, house: 0, seasons: 0, body: 0, pets: 0, playtime: 0, weather: 0, feelings: 0, kitchen: 0, neighborhood: 0, sportsday: 0, doctor: 0, transport: 0, jobs: 0, weekdays: 0, egypt: 0, healthyhabits: 0, hobbies: 0, itsme: 0, dailyroutine: 0, bodysystems: 0, farm: 0 };
 
         let selectedWordId = null;
         let matchedPairs = [];
@@ -2281,7 +2485,8 @@
             body: 'My Body', pets: 'My Pets', playtime: 'Playtime', weather: 'Weather', feelings: 'Feelings', kitchen: 'Kitchen',
             neighborhood: 'Neighborhood', sportsday: 'Sports Day', doctor: 'At Doctor',
             transport: 'Transport', jobs: 'Jobs', weekdays: 'Weekdays',
-            egypt: 'Ancient Egypt', healthyhabits: 'Healthy Habits', hobbies: 'Hobbies'
+            egypt: 'Ancient Egypt', healthyhabits: 'Healthy Habits', hobbies: 'Hobbies', itsme: "It's Me", dailyroutine: 'Daily Routine',
+            bodysystems: 'Inside My Body', farm: 'On the Farm'
         };
         const levelOrderList = ['kg1', 'kg2', 'primary1', 'primary2', 'primary3'];
 
@@ -2775,7 +2980,7 @@
                 subIcon.textContent = '🎁';
                 subTitle.textContent = 'كل القصص مجانية حاليًا!';
                 subTitle.className = "font-bold text-sm text-emerald-800 dark:text-emerald-300";
-                subDesc.textContent = 'استمتعوا بكل الـ25 قصة مجانًا خلال فترة الإطلاق 🎉';
+                subDesc.textContent = 'استمتعوا بكل الـ29 قصة مجانًا خلال فترة الإطلاق 🎉';
                 subDesc.className = "text-xs text-emerald-700 dark:text-emerald-400";
                 subBtn.classList.add('hidden');
             } else if (userSubscriptionStatus === 'active') {
