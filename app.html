@@ -2401,26 +2401,61 @@
 
                 scrollWrap.appendChild(path);
 
-                if (levelBooks.length > 4) {
-                    // زرار "اللي قبل" بيرجّع لبداية الصف (يمين)، وزرار "اللي بعد" بيكمّل للقصص الجديدة (شمال)
-                    const prevBtn = document.createElement('button');
-                    prevBtn.type = 'button';
-                    prevBtn.onclick = () => document.getElementById(pathId).scrollBy({ left: 180, behavior: 'smooth' });
-                    prevBtn.className = 'absolute top-1/2 -translate-y-1/2 end-0 z-10 w-8 h-8 rounded-full bg-slate-900/90 border border-slate-600 text-amber-300 flex items-center justify-center shadow-lg hover:bg-slate-800';
-                    prevBtn.title = 'القصص اللي قبل';
-                    prevBtn.innerHTML = '▶';
-                    scrollWrap.appendChild(prevBtn);
+                // لو الصف نفسه فايض عن الشاشة (شاشات صغيرة أو مستوى فيه قصص كتير)، نضيف أسهم Scroll عادية
+                requestAnimationFrame(() => {
+                    const el = document.getElementById(pathId);
+                    if (el && el.scrollWidth > el.clientWidth + 4) {
+                        if (!scrollWrap.querySelector('.scroll-arrow')) {
+                            const mk = (dir, label, title) => {
+                                const b = document.createElement('button');
+                                b.type = 'button';
+                                b.className = 'scroll-arrow absolute top-1/2 -translate-y-1/2 ' + (dir === 'start' ? 'end-0' : 'start-0') + ' z-10 w-8 h-8 rounded-full bg-slate-900/90 border border-slate-600 text-amber-300 flex items-center justify-center shadow-lg hover:bg-slate-800';
+                                b.title = title;
+                                b.innerHTML = label;
+                                b.onclick = () => el.scrollBy({ left: dir === 'start' ? 160 : -160, behavior: 'smooth' });
+                                return b;
+                            };
+                            scrollWrap.appendChild(mk('start', '▶', 'رجوع'));
+                            scrollWrap.appendChild(mk('end', '◀', 'كمان'));
+                        }
+                    }
+                });
 
-                    const nextBtn = document.createElement('button');
-                    nextBtn.type = 'button';
-                    nextBtn.onclick = () => document.getElementById(pathId).scrollBy({ left: -180, behavior: 'smooth' });
-                    nextBtn.className = 'absolute top-1/2 -translate-y-1/2 start-0 z-10 w-8 h-8 rounded-full bg-slate-900/90 border border-slate-600 text-amber-300 flex items-center justify-center shadow-lg hover:bg-slate-800';
-                    nextBtn.title = 'القصص اللي بعد';
-                    nextBtn.innerHTML = '◀';
-                    scrollWrap.appendChild(nextBtn);
+                // التنقل بين المستويات نفسها (من KG1 لـ KG2 وهكذا) بسهم واحد يمين وواحد شمال
+                if (activeLevelFilter !== 'all') {
+                    const curIdx = levelOrderList.indexOf(levelKey);
+                    const prevLevel = levelOrderList[curIdx - 1];
+                    const nextLevel = levelOrderList[curIdx + 1];
+
+                    const levelNav = document.createElement('div');
+                    levelNav.className = 'flex items-center justify-between mt-1 px-1';
+
+                    const prevLevelBtn = document.createElement('button');
+                    prevLevelBtn.type = 'button';
+                    prevLevelBtn.disabled = !prevLevel;
+                    prevLevelBtn.className = 'flex items-center gap-1 text-[11px] font-bold px-3 py-1.5 rounded-xl transition ' +
+                        (prevLevel ? 'bg-slate-800 text-amber-300 hover:bg-slate-700' : 'bg-slate-900 text-slate-600 cursor-not-allowed');
+                    prevLevelBtn.innerHTML = '▶ ' + (prevLevel ? levelsInfo[prevLevel].shortLabel : '');
+                    prevLevelBtn.title = prevLevel ? 'روح لمستوى ' + levelsInfo[prevLevel].fullLabel : '';
+                    if (prevLevel) prevLevelBtn.onclick = () => setLevelFilter(prevLevel);
+
+                    const nextLevelBtn = document.createElement('button');
+                    nextLevelBtn.type = 'button';
+                    nextLevelBtn.disabled = !nextLevel;
+                    nextLevelBtn.className = 'flex items-center gap-1 text-[11px] font-bold px-3 py-1.5 rounded-xl transition ' +
+                        (nextLevel ? 'bg-slate-800 text-amber-300 hover:bg-slate-700' : 'bg-slate-900 text-slate-600 cursor-not-allowed');
+                    nextLevelBtn.innerHTML = (nextLevel ? levelsInfo[nextLevel].shortLabel : '') + ' ◀';
+                    nextLevelBtn.title = nextLevel ? 'روح لمستوى ' + levelsInfo[nextLevel].fullLabel : '';
+                    if (nextLevel) nextLevelBtn.onclick = () => setLevelFilter(nextLevel);
+
+                    levelNav.appendChild(prevLevelBtn);
+                    levelNav.appendChild(nextLevelBtn);
+                    chapter.appendChild(scrollWrap);
+                    chapter.appendChild(levelNav);
+                } else {
+                    chapter.appendChild(scrollWrap);
                 }
 
-                chapter.appendChild(scrollWrap);
                 container.appendChild(chapter);
 
                 if (activeNodeWrap) {
