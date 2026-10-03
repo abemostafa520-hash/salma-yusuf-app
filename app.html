@@ -224,6 +224,9 @@
                         <button onclick="openSentenceBuilder()" id="builder-page-btn" class="bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs sm:text-sm px-4 py-1.5 rounded-xl shadow-md transition flex items-center gap-1.5">
                             🧩 رتّب الجملة
                         </button>
+                        <button onclick="openPronounGame()" id="pronoun-page-btn" class="hidden bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs sm:text-sm px-4 py-1.5 rounded-xl shadow-md transition items-center gap-1.5">
+                            🔤 أكمل بالضمير
+                        </button>
                     </div>
                 </div>
 
@@ -565,6 +568,28 @@
                 <button onclick="sbHint()" class="px-4 py-2 bg-sky-100 dark:bg-slate-800 hover:bg-sky-200 dark:hover:bg-slate-700 text-sky-700 dark:text-sky-300 text-xs font-bold rounded-xl transition border border-sky-200 dark:border-slate-700">💡 تلميح</button>
                 <button onclick="sbReset()" class="px-4 py-2 bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-800 dark:text-amber-300 text-xs font-bold rounded-xl transition border border-amber-200 dark:border-slate-700">🔄 إعادة الخلط</button>
             </div>
+        </div>
+    </div>
+
+    <div id="pronoun-game-overlay" class="hidden fixed inset-0 bg-black/60 z-[65] flex items-center justify-center p-4" onclick="closePronounGameOnOverlay(event)">
+        <div class="bg-sky-50 dark:bg-slate-900 rounded-[28px] p-5 sm:p-7 max-w-lg w-full shadow-2xl border-4 border-white dark:border-slate-700 relative" onclick="event.stopPropagation()">
+            <button onclick="closePronounGame()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-700 dark:hover:text-white text-xl leading-none bg-white dark:bg-slate-800 w-8 h-8 rounded-full shadow flex items-center justify-center">✕</button>
+
+            <div class="flex items-start gap-3 mb-5">
+                <div class="w-14 h-14 rounded-full bg-sky-100 dark:bg-slate-800 border-2 border-sky-300 dark:border-sky-700 flex items-center justify-center text-3xl shrink-0 shadow-sm">🐧</div>
+                <div class="bg-white dark:bg-slate-800 rounded-2xl rounded-tr-none px-4 py-2.5 border border-sky-200 dark:border-slate-700 shadow-sm">
+                    <p class="text-sm font-bold text-slate-800 dark:text-slate-100">اختار الضمير الصح يكمّل الجملة! 🔤</p>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border-2 border-sky-200 dark:border-slate-700 mb-3 text-center">
+                <p id="pg-sentence" class="font-english font-bold text-xl sm:text-2xl text-slate-900 dark:text-white leading-relaxed" dir="ltr"></p>
+            </div>
+            <div id="pg-arabic-hint" class="text-center text-xs font-bold text-amber-700 dark:text-amber-400 mb-5"></div>
+
+            <div id="pg-options" class="grid grid-cols-3 gap-3 mb-4"></div>
+
+            <div id="pg-result-msg" class="hidden text-center font-black text-base py-2.5 rounded-xl"></div>
         </div>
     </div>
 
@@ -1988,6 +2013,7 @@
             document.getElementById('next-btn').disabled = currentPageIndex === currentBook.pages.length - 1;
 
             updateDots();
+            updatePronounButtonVisibility();
 
             if (audioEnabled) playCurrentAudio();
         }
@@ -2380,6 +2406,91 @@
                 setTimeout(() => target.classList.remove('ring-4', 'ring-amber-400', 'animate-pulse'), 1500);
             }
         };
+
+        // ================= نشاط "أكمل بالضمير الصح" (Pronoun Fill-in-the-Blank) =================
+        const PRONOUN_LIST = ['He', 'She', 'It', 'They', 'We', 'You', 'I'];
+        const PRONOUN_RE = new RegExp('\\b(' + PRONOUN_LIST.join('|') + ')\\b');
+        const PRONOUN_DISTRACTORS = {
+            He: ['She', 'It'], She: ['He', 'It'], It: ['He', 'She'],
+            They: ['We', 'She'], We: ['They', 'You'], You: ['We', 'They'], I: ['You', 'We']
+        };
+
+        let pgCorrectPronoun = '';
+        let pgFullSentence = '';
+
+        function findPageProoun(enText) {
+            const m = enText.match(PRONOUN_RE);
+            return m ? m[1] : null;
+        }
+
+        function updatePronounButtonVisibility() {
+            const page = booksDatabase[currentBookId].pages[currentPageIndex];
+            const btn = document.getElementById('pronoun-page-btn');
+            const found = findPageProoun(page.en);
+            if (found) {
+                btn.classList.remove('hidden');
+                btn.classList.add('flex');
+            } else {
+                btn.classList.add('hidden');
+                btn.classList.remove('flex');
+            }
+        }
+
+        window.openPronounGame = function() {
+            const page = booksDatabase[currentBookId].pages[currentPageIndex];
+            const found = findPageProoun(page.en);
+            if (!found) return;
+
+            pgCorrectPronoun = found;
+            pgFullSentence = page.en;
+
+            const blanked = page.en.replace(new RegExp('\\b' + found + '\\b'), '_____');
+            document.getElementById('pg-sentence').textContent = blanked;
+            document.getElementById('pg-arabic-hint').textContent = '💬 ' + page.ar;
+            document.getElementById('pg-result-msg').classList.add('hidden');
+
+            const options = sbShuffle([found, ...(PRONOUN_DISTRACTORS[found] || ['He', 'She'])]);
+            const optBox = document.getElementById('pg-options');
+            optBox.innerHTML = '';
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'py-3 rounded-xl border-2 font-english font-black text-lg bg-white dark:bg-slate-800 border-sky-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 hover:border-sky-400 hover:-translate-y-0.5 transition shadow-sm';
+                btn.textContent = opt;
+                btn.onclick = () => pgCheckAnswer(opt, btn);
+                optBox.appendChild(btn);
+            });
+
+            document.getElementById('pronoun-game-overlay').classList.remove('hidden');
+        };
+
+        window.closePronounGame = function() {
+            document.getElementById('pronoun-game-overlay').classList.add('hidden');
+        };
+
+        window.closePronounGameOnOverlay = function(e) {
+            if (e.target.id === 'pronoun-game-overlay') closePronounGame();
+        };
+
+        function pgCheckAnswer(chosen, btnEl) {
+            const resultBox = document.getElementById('pg-result-msg');
+            const allBtns = document.getElementById('pg-options').children;
+            resultBox.classList.remove('hidden');
+
+            if (chosen === pgCorrectPronoun) {
+                btnEl.className = btnEl.className.replace('bg-white dark:bg-slate-800 border-sky-200 dark:border-slate-700 text-slate-800 dark:text-slate-100', 'bg-emerald-500 border-emerald-600 text-white');
+                document.getElementById('pg-sentence').textContent = pgFullSentence;
+                resultBox.className = 'text-center font-black text-base py-2.5 rounded-xl bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300';
+                resultBox.textContent = '🎉 صح! برافو عليك!';
+                Array.from(allBtns).forEach(b => b.disabled = true);
+                speakText(pgFullSentence);
+                setTimeout(() => { closePronounGame(); }, 2000);
+            } else {
+                btnEl.className = btnEl.className.replace('bg-white dark:bg-slate-800 border-sky-200 dark:border-slate-700 text-slate-800 dark:text-slate-100', 'bg-rose-100 dark:bg-rose-950/50 border-rose-400 text-rose-700 dark:text-rose-300');
+                resultBox.className = 'text-center font-black text-base py-2.5 rounded-xl bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300';
+                resultBox.textContent = '🤔 مش هي، جرّب كلمة تانية!';
+            }
+        }
 
         function sbCheckAnswer() {
             const built = sbPlacedIndexes.map(idx => sbBankState[idx].word);
