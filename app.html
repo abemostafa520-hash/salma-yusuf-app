@@ -221,6 +221,9 @@
                         <button onclick="practiceCurrentPageSpeech(this)" id="mic-page-btn" class="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs sm:text-sm px-4 py-1.5 rounded-xl shadow-md transition flex items-center gap-1.5">
                             🎤 جرّب تنطقها
                         </button>
+                        <button onclick="openSentenceBuilder()" id="builder-page-btn" class="bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs sm:text-sm px-4 py-1.5 rounded-xl shadow-md transition flex items-center gap-1.5">
+                            🧩 رتّب الجملة
+                        </button>
                     </div>
                 </div>
 
@@ -537,6 +540,33 @@
             <p>تطبيق تفاعلي موحّد يضم 30 قصة ووحدة تعليمية كاملة تغطي KG1 حتى الصف الثالث الابتدائي، لتعزيز مهارات الأطفال في اللغة الإنجليزية.</p>
         </div>
     </footer>
+
+    <div id="sentence-builder-overlay" class="hidden fixed inset-0 bg-black/60 z-[65] flex items-center justify-center p-4" onclick="closeSentenceBuilderOnOverlay(event)">
+        <div class="bg-amber-50 dark:bg-slate-900 rounded-[28px] p-5 sm:p-7 max-w-lg w-full shadow-2xl border-4 border-white dark:border-slate-700 relative" style="background-image: radial-gradient(circle, rgba(0,0,0,0.04) 1px, transparent 1px); background-size: 14px 14px;" onclick="event.stopPropagation()">
+            <button onclick="closeSentenceBuilder()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-700 dark:hover:text-white text-xl leading-none bg-white dark:bg-slate-800 w-8 h-8 rounded-full shadow flex items-center justify-center">✕</button>
+
+            <div class="flex items-start gap-3 mb-4">
+                <div class="w-14 h-14 rounded-full bg-violet-100 dark:bg-slate-800 border-2 border-violet-300 dark:border-violet-700 flex items-center justify-center text-3xl shrink-0 shadow-sm">🦉</div>
+                <div class="bg-white dark:bg-slate-800 rounded-2xl rounded-tr-none px-4 py-2.5 border border-violet-200 dark:border-slate-700 shadow-sm">
+                    <p class="text-sm font-bold text-slate-800 dark:text-slate-100">رتّب الكلمات بالترتيب الصح عشان تكوّن الجملة! 🧩</p>
+                </div>
+            </div>
+
+            <div id="sb-arabic-hint" class="text-center text-xs font-bold text-amber-700 dark:text-amber-400 mb-4"></div>
+
+            <div id="sb-slots" class="flex flex-wrap justify-center gap-2 min-h-[64px] mb-5 p-3 rounded-2xl bg-white/70 dark:bg-slate-800/60 border-2 border-dashed border-violet-300 dark:border-slate-600"></div>
+
+            <div id="sb-bank" class="flex flex-wrap justify-center gap-2 mb-5 min-h-[56px]"></div>
+
+            <div id="sb-result-msg" class="hidden text-center font-black text-base mb-4 py-2.5 rounded-xl"></div>
+
+            <div class="flex items-center justify-center gap-2 flex-wrap">
+                <button onclick="sbUndo()" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition border border-slate-200 dark:border-slate-700">↩️ تراجع</button>
+                <button onclick="sbHint()" class="px-4 py-2 bg-sky-100 dark:bg-slate-800 hover:bg-sky-200 dark:hover:bg-slate-700 text-sky-700 dark:text-sky-300 text-xs font-bold rounded-xl transition border border-sky-200 dark:border-slate-700">💡 تلميح</button>
+                <button onclick="sbReset()" class="px-4 py-2 bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-800 dark:text-amber-300 text-xs font-bold rounded-xl transition border border-amber-200 dark:border-slate-700">🔄 إعادة الخلط</button>
+            </div>
+        </div>
+    </div>
 
     <div id="skin-picker-overlay" class="hidden fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4" onclick="closeSkinPickerOnOverlay(event)">
         <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 max-w-md w-full shadow-2xl border border-slate-100 dark:border-slate-800">
@@ -2221,6 +2251,151 @@
             const text = booksDatabase[currentBookId].pages[currentPageIndex].en;
             speakText(text);
         };
+
+        // ================= نشاط "رتّب الجملة" (Sentence Builder) =================
+        // بيتولّد تلقائيًا من جملة الصفحة الحالية، من غير أي بيانات إضافية، وبيشتغل على كل القصص
+        const sbPalette = ['bg-rose-100 border-rose-300 text-rose-900', 'bg-sky-100 border-sky-300 text-sky-900',
+            'bg-emerald-100 border-emerald-300 text-emerald-900', 'bg-amber-100 border-amber-300 text-amber-900',
+            'bg-violet-100 border-violet-300 text-violet-900', 'bg-pink-100 border-pink-300 text-pink-900',
+            'bg-teal-100 border-teal-300 text-teal-900', 'bg-orange-100 border-orange-300 text-orange-900'];
+
+        let sbOriginalWords = [];   // الترتيب الصحيح
+        let sbBankState = [];       // [{ word, used }] بالترتيب المخلوط المعروض في بنك الكلمات
+        let sbPlacedIndexes = [];   // فهارس (indexes) داخل sbBankState بالترتيب اللي الطفل حطّهم بيه
+
+        function sbShuffle(arr) {
+            const a = arr.slice();
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+
+        window.openSentenceBuilder = function() {
+            const page = booksDatabase[currentBookId].pages[currentPageIndex];
+            sbOriginalWords = page.en.trim().split(/\s+/);
+            document.getElementById('sb-arabic-hint').textContent = '💬 ' + page.ar;
+
+            let shuffledOrder = sbOriginalWords.map((_, i) => i);
+            if (sbOriginalWords.length > 1) {
+                let tries = 0;
+                do { shuffledOrder = sbShuffle(sbOriginalWords.map((_, i) => i)); tries++; }
+                while (tries < 8 && JSON.stringify(shuffledOrder) === JSON.stringify(sbOriginalWords.map((_, i) => i)));
+            }
+            sbBankState = shuffledOrder.map(origIdx => ({ word: sbOriginalWords[origIdx], used: false }));
+            sbPlacedIndexes = [];
+
+            document.getElementById('sentence-builder-overlay').classList.remove('hidden');
+            sbRender();
+        };
+
+        window.closeSentenceBuilder = function() {
+            document.getElementById('sentence-builder-overlay').classList.add('hidden');
+        };
+
+        window.closeSentenceBuilderOnOverlay = function(e) {
+            if (e.target.id === 'sentence-builder-overlay') closeSentenceBuilder();
+        };
+
+        function sbRender() {
+            const slotsBox = document.getElementById('sb-slots');
+            const bankBox = document.getElementById('sb-bank');
+            const resultBox = document.getElementById('sb-result-msg');
+            resultBox.classList.add('hidden');
+            slotsBox.innerHTML = '';
+            bankBox.innerHTML = '';
+
+            sbOriginalWords.forEach((_, i) => {
+                const filled = i < sbPlacedIndexes.length;
+                const slot = document.createElement('div');
+                if (filled) {
+                    const bankIdx = sbPlacedIndexes[i];
+                    const colorClass = sbPalette[bankIdx % sbPalette.length];
+                    slot.className = 'px-3 py-2 rounded-xl border-2 font-english font-bold text-sm sm:text-base shadow-sm transform transition cursor-pointer hover:-translate-y-0.5 ' + colorClass;
+                    slot.textContent = sbBankState[bankIdx].word;
+                    slot.title = 'دوس عشان تشيلها';
+                    slot.onclick = () => sbRemoveFromIndex(i);
+                } else {
+                    slot.className = 'px-6 py-2 rounded-xl border-b-4 border-dashed border-slate-300 dark:border-slate-600 min-w-[42px]';
+                    slot.innerHTML = '&nbsp;';
+                }
+                slotsBox.appendChild(slot);
+            });
+
+            sbBankState.forEach((item, idx) => {
+                if (item.used) return;
+                const colorClass = sbPalette[idx % sbPalette.length];
+                const tile = document.createElement('button');
+                tile.type = 'button';
+                tile.className = 'px-3 py-2 rounded-xl border-2 font-english font-bold text-sm sm:text-base shadow-sm transition transform hover:-translate-y-1 hover:shadow-md ' + colorClass;
+                tile.style.transform = 'rotate(' + ((idx % 5) - 2) + 'deg)';
+                tile.textContent = item.word;
+                tile.onclick = () => sbPlaceWord(idx);
+                bankBox.appendChild(tile);
+            });
+
+            if (sbPlacedIndexes.length === sbOriginalWords.length) {
+                sbCheckAnswer();
+            }
+        }
+
+        function sbPlaceWord(bankIdx) {
+            if (sbBankState[bankIdx].used) return;
+            sbBankState[bankIdx].used = true;
+            sbPlacedIndexes.push(bankIdx);
+            sbRender();
+        }
+
+        function sbRemoveFromIndex(slotIdx) {
+            // شيل الكلمة دي وكل اللي بعدها، عشان الترتيب يفضل منطقي
+            const removed = sbPlacedIndexes.splice(slotIdx);
+            removed.forEach(bankIdx => { sbBankState[bankIdx].used = false; });
+            sbRender();
+        }
+
+        window.sbUndo = function() {
+            if (sbPlacedIndexes.length === 0) return;
+            const lastIdx = sbPlacedIndexes.pop();
+            sbBankState[lastIdx].used = false;
+            sbRender();
+        };
+
+        window.sbReset = function() {
+            sbBankState.forEach(item => { item.used = false; });
+            sbPlacedIndexes = [];
+            let order = sbBankState.map((_, i) => i);
+            sbBankState = sbShuffle(sbBankState);
+            sbRender();
+        };
+
+        window.sbHint = function() {
+            const nextIdx = sbPlacedIndexes.length;
+            if (nextIdx >= sbOriginalWords.length) return;
+            const correctWord = sbOriginalWords[nextIdx];
+            const bankBox = document.getElementById('sb-bank');
+            const target = Array.from(bankBox.children).find(el => el.textContent === correctWord);
+            if (target) {
+                target.classList.add('ring-4', 'ring-amber-400', 'animate-pulse');
+                setTimeout(() => target.classList.remove('ring-4', 'ring-amber-400', 'animate-pulse'), 1500);
+            }
+        };
+
+        function sbCheckAnswer() {
+            const built = sbPlacedIndexes.map(idx => sbBankState[idx].word);
+            const isCorrect = JSON.stringify(built) === JSON.stringify(sbOriginalWords);
+            const resultBox = document.getElementById('sb-result-msg');
+            resultBox.classList.remove('hidden');
+            if (isCorrect) {
+                resultBox.className = 'text-center font-black text-base mb-4 py-2.5 rounded-xl bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300';
+                resultBox.textContent = '🎉 برافو! الجملة صح تمامًا!';
+                speakText(sbOriginalWords.join(' '));
+                setTimeout(() => { closeSentenceBuilder(); }, 2200);
+            } else {
+                resultBox.className = 'text-center font-black text-base mb-4 py-2.5 rounded-xl bg-rose-100 dark:bg-rose-950/50 text-rose-800 dark:text-rose-300';
+                resultBox.textContent = '🤔 قريب! دوس "تراجع" وجرّب ترتيب تاني.';
+            }
+        }
 
         function renderVocabGrid() {
             const grid = document.getElementById('vocab-grid');
