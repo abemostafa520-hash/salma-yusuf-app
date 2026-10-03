@@ -127,7 +127,7 @@
                 <div class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-1 gap-0.5" title="سرعة نطق القصص">
                     <button onclick="setSpeechRate(0.6)" id="speed-slow-btn" class="px-2 py-1.5 rounded-lg text-sm transition-all" title="بطيء">🐢</button>
                     <button onclick="setSpeechRate(0.85)" id="speed-normal-btn" class="px-2 py-1.5 rounded-lg text-sm transition-all" title="عادي">🚶</button>
-                    <button onclick="setSpeechRate(1.1)" id="speed-fast-btn" class="px-2 py-1.5 rounded-lg text-sm transition-all" title="سريع قليلًا">🐇</button>
+                    <button onclick="setSpeechRate(0.95)" id="speed-fast-btn" class="px-2 py-1.5 rounded-lg text-sm transition-all" title="سريع قليلًا">🐇</button>
                 </div>
             </div>
         </div>
@@ -2044,7 +2044,7 @@
             const buttons = {
                 0.6: document.getElementById('speed-slow-btn'),
                 0.85: document.getElementById('speed-normal-btn'),
-                1.1: document.getElementById('speed-fast-btn')
+                0.95: document.getElementById('speed-fast-btn')
             };
             Object.keys(buttons).forEach(rateKey => {
                 const btn = buttons[rateKey];
