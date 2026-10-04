@@ -227,6 +227,9 @@
                         <button onclick="openPronounGame()" id="pronoun-page-btn" class="hidden bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs sm:text-sm px-4 py-1.5 rounded-xl shadow-md transition items-center gap-1.5">
                             🔤 أكمل بالضمير
                         </button>
+                        <button onclick="openPersonalTalk()" id="personal-page-btn" class="hidden bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs sm:text-sm px-4 py-1.5 rounded-xl shadow-md transition items-center gap-1.5">
+                            🗣️ اتكلم عن نفسك
+                        </button>
                     </div>
                 </div>
 
@@ -343,6 +346,28 @@
         </section>
 
         <section id="section-activity" class="hidden space-y-6">
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-amber-100 dark:border-slate-800 shadow-xl shadow-amber-900/5 dark:shadow-none">
+                <div class="mb-6 pb-5 border-b border-slate-100 dark:border-slate-800">
+                    <h3 id="workbook-title" class="text-2xl font-black text-slate-900 dark:text-white">📘 كراسة الأنشطة</h3>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">كل تمارين القصة دي في مكان واحد، زي كراسة الأنشطة بالظبط!</p>
+                </div>
+
+                <div class="space-y-6" id="workbook-sections">
+                    <div>
+                        <h4 class="font-bold text-slate-800 dark:text-slate-200 mb-3 flex items-center gap-2"><span>🧩</span> رتّب الجملة</h4>
+                        <div id="wb-builder-list" class="flex flex-wrap gap-2"></div>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-800 dark:text-slate-200 mb-3 flex items-center gap-2"><span>🔤</span> أكمل بالضمير الصح</h4>
+                        <div id="wb-pronoun-list" class="flex flex-wrap gap-2"></div>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-800 dark:text-slate-200 mb-3 flex items-center gap-2"><span>🗣️</span> اتكلم عن نفسك</h4>
+                        <div id="wb-personal-list" class="flex flex-wrap gap-2"></div>
+                    </div>
+                </div>
+            </div>
+
             <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-amber-100 dark:border-slate-800 shadow-xl shadow-amber-900/5 dark:shadow-none">
                 <div class="mb-6">
                     <h3 id="activity-title" class="text-2xl font-black text-slate-900 dark:text-white">🎮 نشاط التوصيل التفاعلي</h3>
@@ -590,6 +615,22 @@
             <div id="pg-options" class="grid grid-cols-3 gap-3 mb-4"></div>
 
             <div id="pg-result-msg" class="hidden text-center font-black text-base py-2.5 rounded-xl"></div>
+        </div>
+    </div>
+
+    <div id="personal-talk-overlay" class="hidden fixed inset-0 bg-black/60 z-[65] flex items-center justify-center p-4" onclick="closePersonalTalkOnOverlay(event)">
+        <div class="bg-orange-50 dark:bg-slate-900 rounded-[28px] p-5 sm:p-7 max-w-lg w-full shadow-2xl border-4 border-white dark:border-slate-700 relative text-center" onclick="event.stopPropagation()">
+            <button onclick="closePersonalTalk()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-700 dark:hover:text-white text-xl leading-none bg-white dark:bg-slate-800 w-8 h-8 rounded-full shadow flex items-center justify-center">✕</button>
+
+            <div id="pt-icon" class="text-5xl mb-2">🙋</div>
+            <h3 class="text-lg font-black text-slate-900 dark:text-white mb-1">دورك دلوقتي!</h3>
+            <p id="pt-prompt-ar" class="text-sm font-bold text-orange-700 dark:text-orange-400 mb-1"></p>
+            <p id="pt-starter-en" class="font-english font-bold text-xl text-slate-800 dark:text-slate-100 mb-5" dir="ltr"></p>
+
+            <button onclick="startPersonalRecognition()" id="pt-mic-btn" class="w-20 h-20 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-3xl shadow-lg flex items-center justify-center mx-auto transition transform hover:scale-105">🎤</button>
+            <p id="pt-status" class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-3">دوس على الميكروفون وقول جملتك بصوت عالٍ</p>
+
+            <div id="pt-result-msg" class="hidden text-center font-black text-base mt-4 py-2.5 rounded-xl"></div>
         </div>
     </div>
 
@@ -1953,6 +1994,7 @@
             renderVocabGrid();
             renderQuiz();
             renderMatchingGame();
+            renderActivityWorkbook();
             renderUniverseView();
 
             activePhonicsLevel = data.level;
@@ -2014,6 +2056,7 @@
 
             updateDots();
             updatePronounButtonVisibility();
+            updatePersonalButtonVisibility();
 
             if (audioEnabled) playCurrentAudio();
         }
@@ -2298,8 +2341,9 @@
             return a;
         }
 
-        window.openSentenceBuilder = function() {
-            const page = booksDatabase[currentBookId].pages[currentPageIndex];
+        window.openSentenceBuilder = function(pageIndexOverride) {
+            const pIdx = (typeof pageIndexOverride === 'number') ? pageIndexOverride : currentPageIndex;
+            const page = booksDatabase[currentBookId].pages[pIdx];
             sbOriginalWords = page.en.trim().split(/\s+/);
             document.getElementById('sb-arabic-hint').textContent = '💬 ' + page.ar;
 
@@ -2436,8 +2480,9 @@
             }
         }
 
-        window.openPronounGame = function() {
-            const page = booksDatabase[currentBookId].pages[currentPageIndex];
+        window.openPronounGame = function(pageIndexOverride) {
+            const pIdx = (typeof pageIndexOverride === 'number') ? pageIndexOverride : currentPageIndex;
+            const page = booksDatabase[currentBookId].pages[pIdx];
             const found = findPageProoun(page.en);
             if (!found) return;
 
@@ -2491,6 +2536,116 @@
                 resultBox.textContent = '🤔 مش هي، جرّب كلمة تانية!';
             }
         }
+
+        // ================= نشاط "اتكلم عن نفسك" (Make It Personal) =================
+        // بيكتشف جمل القصة اللي بصيغة "أنا..." ويحوّلها لسؤال شخصي للطفل، بدل مقارنتها بنص ثابت
+        const PERSONAL_TEMPLATES = [
+            { key: 'name', re: /my name is/i, icon: '🙋', promptAr: 'إيه اسمك إنت؟ قول:', starterEn: '"My name is ... "', anchors: ['my name is', 'my name'] },
+            { key: 'age', re: /\b(i am|i'm)\s+\w+\s+years?\s+old/i, icon: '🎂', promptAr: 'كام سنة عمرك؟ قول:', starterEn: '"I am ... years old"', anchors: ['years old', 'year old'] },
+            { key: 'looks', re: /\bi have\b.*(hair|eyes)/i, icon: '👀', promptAr: 'وصّف شعرك أو عينيك! قول:', starterEn: '"I have ... hair / eyes"', anchors: ['i have', 'hair', 'eyes'] },
+            { key: 'feeling', re: /\bi am (happy|sad|tired|excited|scared|surprised)\b/i, icon: '😊', promptAr: 'حاسس إزاي النهاردة؟ قول:', starterEn: '"I am ... "', anchors: ['i am', "i'm"] },
+            { key: 'like', re: /\bi like\b/i, icon: '❤️', promptAr: 'إيه اللي بتحبه؟ قول:', starterEn: '"I like ... "', anchors: ['i like'] }
+        ];
+
+        function findPersonalTemplate(enText) {
+            return PERSONAL_TEMPLATES.find(t => t.re.test(enText)) || null;
+        }
+
+        function updatePersonalButtonVisibility() {
+            const page = booksDatabase[currentBookId].pages[currentPageIndex];
+            const btn = document.getElementById('personal-page-btn');
+            const found = findPersonalTemplate(page.en);
+            if (found) {
+                btn.classList.remove('hidden');
+                btn.classList.add('flex');
+            } else {
+                btn.classList.add('hidden');
+                btn.classList.remove('flex');
+            }
+        }
+
+        let ptActiveRecognition = null;
+
+        window.openPersonalTalk = function(pageIndexOverride) {
+            const pIdx = (typeof pageIndexOverride === 'number') ? pageIndexOverride : currentPageIndex;
+            const page = booksDatabase[currentBookId].pages[pIdx];
+            const template = findPersonalTemplate(page.en);
+            if (!template) return;
+
+            document.getElementById('pt-icon').textContent = template.icon;
+            document.getElementById('pt-prompt-ar').textContent = template.promptAr;
+            document.getElementById('pt-starter-en').textContent = template.starterEn;
+            document.getElementById('pt-status').textContent = 'دوس على الميكروفون وقول جملتك بصوت عالٍ';
+            document.getElementById('pt-result-msg').classList.add('hidden');
+            document.getElementById('personal-talk-overlay').dataset.anchors = JSON.stringify(template.anchors);
+
+            document.getElementById('personal-talk-overlay').classList.remove('hidden');
+        };
+
+        window.closePersonalTalk = function() {
+            if (ptActiveRecognition) { try { ptActiveRecognition.stop(); } catch (e) {} }
+            document.getElementById('personal-talk-overlay').classList.add('hidden');
+        };
+
+        window.closePersonalTalkOnOverlay = function(e) {
+            if (e.target.id === 'personal-talk-overlay') closePersonalTalk();
+        };
+
+        window.startPersonalRecognition = function() {
+            if (!isSpeechRecognitionSupported()) {
+                alert('عذرًا، متصفحك الحالي لا يدعم التعرف الصوتي. جرّب على متصفح Google Chrome.');
+                return;
+            }
+            if (ptActiveRecognition) { try { ptActiveRecognition.stop(); } catch (e) {} }
+
+            const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognitionAPI();
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 3;
+
+            const micBtn = document.getElementById('pt-mic-btn');
+            const statusEl = document.getElementById('pt-status');
+            micBtn.classList.add('animate-pulse');
+            micBtn.disabled = true;
+            statusEl.textContent = '🔴 بيسمعك...';
+
+            const restore = () => {
+                micBtn.classList.remove('animate-pulse');
+                micBtn.disabled = false;
+                ptActiveRecognition = null;
+            };
+
+            recognition.onresult = (event) => {
+                const anchors = JSON.parse(document.getElementById('personal-talk-overlay').dataset.anchors || '[]');
+                const said = normalizeSpeech(event.results[0][0].transcript);
+                const heardSomethingGood = anchors.some(a => said.includes(normalizeSpeech(a))) || said.split(' ').length >= 2;
+                const resultBox = document.getElementById('pt-result-msg');
+                resultBox.classList.remove('hidden');
+                statusEl.textContent = 'سمعناك تقول: "' + event.results[0][0].transcript + '"';
+
+                if (heardSomethingGood) {
+                    resultBox.className = 'text-center font-black text-base mt-4 py-2.5 rounded-xl bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300';
+                    resultBox.textContent = '🎉 رائع جدًا! كلام ممتاز!';
+                } else {
+                    resultBox.className = 'text-center font-black text-base mt-4 py-2.5 rounded-xl bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300';
+                    resultBox.textContent = '🤗 جميل! جرّب تاني وقول الجملة كاملة.';
+                }
+            };
+
+            recognition.onerror = (event) => {
+                restore();
+                if (event.error === 'not-allowed' || event.error === 'permission-denied') {
+                    alert('محتاجين إذن استخدام الميكروفون عشان الميزة دي تشتغل.');
+                } else if (event.error === 'no-speech') {
+                    document.getElementById('pt-status').textContent = '🤫 مسمعتش صوت، جرّب تاني';
+                }
+            };
+            recognition.onend = restore;
+
+            ptActiveRecognition = recognition;
+            try { recognition.start(); } catch (e) { restore(); }
+        };
 
         function sbCheckAnswer() {
             const built = sbPlacedIndexes.map(idx => sbBankState[idx].word);
@@ -2654,6 +2809,48 @@
             quizAnswers = Array(currentBook.quiz.length).fill(null);
             renderQuiz();
         };
+
+        // ================= كراسة الأنشطة: تجميع كل تمارين القصة الحالية في مكان واحد =================
+        function renderActivityWorkbook() {
+            const book = booksDatabase[currentBookId];
+            const builderBox = document.getElementById('wb-builder-list');
+            const pronounBox = document.getElementById('wb-pronoun-list');
+            const personalBox = document.getElementById('wb-personal-list');
+            if (!builderBox || !pronounBox || !personalBox) return;
+
+            document.getElementById('workbook-title').textContent = '📘 كراسة أنشطة (' + book.title + ')';
+
+            builderBox.innerHTML = '';
+            pronounBox.innerHTML = '';
+            personalBox.innerHTML = '';
+
+            const mkBtn = (label, colorClasses, onClick) => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'px-3.5 py-2 rounded-xl border-2 text-xs sm:text-sm font-bold transition hover:-translate-y-0.5 shadow-sm ' + colorClasses;
+                b.textContent = label;
+                b.onclick = onClick;
+                return b;
+            };
+
+            book.pages.forEach((p, idx) => {
+                builderBox.appendChild(mkBtn('📄 صفحة ' + p.page, 'bg-violet-50 dark:bg-slate-800 border-violet-200 dark:border-slate-700 text-violet-800 dark:text-violet-300 hover:bg-violet-100', () => openSentenceBuilder(idx)));
+
+                if (findPageProoun(p.en)) {
+                    pronounBox.appendChild(mkBtn('📄 صفحة ' + p.page, 'bg-sky-50 dark:bg-slate-800 border-sky-200 dark:border-slate-700 text-sky-800 dark:text-sky-300 hover:bg-sky-100', () => openPronounGame(idx)));
+                }
+                if (findPersonalTemplate(p.en)) {
+                    personalBox.appendChild(mkBtn('📄 صفحة ' + p.page, 'bg-orange-50 dark:bg-slate-800 border-orange-200 dark:border-slate-700 text-orange-800 dark:text-orange-300 hover:bg-orange-100', () => openPersonalTalk(idx)));
+                }
+            });
+
+            if (!pronounBox.children.length) {
+                pronounBox.innerHTML = '<p class="text-xs text-slate-400 dark:text-slate-500 font-bold">مفيش جمل فيها ضمير في القصة دي، جرّب قصة تانية! 🙂</p>';
+            }
+            if (!personalBox.children.length) {
+                personalBox.innerHTML = '<p class="text-xs text-slate-400 dark:text-slate-500 font-bold">مفيش جمل شخصية في القصة دي، جرّب قصة "It\'s Me" في KG1! 🙂</p>';
+            }
+        }
 
         function renderMatchingGame() {
             const currentBook = booksDatabase[currentBookId];
