@@ -1,5 +1,5 @@
  <!DOCTYPE html>
-<!-- BUILD-VERSION: v19-timer-fix-stricter-talk-arabic-typos-2026-10-04 -->
+<!-- BUILD-VERSION: v20-personal-talk-celebration-next-2026-10-04 -->
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -74,6 +74,8 @@
         .dark .skin-tinted-bg { background-color: #1E293B !important; border-color: #334155 !important; }
         .skin-swatch-card.active { outline: 3px solid #1e293b; outline-offset: 2px; }
         .dark .skin-swatch-card.active { outline-color: #F8FAFC; }
+    @keyframes sy-fall { 0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(105vh) rotate(540deg); opacity: 0.9; } }
+.sy-confetti { position: fixed; top: 0; z-index: 90; pointer-events: none; animation: sy-fall linear forwards; }
     </style>
 </head>
 <body class="font-sans text-slate-800 antialiased min-h-screen flex flex-col justify-between selection:bg-amber-200 theme-school" id="app-body">
@@ -631,6 +633,10 @@
             <p id="pt-status" class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-3">دوس على الميكروفون وقول جملتك بصوت عالٍ</p>
 
             <div id="pt-result-msg" class="hidden text-center font-black text-base mt-4 py-2.5 rounded-xl"></div>
+            <div class="flex items-center justify-center gap-2 mt-4 flex-wrap">
+                <button onclick="ptRetry()" class="px-4 py-2 bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-800 dark:text-amber-300 text-xs font-bold rounded-xl transition border border-amber-200 dark:border-slate-700">🔄 جرّب تاني</button>
+                <button onclick="ptGoNext()" id="pt-next-btn" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow transition">➡️ الصفحة اللي بعدها</button>
+            </div>
         </div>
     </div>
 
@@ -2572,12 +2578,14 @@
         }
 
         let ptActiveRecognition = null;
+        let ptActivePageIndex = 0;
 
         window.openPersonalTalk = function(pageIndexOverride) {
             const pIdx = (typeof pageIndexOverride === 'number') ? pageIndexOverride : currentPageIndex;
             const page = booksDatabase[currentBookId].pages[pIdx];
             const template = findPersonalTemplate(page.en);
             if (!template) return;
+            ptActivePageIndex = pIdx;
 
             document.getElementById('pt-icon').textContent = template.icon;
             document.getElementById('pt-prompt-ar').textContent = template.promptAr;
@@ -2596,6 +2604,47 @@
 
         window.closePersonalTalkOnOverlay = function(e) {
             if (e.target.id === 'personal-talk-overlay') closePersonalTalk();
+        };
+
+        
+        // 🎉 احتفال "اتكلم عن نفسك": كونفيتي + صوت المعلمة تعيد اللي سمعته
+        function ptConfetti() {
+            const items = ['🎉', '⭐', '✨', '🎊', '🌟'];
+            for (let n = 0; n < 28; n++) {
+                const el = document.createElement('div');
+                el.className = 'sy-confetti';
+                el.textContent = items[n % items.length];
+                el.style.left = (Math.random() * 100) + 'vw';
+                el.style.fontSize = (18 + Math.random() * 20) + 'px';
+                el.style.animationDuration = (1.8 + Math.random() * 1.6) + 's';
+                el.style.animationDelay = (Math.random() * 0.5) + 's';
+                document.body.appendChild(el);
+                setTimeout(() => el.remove(), 4200);
+            }
+        }
+
+        function ptCelebrate(transcript) {
+            ptConfetti();
+            const said = String(transcript || '').replace(/[<>]/g, '').trim();
+            speakText('We heard you say: ' + said + '. Great job!');
+        }
+
+        window.ptRetry = function() {
+            document.getElementById('pt-result-msg').classList.add('hidden');
+            document.getElementById('pt-status').textContent = 'دوس على الميكروفون وقول جملتك بصوت عالٍ';
+            startPersonalRecognition();
+        };
+
+        window.ptGoNext = function() {
+            closePersonalTalk();
+            const book = booksDatabase[currentBookId];
+            if (ptActivePageIndex < book.pages.length - 1) {
+                currentPageIndex = ptActivePageIndex + 1;
+                renderStoryPage();
+                switchTab('reader');
+            } else {
+                switchTab('quiz');
+            }
         };
 
         window.startPersonalRecognition = function() {
@@ -2634,6 +2683,7 @@
                 if (heardSomethingGood) {
                     resultBox.className = 'text-center font-black text-base mt-4 py-2.5 rounded-xl bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300';
                     resultBox.textContent = '🎉 رائع جدًا! كلام ممتاز!';
+                    ptCelebrate(event.results[0][0].transcript);
                 } else {
                     resultBox.className = 'text-center font-black text-base mt-4 py-2.5 rounded-xl bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300';
                     resultBox.textContent = '🤗 جميل! جرّب تاني وقول الجملة كاملة.';
