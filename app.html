@@ -1,5 +1,5 @@
  <!DOCTYPE html>
-<!-- BUILD-VERSION: v20-personal-talk-celebration-next-2026-10-04 -->
+<!-- BUILD-VERSION: v21-personal-talk-question-sequence-2026-10-04 -->
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -624,6 +624,7 @@
         <div class="bg-orange-50 dark:bg-slate-900 rounded-[28px] p-5 sm:p-7 max-w-lg w-full shadow-2xl border-4 border-white dark:border-slate-700 relative text-center" onclick="event.stopPropagation()">
             <button onclick="closePersonalTalk()" class="absolute top-3 left-3 text-slate-400 hover:text-slate-700 dark:hover:text-white text-xl leading-none bg-white dark:bg-slate-800 w-8 h-8 rounded-full shadow flex items-center justify-center">✕</button>
 
+            <p id="pt-progress" class="text-xs font-black text-orange-600 dark:text-orange-400 mb-1"></p>
             <div id="pt-icon" class="text-5xl mb-2">🙋</div>
             <h3 class="text-lg font-black text-slate-900 dark:text-white mb-1">دورك دلوقتي!</h3>
             <p id="pt-prompt-ar" class="text-sm font-bold text-orange-700 dark:text-orange-400 mb-1"></p>
@@ -634,8 +635,9 @@
 
             <div id="pt-result-msg" class="hidden text-center font-black text-base mt-4 py-2.5 rounded-xl"></div>
             <div class="flex items-center justify-center gap-2 mt-4 flex-wrap">
-                <button onclick="ptRetry()" class="px-4 py-2 bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-800 dark:text-amber-300 text-xs font-bold rounded-xl transition border border-amber-200 dark:border-slate-700">🔄 جرّب تاني</button>
-                <button onclick="ptGoNext()" id="pt-next-btn" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow transition">➡️ الصفحة اللي بعدها</button>
+                <button onclick="ptRetry()" id="pt-retry-btn" class="px-4 py-2 bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-800 dark:text-amber-300 text-xs font-bold rounded-xl transition border border-amber-200 dark:border-slate-700">🎤 قولها تاني</button>
+                <button onclick="ptNextQuestion()" id="pt-next-btn" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow transition">➡️ السؤال اللي بعده</button>
+                <button onclick="ptGoNext()" id="pt-story-btn" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition border border-slate-200 dark:border-slate-700">📖 كمّل القصة</button>
             </div>
         </div>
     </div>
@@ -2586,15 +2588,51 @@
             const template = findPersonalTemplate(page.en);
             if (!template) return;
             ptActivePageIndex = pIdx;
+            ptSeqStart = Math.max(0, PERSONAL_TEMPLATES.indexOf(template));
+            ptSeqPos = 0;
+            ptFinished = false;
+            ptRenderCurrent();
+            document.getElementById('personal-talk-overlay').classList.remove('hidden');
+        };
 
-            document.getElementById('pt-icon').textContent = template.icon;
-            document.getElementById('pt-prompt-ar').textContent = template.promptAr;
-            document.getElementById('pt-starter-en').textContent = template.starterEn;
+        // سلسلة الأسئلة: الاسم ← السن ← الشكل ← الشعور ← اللي بتحبه
+        let ptSeqStart = 0, ptSeqPos = 0, ptFinished = false;
+
+        function ptRenderCurrent() {
+            const total = PERSONAL_TEMPLATES.length;
+            const t = PERSONAL_TEMPLATES[(ptSeqStart + ptSeqPos) % total];
+            document.getElementById('pt-progress').textContent = 'سؤال ' + (ptSeqPos + 1) + ' من ' + total;
+            document.getElementById('pt-icon').textContent = t.icon;
+            document.getElementById('pt-prompt-ar').textContent = t.promptAr;
+            document.getElementById('pt-starter-en').textContent = t.starterEn;
             document.getElementById('pt-status').textContent = 'دوس على الميكروفون وقول جملتك بصوت عالٍ';
             document.getElementById('pt-result-msg').classList.add('hidden');
-            document.getElementById('personal-talk-overlay').dataset.anchors = JSON.stringify(template.anchors);
+            document.getElementById('personal-talk-overlay').dataset.anchors = JSON.stringify(t.anchors);
+            document.getElementById('pt-mic-btn').classList.remove('hidden');
+            document.getElementById('pt-retry-btn').classList.remove('hidden');
+            document.getElementById('pt-next-btn').textContent = ptSeqPos + 1 >= total ? '🏁 آخر سؤال خلّصناه' : '➡️ السؤال اللي بعده';
+        }
 
-            document.getElementById('personal-talk-overlay').classList.remove('hidden');
+        window.ptNextQuestion = function() {
+            if (ptFinished) { closePersonalTalk(); return; }
+            if (ptActiveRecognition) { try { ptActiveRecognition.stop(); } catch (e) {} }
+            if (ptSeqPos + 1 >= PERSONAL_TEMPLATES.length) {
+                ptFinished = true;
+                document.getElementById('pt-progress').textContent = 'خلّصت!';
+                document.getElementById('pt-icon').textContent = '🏆';
+                document.getElementById('pt-prompt-ar').textContent = 'برافو! جاوبت على كل الأسئلة';
+                document.getElementById('pt-starter-en').textContent = '';
+                document.getElementById('pt-status').textContent = '';
+                document.getElementById('pt-result-msg').classList.add('hidden');
+                document.getElementById('pt-mic-btn').classList.add('hidden');
+                document.getElementById('pt-retry-btn').classList.add('hidden');
+                document.getElementById('pt-next-btn').textContent = '✅ إغلاق';
+                ptConfetti();
+                speakText('Great job! You answered all the questions.');
+                return;
+            }
+            ptSeqPos++;
+            ptRenderCurrent();
         };
 
         window.closePersonalTalk = function() {
