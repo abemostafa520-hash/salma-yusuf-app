@@ -1,5 +1,5 @@
  <!DOCTYPE html>
-<!-- BUILD-VERSION: v21-personal-talk-question-sequence-2026-10-04 -->
+<!-- BUILD-VERSION: v22-workbook-progress-quote-fix-2026-10-05 -->
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -352,6 +352,7 @@
                 <div class="mb-6 pb-5 border-b border-slate-100 dark:border-slate-800">
                     <h3 id="workbook-title" class="text-2xl font-black text-slate-900 dark:text-white">📘 كراسة الأنشطة</h3>
                     <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">كل تمارين القصة دي في مكان واحد، زي كراسة الأنشطة بالظبط!</p>
+                    <p id="workbook-progress" class="text-sm font-black text-amber-700 dark:text-amber-300 mt-2"></p>
                 </div>
 
                 <div class="space-y-6" id="workbook-sections">
@@ -1778,6 +1779,8 @@
         let isDarkMode = false;
         
         let quizAnswers = [];
+        let workbookDone = {};   // { bookId: {builder:[idx], pronoun:[idx], personal:[idx]} }
+        let sbActivePageIndex = 0, pgActivePageIndex = 0, ptCorrectSet = new Set();
         let completedBooks = { school: false, zoo: false, market: false, family: false, rain: false, colors: false, numbers: false, clothes: false, house: false, seasons: false, body: false, pets: false, playtime: false, weather: false, feelings: false, kitchen: false, neighborhood: false, sportsday: false, doctor: false, transport: false, jobs: false, weekdays: false, egypt: false, healthyhabits: false, hobbies: false, itsme: false, dailyroutine: false, bodysystems: false, farm: false, opposites: false };
         let bestQuizScores = { school: 0, zoo: 0, market: 0, family: 0, rain: 0, colors: 0, numbers: 0, clothes: 0, house: 0, seasons: 0, body: 0, pets: 0, playtime: 0, weather: 0, feelings: 0, kitchen: 0, neighborhood: 0, sportsday: 0, doctor: 0, transport: 0, jobs: 0, weekdays: 0, egypt: 0, healthyhabits: 0, hobbies: 0, itsme: 0, dailyroutine: 0, bodysystems: 0, farm: 0, opposites: 0 };
 
@@ -2355,7 +2358,8 @@
             clearTimeout(sbCloseTimer);
             const pIdx = (typeof pageIndexOverride === 'number') ? pageIndexOverride : currentPageIndex;
             const page = booksDatabase[currentBookId].pages[pIdx];
-            sbOriginalWords = page.en.trim().split(/\s+/);
+            sbOriginalWords = page.en.trim().split(/\s+/).map(w => w.replace(/["\u201C\u201D]/g, '')).filter(Boolean);
+            sbActivePageIndex = pIdx;
             document.getElementById('sb-arabic-hint').textContent = '💬 ' + page.ar;
 
             let shuffledOrder = sbOriginalWords.map((_, i) => i);
@@ -2501,6 +2505,7 @@
 
             pgCorrectPronoun = found;
             pgFullSentence = page.en;
+            pgActivePageIndex = pIdx;
 
             const blanked = page.en.replace(new RegExp('\\b' + found + '\\b'), '_____');
             document.getElementById('pg-sentence').textContent = blanked;
@@ -2543,6 +2548,7 @@
                 resultBox.textContent = '🎉 صح! برافو عليك!';
                 Array.from(allBtns).forEach(b => b.disabled = true);
                 speakText(pgFullSentence);
+                wbMarkDone('pronoun', pgActivePageIndex);
                 clearTimeout(pgCloseTimer);
                 pgCloseTimer = setTimeout(() => { closePronounGame(); }, 2000);
             } else {
@@ -2591,6 +2597,7 @@
             ptSeqStart = Math.max(0, PERSONAL_TEMPLATES.indexOf(template));
             ptSeqPos = 0;
             ptFinished = false;
+            ptCorrectSet = new Set();
             ptRenderCurrent();
             document.getElementById('personal-talk-overlay').classList.remove('hidden');
         };
@@ -2618,6 +2625,7 @@
             if (ptActiveRecognition) { try { ptActiveRecognition.stop(); } catch (e) {} }
             if (ptSeqPos + 1 >= PERSONAL_TEMPLATES.length) {
                 ptFinished = true;
+                if (ptCorrectSet.size >= 3) wbMarkDone('personal', ptActivePageIndex);
                 document.getElementById('pt-progress').textContent = 'خلّصت!';
                 document.getElementById('pt-icon').textContent = '🏆';
                 document.getElementById('pt-prompt-ar').textContent = 'برافو! جاوبت على كل الأسئلة';
@@ -2721,6 +2729,7 @@
                 if (heardSomethingGood) {
                     resultBox.className = 'text-center font-black text-base mt-4 py-2.5 rounded-xl bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300';
                     resultBox.textContent = '🎉 رائع جدًا! كلام ممتاز!';
+                    ptCorrectSet.add(ptSeqPos);
                     ptCelebrate(event.results[0][0].transcript);
                 } else {
                     resultBox.className = 'text-center font-black text-base mt-4 py-2.5 rounded-xl bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300';
@@ -2751,6 +2760,7 @@
                 resultBox.className = 'text-center font-black text-base mb-4 py-2.5 rounded-xl bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300';
                 resultBox.textContent = '🎉 برافو! الجملة صح تمامًا!';
                 speakText(sbOriginalWords.join(' '));
+                wbMarkDone('builder', sbActivePageIndex);
                 clearTimeout(sbCloseTimer);
                 sbCloseTimer = setTimeout(() => { closeSentenceBuilder(); }, 2200);
             } else {
@@ -2907,6 +2917,41 @@
         };
 
         // ================= كراسة الأنشطة: تجميع كل تمارين القصة الحالية في مكان واحد =================
+
+        // ⭐ تقدّم الكراسة (منفصل عن نجوم القصص): ✅ على كل نشاط اتحل صح
+        function wbMarkDone(kind, pIdx) {
+            const b = currentBookId;
+            workbookDone[b] = workbookDone[b] || { builder: [], pronoun: [], personal: [] };
+            const arr = (workbookDone[b][kind] = workbookDone[b][kind] || []);
+            if (arr.includes(pIdx)) return;
+            arr.push(pIdx);
+            safeStorageSet('workbook:done', JSON.stringify(workbookDone));
+            try { renderActivityWorkbook(); } catch (e) {}
+        }
+
+        function wbApplyProgress(book) {
+            const done = workbookDone[currentBookId] || {};
+            const idxs = {
+                builder: book.pages.map((p, i) => i),
+                pronoun: book.pages.map((p, i) => i).filter(i => findPageProoun(book.pages[i].en)),
+                personal: book.pages.map((p, i) => i).filter(i => findPersonalTemplate(book.pages[i].en))
+            };
+            const boxes = { builder: 'wb-builder-list', pronoun: 'wb-pronoun-list', personal: 'wb-personal-list' };
+            let total = 0, got = 0;
+            Object.keys(idxs).forEach(kind => {
+                const box = document.getElementById(boxes[kind]);
+                const buttons = box.querySelectorAll('button');
+                idxs[kind].forEach((pageIdx, n) => {
+                    total++;
+                    const isDone = (done[kind] || []).includes(pageIdx);
+                    if (isDone) got++;
+                    if (isDone && buttons[n] && !buttons[n].textContent.startsWith('✅')) buttons[n].textContent = '✅ ' + buttons[n].textContent;
+                });
+            });
+            const el = document.getElementById('workbook-progress');
+            if (el) el.textContent = '⭐ نجوم الكراسة: ' + got + ' / ' + total;
+        }
+
         function renderActivityWorkbook() {
             const book = booksDatabase[currentBookId];
             const builderBox = document.getElementById('wb-builder-list');
@@ -2946,6 +2991,7 @@
             if (!personalBox.children.length) {
                 personalBox.innerHTML = '<p class="text-xs text-slate-400 dark:text-slate-500 font-bold">مفيش جمل شخصية في القصة دي، جرّب قصة "It\'s Me" في KG1! 🙂</p>';
             }
+            wbApplyProgress(book);
         }
 
         function renderMatchingGame() {
@@ -3419,6 +3465,11 @@
             const storedScores = await safeStorageGet('parent-dashboard:scores');
             if (storedScores) {
                 try { bestQuizScores = { ...bestQuizScores, ...JSON.parse(storedScores) }; } catch(e) {}
+            }
+            const storedWb = await safeStorageGet('workbook:done');
+            if (storedWb) {
+                try { workbookDone = JSON.parse(storedWb) || {}; } catch(e) { workbookDone = {}; }
+                try { renderActivityWorkbook(); } catch(e) {}
             }
             const storedCompleted = await safeStorageGet('parent-dashboard:completed');
             if (storedCompleted) {
