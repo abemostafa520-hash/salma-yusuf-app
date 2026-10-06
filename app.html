@@ -1,5 +1,5 @@
  <!DOCTYPE html>
-<!-- BUILD-VERSION: v22-workbook-progress-quote-fix-2026-10-05 -->
+<!-- BUILD-VERSION: v23-break-games-2026-10-06 -->
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -141,6 +141,7 @@
                 <button onclick="switchTab('phonics')" id="nav-phonics" class="px-3 py-1.5 rounded-full text-xs xl:text-sm font-bold whitespace-nowrap text-slate-600 dark:text-slate-300 hover:text-indigo-600 transition-all">🔡 الصوتيات</button>
                 <button onclick="switchTab('quiz')" id="nav-quiz" class="px-3 py-1.5 rounded-full text-xs xl:text-sm font-bold whitespace-nowrap text-slate-600 dark:text-slate-300 hover:text-indigo-600 transition-all">❓ الاختبار</button>
                 <button onclick="switchTab('activity')" id="nav-activity" class="px-3 py-1.5 rounded-full text-xs xl:text-sm font-bold whitespace-nowrap text-slate-600 dark:text-slate-300 hover:text-indigo-600 transition-all">🎮 النشاط</button>
+                <button onclick="switchTab('break')" id="nav-break" class="px-3 py-1.5 rounded-full text-xs xl:text-sm font-bold whitespace-nowrap text-slate-600 dark:text-slate-300 hover:text-indigo-600 transition-all">🎮 استراحة</button>
                 <button onclick="switchTab('series')" id="nav-series" class="px-3 py-1.5 rounded-full text-xs xl:text-sm font-bold whitespace-nowrap text-slate-600 dark:text-slate-300 hover:text-indigo-600 transition-all">🏆 الأوسمة</button>
                 <button onclick="switchTab('parent')" id="nav-parent" class="px-3 py-1.5 rounded-full text-xs xl:text-sm font-bold whitespace-nowrap text-slate-600 dark:text-slate-300 hover:text-indigo-600 transition-all">👪 أولياء الأمور</button>
             </nav>
@@ -152,6 +153,7 @@
             <button onclick="switchTab('phonics')" id="mob-nav-phonics" class="px-3 py-1 rounded-full font-bold whitespace-nowrap text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800">🔡 الصوتيات</button>
             <button onclick="switchTab('quiz')" id="mob-nav-quiz" class="px-3 py-1 rounded-full font-bold whitespace-nowrap text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800">❓ الاختبار</button>
             <button onclick="switchTab('activity')" id="mob-nav-activity" class="px-3 py-1 rounded-full font-bold whitespace-nowrap text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800">🎮 النشاط</button>
+            <button onclick="switchTab('break')" id="mob-nav-break" class="px-3 py-1 rounded-full font-bold whitespace-nowrap text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800">🎮 استراحة</button>
             <button onclick="switchTab('series')" id="mob-nav-series" class="px-3 py-1 rounded-full font-bold whitespace-nowrap text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800">🏆 الأوسمة</button>
             <button onclick="switchTab('parent')" id="mob-nav-parent" class="px-3 py-1 rounded-full font-bold whitespace-nowrap text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800">👪 أولياء الأمور</button>
         </div>
@@ -392,6 +394,28 @@
                 <div id="game-status" class="mt-8 p-4 rounded-2xl bg-amber-50 dark:bg-slate-800 border border-amber-200 dark:border-slate-700 text-center font-bold text-amber-900 dark:text-amber-300">
                     انقر على كلمة ثم اختر صورتها!
                 </div>
+            </div>
+        </section>
+
+        <section id="section-break" class="hidden space-y-6">
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-amber-100 dark:border-slate-800 shadow-xl shadow-amber-900/5 dark:shadow-none">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-black text-slate-800 dark:text-slate-100">🎮 الاستراحة</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">بعد التعلّم، العب شوية بكلمات القصة دي!</p>
+                </div>
+                <div id="break-hub" class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+                    <button onclick="breakStart('mole')" class="text-right p-5 rounded-2xl border-2 border-green-300 bg-green-50 dark:bg-slate-800 dark:border-green-700 hover:scale-[1.02] transition">
+                        <div class="text-4xl mb-2">🐹</div><div class="font-black text-slate-800 dark:text-slate-100">اضرب الخلد</div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">اسمع الكلمة واضرب الصورة الصح في 30 ثانية</div>
+                        <div class="text-xs font-black text-green-700 dark:text-green-400 mt-3">ابدأ اللعب ←</div>
+                    </button>
+                    <button onclick="breakStart('memory')" class="text-right p-5 rounded-2xl border-2 border-pink-300 bg-pink-50 dark:bg-slate-800 dark:border-pink-700 hover:scale-[1.02] transition">
+                        <div class="text-4xl mb-2">🃏</div><div class="font-black text-slate-800 dark:text-slate-100">كروت الذاكرة</div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">وصّل كل صورة بالكلمة الإنجليزي بتاعتها</div>
+                        <div class="text-xs font-black text-pink-700 dark:text-pink-400 mt-3">ابدأ اللعب ←</div>
+                    </button>
+                </div>
+                <div id="break-stage" class="hidden"></div>
             </div>
         </section>
 
@@ -2014,7 +2038,9 @@
         }
 
         window.switchTab = function(tabId) {
-            const tabs = ['reader', 'vocab', 'phonics', 'quiz', 'activity', 'series', 'parent'];
+            const tabs = ['reader', 'vocab', 'phonics', 'quiz', 'activity', 'break', 'series', 'parent'];
+            if (tabId !== 'break') breakStopAll();
+            if (tabId === 'break') breakShowHub();
             const currentData = booksDatabase[currentBookId];
 
             if (tabId === 'phonics') renderPhonicsTabs();
@@ -2692,6 +2718,128 @@
                 switchTab('quiz');
             }
         };
+
+
+        // 🎮 قسم الاستراحة: ألعاب صغيرة بكلمات القصة الحالية
+        let breakTimers = [];
+        function breakStopAll() { breakTimers.forEach(t => { clearInterval(t); clearTimeout(t); }); breakTimers = []; }
+        function breakVocab() { return booksDatabase[currentBookId].vocab.filter(v => v.en && v.icon); }
+        function breakShuffle(a) { return [...a].sort(() => Math.random() - 0.5); }
+        function bkEl(id) { return document.getElementById(id); }
+        const BK_BACK = '<button onclick="breakShowHub()" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700">↩️ رجوع</button>';
+
+        window.breakShowHub = function() {
+            breakStopAll();
+            bkEl('break-hub').classList.remove('hidden');
+            bkEl('break-stage').classList.add('hidden');
+            bkEl('break-stage').innerHTML = '';
+        };
+        window.breakStart = function(game) {
+            breakStopAll();
+            bkEl('break-hub').classList.add('hidden');
+            bkEl('break-stage').classList.remove('hidden');
+            (game === 'mole' ? breakMole : breakMemory)();
+        };
+
+        function breakMole() {
+            const vocab = breakVocab();
+            let score = 0, time = 30, target = null;
+            bkEl('break-stage').innerHTML = '<div class="flex items-center justify-between mb-4">' + BK_BACK +
+                '<div class="font-black text-amber-700 dark:text-amber-300">⏱️ <span id="bm-time">30</span> &nbsp; ⭐ <span id="bm-score">0</span></div></div>' +
+                '<div class="text-center mb-4"><div class="text-xs text-slate-500 dark:text-slate-400 mb-1">دوس على الصورة اللي معناها:</div>' +
+                '<button id="bm-target" class="font-english text-3xl font-black text-indigo-700 dark:text-indigo-300" dir="ltr"></button></div>' +
+                '<div id="bm-grid" class="grid grid-cols-3 gap-3 max-w-xs mx-auto"></div><div id="bm-end" class="hidden text-center mt-5"></div>';
+            const grid = bkEl('bm-grid');
+            for (let i = 0; i < 9; i++) {
+                const h = document.createElement('button');
+                h.className = 'aspect-square rounded-full bg-amber-100 dark:bg-slate-800 border-4 border-amber-300 dark:border-slate-600 text-4xl flex items-center justify-center transition';
+                grid.appendChild(h);
+            }
+            const holes = [...grid.children];
+            function newTarget() {
+                const prev = target;
+                target = breakShuffle(vocab.filter(v => !prev || v.en !== prev.en))[0];
+                bkEl('bm-target').textContent = '🔊 ' + target.en;
+                bkEl('bm-target').onclick = () => speakText(target.en);
+                speakText(target.en);
+            }
+            function tick() {
+                holes.forEach(h => { h.textContent = ''; delete h.dataset.en; });
+                const others = breakShuffle(vocab.filter(v => v.en !== target.en)).slice(0, 2);
+                breakShuffle([0,1,2,3,4,5,6,7,8]).slice(0, 3).forEach((idx, n) => {
+                    const v = n === 0 ? target : others[n - 1];
+                    holes[idx].textContent = v.icon; holes[idx].dataset.en = v.en;
+                });
+            }
+            grid.onclick = e => {
+                const b = e.target.closest('button');
+                if (!b || !b.dataset.en || time <= 0) return;
+                if (b.dataset.en === target.en) {
+                    score++; bkEl('bm-score').textContent = score;
+                    newTarget(); tick();
+                } else { b.style.transform = 'rotate(-8deg)'; setTimeout(() => { b.style.transform = ''; }, 200); }
+            };
+            newTarget(); tick();
+            breakTimers.push(setInterval(tick, 1300));
+            breakTimers.push(setInterval(() => {
+                time--; bkEl('bm-time').textContent = time;
+                if (time <= 0) {
+                    breakStopAll(); holes.forEach(h => { h.textContent = ''; delete h.dataset.en; });
+                    const end = bkEl('bm-end'); end.classList.remove('hidden');
+                    end.innerHTML = '<div class="text-2xl font-black text-slate-800 dark:text-slate-100 mb-1">' + (score >= 5 ? '🏆 برافو!' : '👏 حلو!') + '</div>' +
+                        '<div class="text-sm text-slate-600 dark:text-slate-300 mb-3">ضربت ' + score + ' كلمة صح</div>' +
+                        '<button onclick="breakStart(\'mole\')" class="px-5 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-xl">🔄 العب تاني</button>';
+                    if (score >= 5) { ptConfetti(); speakText('Great job!'); }
+                }
+            }, 1000));
+        }
+
+        function breakMemory() {
+            const pick = breakShuffle(breakVocab()).slice(0, 6);
+            const cards = breakShuffle(pick.flatMap(v => [{ k: v.en, w: false, c: v.icon }, { k: v.en, w: true, c: v.en }]));
+            let open = [], lock = false, moves = 0, found = 0;
+            bkEl('break-stage').innerHTML = '<div class="flex items-center justify-between mb-4">' + BK_BACK +
+                '<div class="font-black text-amber-700 dark:text-amber-300">🔁 <span id="bmem-moves">0</span> &nbsp; ✅ <span id="bmem-found">0</span> / ' + pick.length + '</div></div>' +
+                '<div id="bmem-grid" class="grid grid-cols-3 sm:grid-cols-4 gap-3 max-w-md mx-auto"></div><div id="bmem-end" class="hidden text-center mt-5"></div>';
+            const grid = bkEl('bmem-grid');
+            cards.forEach((cd, i) => {
+                const b = document.createElement('button');
+                b.dataset.i = i; b.dataset.k = cd.k;
+                b.className = 'h-20 rounded-2xl border-2 border-pink-300 dark:border-pink-700 bg-pink-100 dark:bg-slate-800 text-3xl font-black flex items-center justify-center transition text-slate-800 dark:text-slate-100';
+                b.textContent = '❓';
+                grid.appendChild(b);
+            });
+            const face = (b, up) => {
+                const cd = cards[b.dataset.i];
+                b.textContent = up ? cd.c : '❓';
+                b.classList.toggle('font-english', up && cd.w);
+                b.style.fontSize = up && cd.w ? '1rem' : '';
+                b.classList.toggle('bg-white', up);
+            };
+            grid.onclick = e => {
+                const b = e.target.closest('button');
+                if (!b || lock || open.includes(b) || b.dataset.done) return;
+                face(b, true); open.push(b);
+                if (cards[b.dataset.i].w) speakText(b.dataset.k);
+                if (open.length < 2) return;
+                moves++; bkEl('bmem-moves').textContent = moves;
+                const [x, y] = open;
+                if (x.dataset.k === y.dataset.k) {
+                    x.dataset.done = y.dataset.done = '1'; x.style.opacity = y.style.opacity = '0.6'; open = []; found++;
+                    bkEl('bmem-found').textContent = found;
+                    if (found === pick.length) {
+                        const end = bkEl('bmem-end'); end.classList.remove('hidden');
+                        end.innerHTML = '<div class="text-2xl font-black text-slate-800 dark:text-slate-100 mb-1">🏆 برافو! خلّصت اللعبة</div>' +
+                            '<div class="text-sm text-slate-600 dark:text-slate-300 mb-3">في ' + moves + ' محاولة</div>' +
+                            '<button onclick="breakStart(\'memory\')" class="px-5 py-2 bg-pink-600 hover:bg-pink-700 text-white text-sm font-bold rounded-xl">🔄 العب تاني</button>';
+                        ptConfetti(); speakText('Great job!');
+                    }
+                } else {
+                    lock = true;
+                    breakTimers.push(setTimeout(() => { face(x, false); face(y, false); open = []; lock = false; }, 900));
+                }
+            };
+        }
 
         window.startPersonalRecognition = function() {
             if (!isSpeechRecognitionSupported()) {
