@@ -1,5 +1,5 @@
  <!DOCTYPE html>
-<!-- BUILD-VERSION: v25-listen-wotd-share-2026-10-07 -->
+<!-- BUILD-VERSION: v26-family-record-2026-10-08 -->
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -1820,6 +1820,7 @@
         let isDarkMode = false;
         
         let quizAnswers = [];
+        let breakFam = { games: 0, child: 0, parent: 0, ties: 0, bestChild: 0 };
         let workbookDone = {};   // { bookId: {builder:[idx], pronoun:[idx], personal:[idx]} }
         let sbActivePageIndex = 0, pgActivePageIndex = 0, ptCorrectSet = new Set();
         let completedBooks = { school: false, zoo: false, market: false, family: false, rain: false, colors: false, numbers: false, clothes: false, house: false, seasons: false, body: false, pets: false, playtime: false, weather: false, feelings: false, kitchen: false, neighborhood: false, sportsday: false, doctor: false, transport: false, jobs: false, weekdays: false, egypt: false, healthyhabits: false, hobbies: false, itsme: false, dailyroutine: false, bodysystems: false, farm: false, opposites: false };
@@ -2753,6 +2754,10 @@
             const pool = breakVocab().sort((a, b) => a.en.localeCompare(b.en)); breakCfg.scope = keep;
             return pool[Math.floor(Date.now() / 86400000) % pool.length];
         }
+        window.breakShareFamily = function(a, b) {
+            const txt = '👨‍👩‍👧 تحدّي العيلة في Salma & Yusuf!\n🧒 الطفل: ' + a + '  |  👨‍👩‍👧 الأهل: ' + b + '\nتعالوا نلعب مع بعض! ' + location.origin + location.pathname;
+            window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
+        };
         window.breakShare = function() {
             const stars = (bkEl('global-stars-count') || {}).textContent || '';
             const wb = (bkEl('workbook-progress') || {}).textContent || '';
@@ -2768,6 +2773,12 @@
             bkEl('break-wotd').innerHTML = '<div class="rounded-2xl border-2 border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-slate-800 p-4 flex items-center gap-4"><div class="text-5xl">' + w.icon + '</div>' +
                 '<div class="flex-1 text-right"><div class="text-xs font-bold text-amber-700 dark:text-amber-300">📅 كلمة اليوم</div><div class="font-english text-2xl font-black text-slate-800 dark:text-slate-100" dir="ltr">' + w.en + '</div><div class="text-sm text-slate-500 dark:text-slate-400">' + w.ar + '</div></div>' +
                 '<button onclick="speakText(\'' + w.en.replace(/'/g, "\\'") + '\')" class="px-3 py-2 rounded-xl bg-amber-500 text-white text-sm font-bold">🔊</button></div>';
+            if (breakFam.games > 0) {
+                bkEl('break-wotd').innerHTML += '<div class="mt-3 rounded-2xl border-2 border-sky-300 dark:border-sky-700 bg-sky-50 dark:bg-slate-800 p-3 text-center">' +
+                    '<div class="text-xs font-bold text-sky-700 dark:text-sky-300 mb-1">🏆 سجل العيلة في تحدّي العيلة</div>' +
+                    '<div class="text-sm font-black text-slate-700 dark:text-slate-200">🎮 ' + breakFam.games + ' لعبة &nbsp;|&nbsp; 🧒 فاز ' + breakFam.child + ' &nbsp;|&nbsp; 👨‍👩‍👧 فازوا ' + breakFam.parent + ' &nbsp;|&nbsp; 🤝 تعادل ' + breakFam.ties + '</div>' +
+                    '<div class="text-xs text-slate-500 dark:text-slate-400 mt-1">أحسن نتيجة للطفل: ' + breakFam.bestChild + ' من 4</div></div>';
+            }
             bkEl('break-opts').innerHTML =
                 row('📚 الكلمات من:', 'scope', [['book', 'القصة دي'], ['level', 'كل قصص المستوى'], ['all', 'كل القصص']]) +
                 row('🐹 سرعة الخلد:', 'speed', [[3200, '🐢 هادي'], [2400, '🐇 متوسط'], [1500, '⚡ سريع']]) +
@@ -2903,6 +2914,11 @@
                     st.innerHTML = BK_BACK + '<div class="text-center mt-4"><div class="text-2xl font-black text-slate-800 dark:text-slate-100 mb-2">' + w + '</div>' +
                         '<div class="text-sm text-slate-600 dark:text-slate-300 mb-4">🧒 ' + sc[0] + ' &nbsp; 👨‍👩‍👧 ' + sc[1] + '</div>' +
                         '<button onclick="breakStart(\'family\')" class="px-5 py-2 bg-sky-600 hover:bg-sky-700 text-white text-sm font-bold rounded-xl">🔄 العب تاني</button></div>';
+                    breakFam.games++;
+                    if (sc[0] > sc[1]) breakFam.child++; else if (sc[1] > sc[0]) breakFam.parent++; else breakFam.ties++;
+                    breakFam.bestChild = Math.max(breakFam.bestChild, sc[0]);
+                    safeStorageSet('break:family', JSON.stringify(breakFam));
+                    st.querySelector('.text-center').insertAdjacentHTML('beforeend', '<div class="mt-3"><button onclick="breakShareFamily(' + sc[0] + ',' + sc[1] + ')" class="px-4 py-2 rounded-xl bg-green-600 hover:bg-green-700 text-white text-xs font-bold">📲 شارك النتيجة على واتساب</button></div>');
                     ptConfetti(); speakText('Great job, team!'); return;
                 }
                 const v = pool[r], p = r % 2;
@@ -3761,6 +3777,8 @@
                 try { workbookDone = JSON.parse(storedWb) || {}; } catch(e) { workbookDone = {}; }
                 try { renderActivityWorkbook(); } catch(e) {}
             }
+            const storedFam = await safeStorageGet('break:family');
+            if (storedFam) { try { Object.assign(breakFam, JSON.parse(storedFam)); } catch(e) {} }
             const storedCompleted = await safeStorageGet('parent-dashboard:completed');
             if (storedCompleted) {
                 try { completedBooks = { ...completedBooks, ...JSON.parse(storedCompleted) }; } catch(e) {}
