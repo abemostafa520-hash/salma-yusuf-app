@@ -1,5 +1,5 @@
  <!DOCTYPE html>
-<!-- BUILD-VERSION: v28-arcade-bolt-run-2026-10-10 -->
+<!-- BUILD-VERSION: v30-break-ui-canva-2026-10-12 -->
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -7,7 +7,9 @@
     <title>Salma & Yusuf – English Adventures Hub</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#4f46e5">
+    <link rel="icon" type="image/png" href="icon-192.png">
     <link rel="apple-touch-icon" href="icon-192.png">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Salma & Yusuf">
@@ -76,6 +78,18 @@
         .dark .skin-swatch-card.active { outline-color: #F8FAFC; }
     @keyframes sy-fall { 0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(105vh) rotate(540deg); opacity: 0.9; } }
 .sy-confetti { position: fixed; top: 0; z-index: 90; pointer-events: none; animation: sy-fall linear forwards; }
+    
+    #break-hub > button { border-width: 3px; border-radius: 1.5rem; background: var(--bg); border-color: var(--c); box-shadow: 0 6px 0 rgba(15,23,42,.08); transition: transform .15s, box-shadow .15s; }
+    #break-hub > button:active { transform: translateY(3px); box-shadow: 0 3px 0 rgba(15,23,42,.08); }
+    #break-hub > button > div:last-child { color: var(--c); }
+    #break-hub > button:nth-of-type(1) { --c: #f59e0b; --bg: #fffbeb; }
+    #break-hub > button:nth-of-type(2) { --c: #38bdf8; --bg: #f0f9ff; }
+    #break-hub > button:nth-of-type(3) { --c: #4f46e5; --bg: #eef2ff; }
+    #break-hub > button:nth-of-type(4) { --c: #f472b6; --bg: #fdf2f8; }
+    #break-hub > button:nth-of-type(5) { --c: #0ea5e9; --bg: #f0f9ff; }
+    #break-hub > button:nth-of-type(6) { --c: #4f46e5; --bg: #eef2ff; }
+    #break-hub > button:nth-of-type(7) { --c: #f472b6; --bg: #fdf2f8; }
+    .dark #break-hub > button { background: #1e293b; }
     </style>
 </head>
 <body class="font-sans text-slate-800 antialiased min-h-screen flex flex-col justify-between selection:bg-amber-200 theme-school" id="app-body">
@@ -399,45 +413,42 @@
 
         <section id="section-break" class="hidden space-y-6">
             <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-amber-100 dark:border-slate-800 shadow-xl shadow-amber-900/5 dark:shadow-none">
-                <div class="text-center mb-6">
-                    <h2 class="text-2xl font-black text-slate-800 dark:text-slate-100">🎮 الاستراحة</h2>
-                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">بعد التعلّم، العب شوية بكلمات القصة دي!</p>
-                </div>
+                <div class="relative overflow-hidden rounded-3xl mb-6 px-6 py-7 text-center" style="background:linear-gradient(135deg,#4f46e5 0%,#38bdf8 55%,#f472b6 100%)"><svg class="absolute inset-0 w-full h-full" style="opacity:.28" viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><circle cx="46" cy="28" r="24" fill="#fff"/><circle cx="352" cy="112" r="32" fill="#fde68a"/><circle cx="326" cy="26" r="12" fill="#fff"/><circle cx="96" cy="118" r="10" fill="#fff"/><polygon points="200,10 205,24 220,25 208,34 212,48 200,40 188,48 192,34 180,25 195,24" fill="#fde68a"/></svg><div class="relative flex items-center justify-center gap-3"><svg viewBox="0 0 64 64" class="w-14 h-14 hidden sm:block" aria-hidden="true"><defs><linearGradient id="bkg11" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#bkg11)"/><ellipse cx="32" cy="48" rx="20" ry="7" fill="#5b3a1e"/><path d="M16 46c0-16 6-24 16-24s16 8 16 24z" fill="#a0693a"/><circle cx="26" cy="36" r="2.6" fill="#fff"/><circle cx="38" cy="36" r="2.6" fill="#fff"/><circle cx="26" cy="36.5" r="1.2" fill="#222"/><circle cx="38" cy="36.5" r="1.2" fill="#222"/><ellipse cx="32" cy="41" rx="3.4" ry="2.4" fill="#f472b6"/><path d="M28 45q4 3 8 0" stroke="#5b3a1e" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg><div><div class="text-3xl sm:text-4xl font-black text-white" style="text-shadow:0 3px 0 rgba(0,0,0,.18)">🎮 الاستراحة</div><div class="text-sm font-bold text-white/90 mt-1">العب وتعلّم مع العيلة</div></div><svg viewBox="0 0 64 64" class="w-14 h-14 hidden sm:block" aria-hidden="true"><defs><linearGradient id="bkg12" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#818cf8"/><stop offset="1" stop-color="#4f46e5"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#bkg12)"/><polygon points="36,8 18,36 30,36 26,56 46,26 33,26" fill="#fde047" stroke="#f59e0b" stroke-width="2" stroke-linejoin="round"/></svg></div></div>
                 <div id="break-hub" class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
                     <div id="break-wotd" class="sm:col-span-2"></div>
                     <div id="break-opts" class="sm:col-span-2 space-y-3 text-center"></div>
                     <button onclick="breakStart('mole')" class="text-right p-5 rounded-2xl border-2 border-green-300 bg-green-50 dark:bg-slate-800 dark:border-green-700 hover:scale-[1.02] transition">
-                        <div class="text-4xl mb-2">🐹</div><div class="font-black text-slate-800 dark:text-slate-100">اضرب الخلد</div>
+                        <svg viewBox="0 0 64 64" class="w-16 h-16 mb-2" aria-hidden="true"><defs><linearGradient id="bkg0" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#bkg0)"/><ellipse cx="32" cy="48" rx="20" ry="7" fill="#5b3a1e"/><path d="M16 46c0-16 6-24 16-24s16 8 16 24z" fill="#a0693a"/><circle cx="26" cy="36" r="2.6" fill="#fff"/><circle cx="38" cy="36" r="2.6" fill="#fff"/><circle cx="26" cy="36.5" r="1.2" fill="#222"/><circle cx="38" cy="36.5" r="1.2" fill="#222"/><ellipse cx="32" cy="41" rx="3.4" ry="2.4" fill="#f472b6"/><path d="M28 45q4 3 8 0" stroke="#5b3a1e" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg><div class="font-black text-slate-800 dark:text-slate-100">اضرب الخلد</div>
                         <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">اسمع الكلمة واضرب الصورة الصح في 30 ثانية</div>
                         <div class="text-xs font-black text-green-700 dark:text-green-400 mt-3">ابدأ اللعب ←</div>
                     </button>
                     <button onclick="breakStart('memory')" class="text-right p-5 rounded-2xl border-2 border-pink-300 bg-pink-50 dark:bg-slate-800 dark:border-pink-700 hover:scale-[1.02] transition">
-                        <div class="text-4xl mb-2">🃏</div><div class="font-black text-slate-800 dark:text-slate-100">كروت الذاكرة</div>
+                        <svg viewBox="0 0 64 64" class="w-16 h-16 mb-2" aria-hidden="true"><defs><linearGradient id="bkg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#bae6fd"/><stop offset="1" stop-color="#38bdf8"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#bkg1)"/><rect x="10" y="16" width="26" height="34" rx="5" fill="#fff" transform="rotate(-10 23 33)"/><circle cx="23" cy="33" r="6" fill="#4f46e5"/><rect x="28" y="14" width="26" height="34" rx="5" fill="#f472b6" transform="rotate(8 41 31)"/><polygon points="41,23 43.4,28.6 49.5,29.2 44.9,33.2 46.3,39.2 41,36 35.7,39.2 37.1,33.2 32.5,29.2 38.6,28.6" fill="#fff"/></svg><div class="font-black text-slate-800 dark:text-slate-100">كروت الذاكرة</div>
                         <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">وصّل كل صورة بالكلمة الإنجليزي بتاعتها</div>
                         <div class="text-xs font-black text-pink-700 dark:text-pink-400 mt-3">ابدأ اللعب ←</div>
                     </button>
                     <button onclick="breakStart('family')" class="text-right p-5 rounded-2xl border-2 border-sky-300 bg-sky-50 dark:bg-slate-800 dark:border-sky-700 hover:scale-[1.02] transition">
-                        <div class="text-4xl mb-2">👨‍👩‍👧</div><div class="font-black text-slate-800 dark:text-slate-100">تحدّي العيلة</div>
+                        <svg viewBox="0 0 64 64" class="w-16 h-16 mb-2" aria-hidden="true"><defs><linearGradient id="bkg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#4f46e5"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#bkg2)"/><circle cx="20" cy="26" r="6" fill="#fde68a"/><path d="M10 48q0-14 10-14t10 14z" fill="#fff"/><circle cx="44" cy="26" r="6" fill="#fde68a"/><path d="M34 48q0-14 10-14t10 14z" fill="#fff"/><circle cx="32" cy="34" r="5" fill="#fde68a"/><path d="M24 52q0-11 8-11t8 11z" fill="#f59e0b"/></svg><div class="font-black text-slate-800 dark:text-slate-100">تحدّي العيلة</div>
                         <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">الطفل والأهل بالدور: قول الكلمة بالإنجليزي واكسب نقاط! (للعب مع ماما أو بابا)</div>
                         <div class="text-xs font-black text-sky-700 dark:text-sky-400 mt-3">ابدأ التحدي ←</div>
                     </button>
                     <button onclick="breakStart('charades')" class="text-right p-5 rounded-2xl border-2 border-violet-300 bg-violet-50 dark:bg-slate-800 dark:border-violet-700 hover:scale-[1.02] transition">
-                        <div class="text-4xl mb-2">🎭</div><div class="font-black text-slate-800 dark:text-slate-100">مثّل وخمّن</div>
+                        <svg viewBox="0 0 64 64" class="w-16 h-16 mb-2" aria-hidden="true"><defs><linearGradient id="bkg3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a5b4fc"/><stop offset="1" stop-color="#4f46e5"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#bkg3)"/><path d="M12 16h40v16c0 12-9 20-20 20S12 44 12 32z" fill="#fff"/><ellipse cx="24" cy="29" rx="5" ry="3.5" fill="#4f46e5"/><ellipse cx="40" cy="29" rx="5" ry="3.5" fill="#4f46e5"/><path d="M22 39q10 10 20 0" stroke="#4f46e5" stroke-width="3" fill="none" stroke-linecap="round"/></svg><div class="font-black text-slate-800 dark:text-slate-100">مثّل وخمّن</div>
                         <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">حد يمثّل الكلمة بالحركة من غير كلام والباقي يخمّنوا بالإنجليزي في 60 ثانية</div>
                         <div class="text-xs font-black text-violet-700 dark:text-violet-400 mt-3">ابدأ اللعب ←</div>
                     </button>
                     <button onclick="breakStart('listen')" class="text-right p-5 rounded-2xl border-2 border-emerald-300 bg-emerald-50 dark:bg-slate-800 dark:border-emerald-700 hover:scale-[1.02] transition">
-                        <div class="text-4xl mb-2">🔊</div><div class="font-black text-slate-800 dark:text-slate-100">اسمع واختار</div>
+                        <svg viewBox="0 0 64 64" class="w-16 h-16 mb-2" aria-hidden="true"><defs><linearGradient id="bkg4" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5eead4"/><stop offset="1" stop-color="#38bdf8"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#bkg4)"/><path d="M10 26h9l11-9v30l-11-9h-9z" fill="#fff"/><path d="M38 24q6 8 0 16" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M44 18q12 14 0 28" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".8"/></svg><div class="font-black text-slate-800 dark:text-slate-100">اسمع واختار</div>
                         <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">اسمع الكلمة واختار الصورة الصح من 4 صور</div>
                         <div class="text-xs font-black text-emerald-700 dark:text-emerald-400 mt-3">ابدأ اللعب ←</div>
                     </button>
                     <button onclick="breakStart('bolt')" class="text-right p-5 rounded-2xl border-2 border-yellow-300 bg-yellow-50 dark:bg-slate-800 dark:border-yellow-700 hover:scale-[1.02] transition">
-                        <div class="text-4xl mb-2">⚡</div><div class="font-black text-slate-800 dark:text-slate-100">تحليق البرق</div>
+                        <svg viewBox="0 0 64 64" class="w-16 h-16 mb-2" aria-hidden="true"><defs><linearGradient id="bkg5" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#818cf8"/><stop offset="1" stop-color="#4f46e5"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#bkg5)"/><polygon points="36,8 18,36 30,36 26,56 46,26 33,26" fill="#fde047" stroke="#f59e0b" stroke-width="2" stroke-linejoin="round"/></svg><div class="font-black text-slate-800 dark:text-slate-100">تحليق البرق</div>
                         <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">حرّك البرق ودمّر الصورة اللي معناها الكلمة المسموعة، وانتبه من الصور الغلط!</div>
                         <div class="text-xs font-black text-yellow-700 dark:text-yellow-400 mt-3">ابدأ اللعب ←</div>
                     </button>
                     <button onclick="breakStart('run')" class="text-right p-5 rounded-2xl border-2 border-orange-300 bg-orange-50 dark:bg-slate-800 dark:border-orange-700 hover:scale-[1.02] transition">
-                        <div class="text-4xl mb-2">🏁</div><div class="font-black text-slate-800 dark:text-slate-100">سباق المنعطفات</div>
+                        <svg viewBox="0 0 64 64" class="w-16 h-16 mb-2" aria-hidden="true"><defs><linearGradient id="bkg6" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fda4af"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#bkg6)"/><rect x="14" y="10" width="4" height="46" rx="2" fill="#fff"/><rect x="18" y="12" width="28" height="21" fill="#fff"/><rect x="18" y="12" width="7" height="7" fill="#1e293b"/><rect x="32" y="12" width="7" height="7" fill="#1e293b"/><rect x="25" y="19" width="7" height="7" fill="#1e293b"/><rect x="39" y="19" width="7" height="7" fill="#1e293b"/><rect x="18" y="26" width="7" height="7" fill="#1e293b"/><rect x="32" y="26" width="7" height="7" fill="#1e293b"/></svg><div class="font-black text-slate-800 dark:text-slate-100">سباق المنعطفات</div>
                         <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">اجري بين 3 مسارات واجمع الصورة الصح وتجنّب الصور الغلط والأحجار!</div>
                         <div class="text-xs font-black text-orange-700 dark:text-orange-400 mt-3">ابدأ اللعب ←</div>
                     </button>
