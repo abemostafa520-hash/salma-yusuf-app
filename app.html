@@ -1,5 +1,5 @@
  <!DOCTYPE html>
-<!-- BUILD-VERSION: v30-break-ui-canva-2026-10-12 -->
+<!-- BUILD-VERSION: v31-vocab-flashcards-2026-10-13 -->
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -90,6 +90,30 @@
     #break-hub > button:nth-of-type(6) { --c: #4f46e5; --bg: #eef2ff; }
     #break-hub > button:nth-of-type(7) { --c: #f472b6; --bg: #fdf2f8; }
     .dark #break-hub > button { background: #1e293b; }
+    
+    .vc { position: relative; border-radius: 1.5rem; padding: 1rem .75rem .85rem; text-align: center; cursor: pointer; user-select: none; color: #0f172a;
+          box-shadow: 0 6px 0 rgba(15,23,42,.10), 0 12px 22px rgba(15,23,42,.10); transition: transform .25s ease, box-shadow .25s ease; transform-style: preserve-3d; }
+    .vc:hover { transform: perspective(700px) translateY(-8px) rotateX(6deg) rotateY(-5deg) scale(1.03); box-shadow: 0 16px 0 rgba(15,23,42,.08), 0 26px 34px rgba(15,23,42,.16); }
+    .vc:active { transform: translateY(0) scale(.99); }
+    @media (hover: none) { .vc:hover { transform: none; } }
+    .vc-art { width: 5.2rem; height: 5.2rem; margin: 0 auto .35rem; filter: drop-shadow(0 6px 4px rgba(15,23,42,.18)); }
+    .vc-en { font-weight: 900; font-size: 1.1rem; }
+    .vc-ar { font-size: .75rem; font-weight: 700; color: #475569; margin-top: .1rem; }
+    .vc-star { position: absolute; top: .55rem; left: .55rem; width: 1.5rem; height: 1.5rem; opacity: .25; transition: opacity .3s, transform .3s; }
+    .vc-bar { display: flex; gap: .25rem; justify-content: center; margin-top: .55rem; }
+    .vc-seg { display: block; width: 1.6rem; height: .45rem; border-radius: 9999px; background: rgba(15,23,42,.15); transition: background .3s; }
+    .vc-msg { min-height: 1rem; font-size: .7rem; font-weight: 800; margin-top: .3rem; }
+    .vc-btns { display: flex; gap: .4rem; justify-content: center; margin-top: .45rem; }
+    .vc-btns button { font-size: .7rem; font-weight: 800; padding: .3rem .7rem; border-radius: 9999px; border: 2px solid rgba(15,23,42,.12); background: #fff; color: #334155; }
+    .vc-btns .vc-say { background: #4f46e5; color: #fff; border-color: #4f46e5; }
+    .vc-glow { animation: vcGlow 1s ease-out; }
+    .vc-shake { animation: vcShake .45s; }
+    .vc-spark { position: absolute; left: 50%; top: 38%; width: 9px; height: 9px; border-radius: 3px; pointer-events: none; animation: vcSpark .85s ease-out forwards; }
+    .vc-plus { position: absolute; left: 50%; top: 20%; font-weight: 900; color: #b45309; pointer-events: none; animation: vcPlus 1.1s ease-out forwards; }
+    @keyframes vcGlow { 0% { box-shadow: 0 0 0 0 rgba(250,204,21,.95); } 100% { box-shadow: 0 0 0 26px rgba(250,204,21,0); } }
+    @keyframes vcShake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+    @keyframes vcSpark { 0% { transform: translate(0,0) scale(1) rotate(0); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(.2) rotate(240deg); opacity: 0; } }
+    @keyframes vcPlus { 0% { transform: translate(-50%,0); opacity: 0; } 20% { opacity: 1; } 100% { transform: translate(-50%,-46px); opacity: 0; } }
     </style>
 </head>
 <body class="font-sans text-slate-800 antialiased min-h-screen flex flex-col justify-between selection:bg-amber-200 theme-school" id="app-body">
@@ -337,7 +361,8 @@
                     </span>
                 </div>
 
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4" id="vocab-grid"></div>
+                <div id="vocab-stats" class="mb-5 p-4 rounded-2xl bg-white/70 dark:bg-slate-800/70 border border-indigo-100 dark:border-slate-700"></div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5" id="vocab-grid"></div>
             </div>
         </section>
 
@@ -1841,6 +1866,10 @@
         let isDarkMode = false;
         
         let quizAnswers = [];
+        const VOCAB_ART = {"school": ["#dbeafe", "#93c5fd", "<rect x=\"12\" y=\"28\" width=\"40\" height=\"26\" rx=\"2\" fill=\"#ef4444\"/><polygon points=\"8,30 32,12 56,30\" fill=\"#b91c1c\"/><rect x=\"26\" y=\"38\" width=\"12\" height=\"16\" fill=\"#fde68a\"/><rect x=\"16\" y=\"34\" width=\"7\" height=\"7\" fill=\"#bae6fd\"/><rect x=\"41\" y=\"34\" width=\"7\" height=\"7\" fill=\"#bae6fd\"/><rect x=\"31\" y=\"4\" width=\"2\" height=\"9\" fill=\"#475569\"/><polygon points=\"33,4 44,8 33,12\" fill=\"#f59e0b\"><animateTransform attributeName=\"transform\" type=\"rotate\" values=\"-6 33 8;6 33 8;-6 33 8\" dur=\"1.4s\" repeatCount=\"indefinite\"/></polygon>"], "brother": ["#ccfbf1", "#5eead4", "<circle cx=\"32\" cy=\"34\" r=\"16\" fill=\"#fcd9b6\"/><path d=\"M16 31c2-15 30-15 32 0-6-5-26-5-32 0z\" fill=\"#5b3a1e\"/><circle cx=\"26\" cy=\"35\" r=\"2\" fill=\"#222\"/><circle cx=\"38\" cy=\"35\" r=\"2\" fill=\"#222\"/><path d=\"M26 42q6 5 12 0\" stroke=\"#c2410c\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\"/><rect x=\"18\" y=\"51\" width=\"28\" height=\"9\" rx=\"4\" fill=\"#4f46e5\"/>"], "breakfast": ["#fef3c7", "#fcd34d", "<ellipse cx=\"32\" cy=\"40\" rx=\"25\" ry=\"13\" fill=\"#fff\"/><ellipse cx=\"29\" cy=\"39\" rx=\"12\" ry=\"8\" fill=\"#fff7ed\" stroke=\"#fbbf24\" stroke-width=\"1.2\"/><circle cx=\"29\" cy=\"39\" r=\"5\" fill=\"#f59e0b\"/><rect x=\"43\" y=\"31\" width=\"10\" height=\"13\" rx=\"3\" fill=\"#d97706\"/><path d=\"M22 24q-3-5 0-9M30 24q-3-5 0-9\" stroke=\"#94a3b8\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\"><animate attributeName=\"opacity\" values=\".2;.9;.2\" dur=\"1.8s\" repeatCount=\"indefinite\"/></path>"], "red bag": ["#fee2e2", "#fca5a5", "<rect x=\"16\" y=\"18\" width=\"32\" height=\"38\" rx=\"9\" fill=\"#ef4444\"/><path d=\"M22 18q10-13 20 0\" stroke=\"#991b1b\" stroke-width=\"4\" fill=\"none\"/><rect x=\"21\" y=\"35\" width=\"22\" height=\"15\" rx=\"4\" fill=\"#dc2626\"/><rect x=\"21\" y=\"24\" width=\"22\" height=\"3\" fill=\"#fecaca\"/><rect x=\"29\" y=\"39\" width=\"6\" height=\"9\" rx=\"2\" fill=\"#fde68a\"><animateTransform attributeName=\"transform\" type=\"rotate\" values=\"-10 32 39;10 32 39;-10 32 39\" dur=\"1.6s\" repeatCount=\"indefinite\"/></rect>"], "yellow bus": ["#fef9c3", "#fde047", "<g><animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 0;0 -1.6;0 0\" dur=\".8s\" repeatCount=\"indefinite\"/><rect x=\"5\" y=\"19\" width=\"54\" height=\"29\" rx=\"7\" fill=\"#facc15\"/><rect x=\"10\" y=\"24\" width=\"10\" height=\"9\" rx=\"2\" fill=\"#bae6fd\"/><rect x=\"23\" y=\"24\" width=\"10\" height=\"9\" rx=\"2\" fill=\"#bae6fd\"/><rect x=\"36\" y=\"24\" width=\"10\" height=\"9\" rx=\"2\" fill=\"#bae6fd\"/><rect x=\"49\" y=\"24\" width=\"6\" height=\"14\" rx=\"2\" fill=\"#bae6fd\"/><rect x=\"5\" y=\"38\" width=\"54\" height=\"3\" fill=\"#ca8a04\"/></g><circle cx=\"18\" cy=\"50\" r=\"6\" fill=\"#1e293b\"/><circle cx=\"46\" cy=\"50\" r=\"6\" fill=\"#1e293b\"/><circle cx=\"18\" cy=\"50\" r=\"2.4\" fill=\"#cbd5e1\"/><circle cx=\"46\" cy=\"50\" r=\"2.4\" fill=\"#cbd5e1\"/>"], "teacher": ["#fce7f3", "#f9a8d4", "<circle cx=\"32\" cy=\"30\" r=\"15\" fill=\"#fcd9b6\"/><path d=\"M16 30c-2-18 30-18 32 0-4-8-28-8-32 0z\" fill=\"#7c2d12\"/><circle cx=\"26\" cy=\"31\" r=\"5\" fill=\"none\" stroke=\"#334155\" stroke-width=\"1.8\"/><circle cx=\"38\" cy=\"31\" r=\"5\" fill=\"none\" stroke=\"#334155\" stroke-width=\"1.8\"/><path d=\"M31 31h2\" stroke=\"#334155\" stroke-width=\"1.8\"/><path d=\"M27 40q5 4 10 0\" stroke=\"#c2410c\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M13 60q0-12 19-12t19 12z\" fill=\"#ec4899\"/>"], "book": ["#e0e7ff", "#a5b4fc", "<path d=\"M9 16h21q2 0 2 2v35q0-3-4-3H9z\" fill=\"#4f46e5\"/><path d=\"M55 16H34q-2 0-2 2v35q0-3 4-3h19z\" fill=\"#6366f1\"/><rect x=\"13\" y=\"22\" width=\"14\" height=\"2.4\" fill=\"#c7d2fe\"/><rect x=\"13\" y=\"28\" width=\"14\" height=\"2.4\" fill=\"#c7d2fe\"/><rect x=\"38\" y=\"22\" width=\"12\" height=\"2.4\" fill=\"#e0e7ff\"/><rect x=\"38\" y=\"28\" width=\"12\" height=\"2.4\" fill=\"#e0e7ff\"/>"], "football": ["#dcfce7", "#86efac", "<g><animateTransform attributeName=\"transform\" type=\"rotate\" values=\"0 32 32;360 32 32\" dur=\"6s\" repeatCount=\"indefinite\"/><circle cx=\"32\" cy=\"32\" r=\"21\" fill=\"#fff\" stroke=\"#1e293b\" stroke-width=\"2\"/><polygon points=\"32,22 41,28 38,39 26,39 23,28\" fill=\"#1e293b\"/><path d=\"M32 22V12M41 28l9-4M38 39l6 8M26 39l-6 8M23 28l-9-4\" stroke=\"#1e293b\" stroke-width=\"2\"/></g>"], "red": ["#fee2e2", "#fecaca", "<path d=\"M32 10C32 10 14 30 14 40a18 18 0 0 0 36 0C50 30 32 10 32 10z\" fill=\"#ef4444\"/><ellipse cx=\"25\" cy=\"38\" rx=\"3\" ry=\"6\" fill=\"#fff\" opacity=\".45\" transform=\"rotate(20 25 38)\"/>"], "blue": ["#dbeafe", "#bfdbfe", "<path d=\"M32 10C32 10 14 30 14 40a18 18 0 0 0 36 0C50 30 32 10 32 10z\" fill=\"#3b82f6\"/><ellipse cx=\"25\" cy=\"38\" rx=\"3\" ry=\"6\" fill=\"#fff\" opacity=\".45\" transform=\"rotate(20 25 38)\"/>"], "yellow": ["#fef9c3", "#fde68a", "<path d=\"M32 10C32 10 14 30 14 40a18 18 0 0 0 36 0C50 30 32 10 32 10z\" fill=\"#facc15\"/><ellipse cx=\"25\" cy=\"38\" rx=\"3\" ry=\"6\" fill=\"#fff\" opacity=\".45\" transform=\"rotate(20 25 38)\"/>"], "green": ["#dcfce7", "#bbf7d0", "<path d=\"M32 10C32 10 14 30 14 40a18 18 0 0 0 36 0C50 30 32 10 32 10z\" fill=\"#22c55e\"/><ellipse cx=\"25\" cy=\"38\" rx=\"3\" ry=\"6\" fill=\"#fff\" opacity=\".45\" transform=\"rotate(20 25 38)\"/>"], "orange": ["#ffedd5", "#fed7aa", "<path d=\"M32 10C32 10 14 30 14 40a18 18 0 0 0 36 0C50 30 32 10 32 10z\" fill=\"#f97316\"/><ellipse cx=\"25\" cy=\"38\" rx=\"3\" ry=\"6\" fill=\"#fff\" opacity=\".45\" transform=\"rotate(20 25 38)\"/>"], "purple": ["#ede9fe", "#ddd6fe", "<path d=\"M32 10C32 10 14 30 14 40a18 18 0 0 0 36 0C50 30 32 10 32 10z\" fill=\"#8b5cf6\"/><ellipse cx=\"25\" cy=\"38\" rx=\"3\" ry=\"6\" fill=\"#fff\" opacity=\".45\" transform=\"rotate(20 25 38)\"/>"], "circle": ["#fce7f3", "#fbcfe8", "<circle cx=\"32\" cy=\"32\" r=\"21\" fill=\"#ec4899\"><animate attributeName=\"r\" values=\"21;23;21\" dur=\"2s\" repeatCount=\"indefinite\"/></circle>"], "square": ["#e0f2fe", "#bae6fd", "<rect x=\"12\" y=\"12\" width=\"40\" height=\"40\" rx=\"5\" fill=\"#0ea5e9\"><animateTransform attributeName=\"transform\" type=\"rotate\" values=\"-4 32 32;4 32 32;-4 32 32\" dur=\"2.4s\" repeatCount=\"indefinite\"/></rect>"]};
+        const VOCAB_PALETTE = [["#fef3c7", "#fde68a"], ["#dbeafe", "#bfdbfe"], ["#fce7f3", "#fbcfe8"], ["#dcfce7", "#bbf7d0"], ["#ede9fe", "#ddd6fe"], ["#ffedd5", "#fed7aa"], ["#ccfbf1", "#99f6e4"], ["#fee2e2", "#fecaca"]];
+        let vocabProg = {};   // { bookId: { word: {ok, bad} } }
+        let vocabSyncTimer = null;
         let breakFam = { games: 0, child: 0, parent: 0, ties: 0, bestChild: 0 };
         let workbookDone = {};   // { bookId: {builder:[idx], pronoun:[idx], personal:[idx]} }
         let sbActivePageIndex = 0, pgActivePageIndex = 0, ptCorrectSet = new Set();
@@ -2331,7 +2360,7 @@
                 speechPracticeCount++;
                 if (isMatch) speechPracticeCorrect++;
                 showSpeechFeedback(isMatch);
-                if (typeof onResult === 'function') onResult(isMatch);
+                if (typeof onResult === 'function') onResult(isMatch, alternatives);
             };
 
             recognition.onerror = (event) => {
@@ -3114,6 +3143,112 @@
             (function loop(ts) { if (breakG !== g || g.over) return; g.step(Math.min(50, last ? ts - last : 16)); last = ts; breakRaf = requestAnimationFrame(loop); })(0);
         }
 
+
+        // ===================== بطاقات الكلمات v31: رسومات + إتقان + نجوم =====================
+        function vocabWordsTotal() { return Object.values(booksDatabase).reduce((n, b) => n + b.vocab.length, 0); }
+        function vocabBookMastered(bookId) {
+            const p = vocabProg[bookId] || {};
+            return booksDatabase[bookId].vocab.filter(v => p[v.en] && p[v.en].ok >= 1).length;
+        }
+        function vocabStarsTotal() { return Object.keys(booksDatabase).reduce((n, b) => n + vocabBookMastered(b), 0); }
+        function saveVocabProg() { safeStorageSet('vocab:progress', JSON.stringify(vocabProg)); }
+        function strictSpeechMatch(alts, target) {
+            const t = ' ' + normalizeSpeech(target) + ' ';
+            return alts.some(a => (' ' + a + ' ').includes(t));
+        }
+        function vocabArt(item, idx) {
+            const a = VOCAB_ART[item.en.toLowerCase()];
+            if (a) return { c: [a[0], a[1]], svg: a[2] };
+            return { c: VOCAB_PALETTE[idx % VOCAB_PALETTE.length], svg: '<circle cx="32" cy="32" r="22" fill="#fff" opacity=".9"/><text x="32" y="42" text-anchor="middle" font-size="28" font-weight="900" fill="#4f46e5" font-family="Fredoka, system-ui, sans-serif">' + item.en.charAt(0).toUpperCase() + '</text>' };
+        }
+        function vocabRenderStats() {
+            const el = document.getElementById('vocab-stats'); if (!el) return;
+            const total = booksDatabase[currentBookId].vocab.length, n = vocabBookMastered(currentBookId);
+            el.innerHTML = '<div class="flex items-center justify-between text-sm font-black text-slate-800 dark:text-slate-100 mb-2"><span>لقد أتقنت <b class="text-indigo-600 dark:text-indigo-300">' + n + '</b> كلمات من أصل ' + total + '</span><span class="text-amber-600 dark:text-amber-300">نجوم الكلمات: ' + n + '</span></div>' +
+                '<div class="h-3 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden"><div style="height:100%;transition:width .5s;width:' + (total ? n / total * 100 : 0) + '%;background:linear-gradient(90deg,#4f46e5,#38bdf8,#f472b6)"></div></div>';
+        }
+        function vcPaint(card, p) {
+            const ok = Math.min(3, p.ok || 0);
+            card.querySelectorAll('.vc-seg').forEach((s, i) => { s.style.background = i < ok ? '#22c55e' : ''; });
+            card.querySelector('.vc-star').style.opacity = p.ok >= 1 ? '1' : '';
+        }
+        function vcSparkle(card, first) {
+            card.classList.remove('vc-glow'); void card.offsetWidth; card.classList.add('vc-glow');
+            for (let i = 0; i < 14; i++) {
+                const sp = document.createElement('span'); sp.className = 'vc-spark';
+                const ang = i / 14 * Math.PI * 2, d = 45 + Math.random() * 35;
+                sp.style.setProperty('--dx', Math.cos(ang) * d + 'px'); sp.style.setProperty('--dy', Math.sin(ang) * d + 'px');
+                sp.style.background = ['#facc15', '#f472b6', '#38bdf8', '#4f46e5'][i % 4];
+                card.appendChild(sp); setTimeout(() => sp.remove(), 900);
+            }
+            if (first) { const pl = document.createElement('div'); pl.className = 'vc-plus'; pl.textContent = '+1 نجمة'; card.appendChild(pl); setTimeout(() => pl.remove(), 1200); }
+        }
+        function vcResult(card, item, isMatch, alts) {
+            const bookId = currentBookId, p = vocabProg[bookId][item.en], msg = card.querySelector('.vc-msg');
+            if (strictSpeechMatch(alts || [], item.en)) {
+                const first = !(p.ok >= 1);
+                p.ok = (p.ok || 0) + 1; saveVocabProg(); recordWordMastery(bookId, item.en);
+                msg.textContent = first ? 'نطقتها صح! +1 نجمة' : 'نطق ممتاز!'; msg.style.color = '#15803d';
+                vcPaint(card, p); vcSparkle(card, first);
+                if (first) { recalculateTotalStars(); refreshParentDashboardIfUnlocked(); }
+                vocabRenderStats(); vocabSyncSoon();
+            } else {
+                p.bad = (p.bad || 0) + 1; saveVocabProg();
+                if (isMatch) { msg.textContent = 'قريب! قولها كاملة'; msg.style.color = '#b45309'; }
+                else { msg.textContent = 'حاول تاني'; msg.style.color = '#b91c1c'; recordWordStruggle(bookId, item.en, item.ar, item.icon); }
+                card.classList.remove('vc-shake'); void card.offsetWidth; card.classList.add('vc-shake');
+                const seg = card.querySelectorAll('.vc-seg')[Math.min(p.ok || 0, 2)];
+                if (seg && (p.ok || 0) < 3) { seg.style.background = '#ef4444'; setTimeout(() => vcPaint(card, p), 900); }
+            }
+        }
+        function renderVocabGrid() {
+            renderVocabGridLegacy();   // يضبط العنوان والعدّاد
+            const grid = document.getElementById('vocab-grid'), book = booksDatabase[currentBookId];
+            const prog = (vocabProg[currentBookId] = vocabProg[currentBookId] || {});
+            grid.innerHTML = '';
+            book.vocab.forEach((item, idx) => {
+                const art = vocabArt(item, idx), p = (prog[item.en] = prog[item.en] || { ok: 0, bad: 0 });
+                const card = document.createElement('div'); card.className = 'vc';
+                card.style.background = 'linear-gradient(145deg,' + art.c[0] + ',' + art.c[1] + ')';
+                card.innerHTML = '<svg class="vc-star" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12,2 15,9 22,9.5 16.5,14 18.5,21.5 12,17.5 5.5,21.5 7.5,14 2,9.5 9,9" fill="#facc15" stroke="#f59e0b" stroke-width="1.2" stroke-linejoin="round"/></svg>' +
+                    '<svg class="vc-art" viewBox="0 0 64 64" aria-hidden="true">' + art.svg + '</svg><div class="vc-en font-english"></div><div class="vc-ar"></div>' +
+                    '<div class="vc-bar"><i class="vc-seg"></i><i class="vc-seg"></i><i class="vc-seg"></i></div><div class="vc-msg"></div>' +
+                    '<div class="vc-btns"><button class="vc-listen">استمع</button><button class="vc-say">قول الكلمة</button></div>';
+                card.querySelector('.vc-en').textContent = item.en; card.querySelector('.vc-ar').textContent = item.ar;
+                card.onclick = e => { if (!e.target.closest('button')) speakText(item.en); };
+                card.querySelector('.vc-listen').onclick = e => { e.stopPropagation(); speakText(item.en); };
+                const say = card.querySelector('.vc-say');
+                say.onclick = e => {
+                    e.stopPropagation();
+                    if (!isSpeechRecognitionSupported()) { alert('الميكروفون مش متاح في المتصفح ده. جرّب Google Chrome.'); return; }
+                    practiceSpeaking(item.en, say, (isMatch, alts) => vcResult(card, item, isMatch, alts));
+                };
+                vcPaint(card, p); grid.appendChild(card);
+            });
+            vocabRenderStats();
+        }
+        function vocabSyncSoon() { clearTimeout(vocabSyncTimer); vocabSyncTimer = setTimeout(vocabSync, 1500); }
+        // مزامنة التقدم مع السيرفر: للأجهزة المفعّلة بكود فقط، وبصمت لو الدالة مش موجودة أو مفيش نت
+        async function vocabSync() {
+            try {
+                if (!supabaseClient) return;
+                const code = await safeStorageGet('activation:code'); if (!code) return;
+                const { data, error } = await supabaseClient.rpc('sync_vocab_progress', { p_code: code, p_device_id: await getDeviceId(), p_progress: vocabProg });
+                if (error || !data || typeof data !== 'object' || !data.progress) return;
+                let changed = false;
+                Object.keys(data.progress).forEach(b => {
+                    if (!booksDatabase[b]) return; vocabProg[b] = vocabProg[b] || {};
+                    Object.keys(data.progress[b] || {}).forEach(w => {
+                        const sv = data.progress[b][w] || {}, lc = vocabProg[b][w] || { ok: 0, bad: 0 };
+                        const ok = Math.min(99, Math.max(lc.ok || 0, +sv.ok || 0)), bad = Math.min(99, Math.max(lc.bad || 0, +sv.bad || 0));
+                        if (ok !== (lc.ok || 0) || bad !== (lc.bad || 0)) changed = true;
+                        vocabProg[b][w] = { ok, bad };
+                    });
+                });
+                if (changed) { saveVocabProg(); recalculateTotalStars(); refreshParentDashboardIfUnlocked(); vocabRenderStats(); const sec = document.getElementById('section-vocab'); if (sec && !sec.classList.contains('hidden')) renderVocabGrid(); }
+            } catch (e) { /* offline-first: نتجاهل */ }
+        }
+
         window.startPersonalRecognition = function() {
             if (!isSpeechRecognitionSupported()) {
                 alert('عذرًا، متصفحك الحالي لا يدعم التعرف الصوتي. جرّب على متصفح Google Chrome.');
@@ -3190,7 +3325,7 @@
             }
         }
 
-        function renderVocabGrid() {
+        function renderVocabGridLegacy() {
             const grid = document.getElementById('vocab-grid');
             const currentBook = booksDatabase[currentBookId];
             grid.innerHTML = '';
@@ -3327,7 +3462,7 @@
                 if (completedBooks[key]) totalStars += 10;
             });
 
-            document.getElementById('global-stars-count').textContent = totalStars + " / " + (Object.keys(booksDatabase).length * 10) + " نجمة ⭐";
+            document.getElementById('global-stars-count').textContent = (totalStars + vocabStarsTotal()) + " / " + (Object.keys(booksDatabase).length * 10 + vocabWordsTotal()) + " نجمة ⭐";
             renderUniverseView();
         }
 
@@ -3892,6 +4027,9 @@
                 try { workbookDone = JSON.parse(storedWb) || {}; } catch(e) { workbookDone = {}; }
                 try { renderActivityWorkbook(); } catch(e) {}
             }
+            const storedVp = await safeStorageGet('vocab:progress');
+            if (storedVp) { try { vocabProg = JSON.parse(storedVp) || {}; } catch(e) { vocabProg = {}; } }
+            setTimeout(() => { vocabSync(); }, 3000);
             const storedFam = await safeStorageGet('break:family');
             if (storedFam) { try { Object.assign(breakFam, JSON.parse(storedFam)); } catch(e) {} }
             const storedCompleted = await safeStorageGet('parent-dashboard:completed');
@@ -4064,7 +4202,7 @@
             const totalStars = Object.keys(booksDatabase).filter(k => completedBooks[k]).length * 10;
             const booksCompletedCount = Object.keys(booksDatabase).filter(k => completedBooks[k]).length;
 
-            document.getElementById('pd-total-stars').textContent = totalStars + " / " + (Object.keys(booksDatabase).length * 10);
+            document.getElementById('pd-total-stars').textContent = (totalStars + vocabStarsTotal()) + " / " + (Object.keys(booksDatabase).length * 10 + vocabWordsTotal());
             document.getElementById('pd-books-completed').textContent = booksCompletedCount + " / " + Object.keys(booksDatabase).length;
             document.getElementById('pd-time-spent').textContent = Math.round(totalReadingMinutes) + " دقيقة";
 
