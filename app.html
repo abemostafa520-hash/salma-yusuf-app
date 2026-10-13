@@ -1,5 +1,5 @@
  <!DOCTYPE html>
-<!-- BUILD-VERSION: v33-vocab-persist-fix-2026-10-15 -->
+<!-- BUILD-VERSION: v35-version-tag-sw-revalidate-2026-10-17 -->
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -103,8 +103,9 @@
     .vc-bar { display: flex; gap: .25rem; justify-content: center; margin-top: .55rem; }
     .vc-seg { display: block; width: 1.6rem; height: .45rem; border-radius: 9999px; background: rgba(15,23,42,.15); transition: background .3s; }
     .vc-msg { min-height: 1rem; font-size: .7rem; font-weight: 800; margin-top: .3rem; }
-    .vc-btns { display: flex; gap: .4rem; justify-content: center; margin-top: .45rem; }
-    .vc-btns button { white-space: nowrap; font-size: .66rem; font-weight: 800; padding: .3rem .55rem; border-radius: 9999px; border: 2px solid rgba(15,23,42,.12); background: #fff; color: #334155; }
+    .vc-btns { display: flex; flex-direction: column; gap: .35rem; align-items: stretch; margin-top: .45rem; }
+    @media (min-width: 640px) { .vc-btns { flex-direction: row; justify-content: center; } }
+    .vc-btns button { white-space: nowrap; max-width: 100%; font-size: .72rem; font-weight: 800; padding: .4rem .55rem; border-radius: 9999px; border: 2px solid rgba(15,23,42,.12); background: #fff; color: #334155; }
     .vc-btns .vc-say { background: #4f46e5; color: #fff; border-color: #4f46e5; }
     .vc-glow { animation: vcGlow 1s ease-out; }
     .vc-shake { animation: vcShake .45s; }
@@ -3170,7 +3171,7 @@
         function vocabRenderStats() {
             const el = document.getElementById('vocab-stats'); if (!el) return;
             const total = booksDatabase[currentBookId].vocab.length, n = vocabBookMastered(currentBookId);
-            el.innerHTML = '<div class="flex items-center justify-between text-sm font-black text-slate-800 dark:text-slate-100 mb-2"><span>لقد أتقنت <b class="text-indigo-600 dark:text-indigo-300">' + n + '</b> كلمات من أصل ' + total + '</span><span class="text-amber-600 dark:text-amber-300">نجوم الكلمات: ' + n + '</span></div>' +
+            el.innerHTML = '<div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-sm font-black text-slate-800 dark:text-slate-100 mb-2"><span>لقد أتقنت <b class="text-indigo-600 dark:text-indigo-300">' + n + '</b> كلمات من أصل ' + total + '</span><span class="text-amber-600 dark:text-amber-300">نجوم الكلمات: ' + n + '</span></div>' +
                 '<div class="h-3 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden"><div style="height:100%;transition:width .5s;width:' + (total ? n / total * 100 : 0) + '%;background:linear-gradient(90deg,#4f46e5,#38bdf8,#f472b6)"></div></div>';
         }
         function vcPaint(card, p) {
@@ -5092,5 +5093,6 @@
             });
         }
     </script>
+<div id="app-version-tag" dir="ltr" style="text-align:center;font-size:10px;opacity:.4;padding:6px 0 10px">v35</div>
 </body>
 </html>
