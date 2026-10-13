@@ -1,4 +1,4 @@
- const CACHE_NAME = 'salma-yusuf-v17';
+ const CACHE_NAME = 'salma-yusuf-v19';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -45,7 +45,7 @@ self.addEventListener('fetch', (event) => {
   // الصفحات: النت الأول (التحديثات توصل فورًا)، والكاش لو مفيش نت
   if (req.mode === 'navigate') {
     event.respondWith(
-      fetch(req).then((res) => putInCache(req, res)).catch(() =>
+      fetch(new Request(req.url, { cache: 'no-cache', credentials: 'same-origin' })).then((res) => putInCache(req, res)).catch(() =>
         caches.match(req).then((c) => c || caches.match('./app.html'))
       )
     );
