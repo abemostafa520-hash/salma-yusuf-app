@@ -1,5 +1,5 @@
  <!DOCTYPE html>
-<!-- BUILD-VERSION: v31-vocab-flashcards-2026-10-13 -->
+<!-- BUILD-VERSION: v32-mobile-stars-pill-bidi-2026-10-14 -->
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -104,7 +104,7 @@
     .vc-seg { display: block; width: 1.6rem; height: .45rem; border-radius: 9999px; background: rgba(15,23,42,.15); transition: background .3s; }
     .vc-msg { min-height: 1rem; font-size: .7rem; font-weight: 800; margin-top: .3rem; }
     .vc-btns { display: flex; gap: .4rem; justify-content: center; margin-top: .45rem; }
-    .vc-btns button { font-size: .7rem; font-weight: 800; padding: .3rem .7rem; border-radius: 9999px; border: 2px solid rgba(15,23,42,.12); background: #fff; color: #334155; }
+    .vc-btns button { white-space: nowrap; font-size: .66rem; font-weight: 800; padding: .3rem .55rem; border-radius: 9999px; border: 2px solid rgba(15,23,42,.12); background: #fff; color: #334155; }
     .vc-btns .vc-say { background: #4f46e5; color: #fff; border-color: #4f46e5; }
     .vc-glow { animation: vcGlow 1s ease-out; }
     .vc-shake { animation: vcShake .45s; }
@@ -136,6 +136,11 @@
                     <div class="text-[10px] text-amber-800 dark:text-amber-300 font-bold uppercase tracking-wider">مجموع النجوم</div>
                     <div class="text-sm font-black text-amber-900 dark:text-amber-200" id="global-stars-count">0 / 100 نجمة</div>
                 </div>
+            </div>
+
+            <div class="lg:hidden flex items-center gap-1.5 bg-amber-50 dark:bg-slate-800 px-3 py-1.5 rounded-2xl border border-amber-200 dark:border-slate-700" aria-label="مجموع النجوم">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12,2 15,9 22,9.5 16.5,14 18.5,21.5 12,17.5 5.5,21.5 7.5,14 2,9.5 9,9" fill="#facc15" stroke="#f59e0b" stroke-width="1.2" stroke-linejoin="round"/></svg>
+                <span class="text-sm font-black text-amber-900 dark:text-amber-200" id="global-stars-count-mobile" dir="ltr">0 / 100</span>
             </div>
 
             <div class="hidden md:flex items-center gap-2 bg-rose-50 dark:bg-slate-800 px-3 py-1.5 rounded-2xl border border-rose-200 dark:border-slate-700">
@@ -3330,7 +3335,7 @@
             const currentBook = booksDatabase[currentBookId];
             grid.innerHTML = '';
 
-            document.getElementById('vocab-title').textContent = "🔤 مفردات قصة (" + currentBook.title + ")";
+            document.getElementById('vocab-title').innerHTML = "🔤 مفردات قصة <bdi dir=\"ltr\">(" + currentBook.title + ")</bdi>";
             document.getElementById('vocab-count-badge').textContent = currentBook.vocab.length + " كلمات رئيسية";
 
             currentBook.vocab.forEach((item, idx) => {
@@ -3374,7 +3379,7 @@
             const currentBook = booksDatabase[currentBookId];
             container.innerHTML = '';
 
-            document.getElementById('quiz-title').textContent = "❓ اختبار قصة (" + currentBook.title + ")";
+            document.getElementById('quiz-title').innerHTML = "❓ اختبار قصة <bdi dir=\"ltr\">(" + currentBook.title + ")</bdi>";
 
             currentBook.quiz.forEach((item, qIdx) => {
                 const qBox = document.createElement('div');
@@ -3462,7 +3467,7 @@
                 if (completedBooks[key]) totalStars += 10;
             });
 
-            document.getElementById('global-stars-count').textContent = (totalStars + vocabStarsTotal()) + " / " + (Object.keys(booksDatabase).length * 10 + vocabWordsTotal()) + " نجمة ⭐";
+            { const _starsTxt = (totalStars + vocabStarsTotal()) + " / " + (Object.keys(booksDatabase).length * 10 + vocabWordsTotal()) + " نجمة ⭐"; document.getElementById('global-stars-count').textContent = _starsTxt; const _sm = document.getElementById('global-stars-count-mobile'); if (_sm) _sm.textContent = _starsTxt.replace(/[^\d\s\/]/g, '').replace(/\s+/g, ' ').trim(); }
             renderUniverseView();
         }
 
@@ -3515,7 +3520,7 @@
             const personalBox = document.getElementById('wb-personal-list');
             if (!builderBox || !pronounBox || !personalBox) return;
 
-            document.getElementById('workbook-title').textContent = '📘 كراسة أنشطة (' + book.title + ')';
+            document.getElementById('workbook-title').innerHTML = '📘 كراسة أنشطة <bdi dir=\"ltr\">(' + book.title + ')</bdi>';
 
             builderBox.innerHTML = '';
             pronounBox.innerHTML = '';
@@ -3556,7 +3561,7 @@
             const picsContainer = document.getElementById('game-pics-container');
             const statusBox = document.getElementById('game-status');
 
-            document.getElementById('activity-title').textContent = "🎮 لعبة توصيل كلمات (" + currentBook.title + ")";
+            document.getElementById('activity-title').innerHTML = "🎮 لعبة توصيل كلمات <bdi dir=\"ltr\">(" + currentBook.title + ")</bdi>";
 
             wordsContainer.innerHTML = '';
             picsContainer.innerHTML = '';
