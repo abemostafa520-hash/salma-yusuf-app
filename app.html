@@ -1,5 +1,5 @@
  <!DOCTYPE html>
-<!-- BUILD-VERSION: v32-mobile-stars-pill-bidi-2026-10-14 -->
+<!-- BUILD-VERSION: v33-vocab-persist-fix-2026-10-15 -->
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -2114,6 +2114,7 @@
             const tabs = ['reader', 'vocab', 'phonics', 'quiz', 'activity', 'break', 'series', 'parent'];
             if (tabId !== 'break') breakStopAll();
             if (tabId === 'break') breakShowHub();
+            if (tabId === 'vocab') { try { renderVocabGrid(); } catch (e) {} }
             const currentData = booksDatabase[currentBookId];
 
             if (tabId === 'phonics') renderPhonicsTabs();
@@ -3190,6 +3191,7 @@
         }
         function vcResult(card, item, isMatch, alts) {
             const bookId = currentBookId, p = vocabProg[bookId][item.en], msg = card.querySelector('.vc-msg');
+            clearTimeout(card._mt); card._mt = setTimeout(() => { msg.textContent = ''; }, 2600);
             if (strictSpeechMatch(alts || [], item.en)) {
                 const first = !(p.ok >= 1);
                 p.ok = (p.ok || 0) + 1; saveVocabProg(); recordWordMastery(bookId, item.en);
@@ -4040,8 +4042,10 @@
             const storedCompleted = await safeStorageGet('parent-dashboard:completed');
             if (storedCompleted) {
                 try { completedBooks = { ...completedBooks, ...JSON.parse(storedCompleted) }; } catch(e) {}
-                recalculateTotalStars();
             }
+            // v33: التحميل غير متزامن، فنحدّث العداد وبطاقات الكلمات بعد ما كل البيانات المحفوظة توصل
+            try { recalculateTotalStars(); } catch(e) {}
+            try { if (currentBookId && document.getElementById('vocab-grid')) renderVocabGrid(); } catch(e) {}
         }
 
         // ---- وضع PIN المحلي (fallback بدون Supabase) ----
