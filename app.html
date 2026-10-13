@@ -1,5 +1,5 @@
  <!DOCTYPE html>
-<!-- BUILD-VERSION: v35-version-tag-sw-revalidate-2026-10-17 -->
+<!-- BUILD-VERSION: v36-header-wrap-no-sideways-scroll-2026-10-18 -->
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -115,19 +115,20 @@
     @keyframes vcShake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
     @keyframes vcSpark { 0% { transform: translate(0,0) scale(1) rotate(0); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(.2) rotate(240deg); opacity: 0; } }
     @keyframes vcPlus { 0% { transform: translate(-50%,0); opacity: 0; } 20% { opacity: 1; } 100% { transform: translate(-50%,-46px); opacity: 0; } }
+        html, body { max-width: 100%; overflow-x: clip; }
     </style>
 </head>
 <body class="font-sans text-slate-800 antialiased min-h-screen flex flex-col justify-between selection:bg-amber-200 theme-school" id="app-body">
 
     <header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 border-b border-amber-100 dark:border-slate-800 shadow-sm transition-all duration-300">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-2">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-x-2 gap-y-2">
             <div class="flex items-center gap-3">
                 <div id="brand-logo-icon" class="w-12 h-12 bg-amber-400 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-md shadow-amber-200 dark:shadow-none transition-transform transform hover:scale-105">
                     🌟
                 </div>
                 <div>
                     <h1 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white leading-tight">Salma & Yusuf</h1>
-                    <p class="text-xs text-amber-600 dark:text-amber-400 font-semibold">English Adventures • سلسلة مغامرات إنجليزية</p>
+                    <p class="hidden sm:block text-xs text-amber-600 dark:text-amber-400 font-semibold">English Adventures • سلسلة مغامرات إنجليزية</p>
                 </div>
             </div>
 
@@ -154,7 +155,7 @@
                 <span id="trial-days-left" class="text-xs font-black text-emerald-700 dark:text-emerald-300"></span>
             </div>
 
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 w-full justify-center sm:w-auto sm:justify-start">
                 <button onclick="toggleSkinPicker()" id="skin-toggle-btn" class="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 p-2.5 rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all border-2" style="border-color: var(--skin-primary);">
                     <span>🎨</span>
                     <span class="hidden sm:inline text-xs font-black" style="color: var(--skin-primary);">المظهر</span>
@@ -5093,6 +5094,6 @@
             });
         }
     </script>
-<div id="app-version-tag" dir="ltr" style="text-align:center;font-size:10px;opacity:.4;padding:6px 0 10px">v35</div>
+<div id="app-version-tag" dir="ltr" style="text-align:center;font-size:10px;opacity:.4;padding:6px 0 10px">v36</div>
 </body>
 </html>
