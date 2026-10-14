@@ -1,5 +1,5 @@
  <!DOCTYPE html>
-<!-- BUILD-VERSION: v37-removed-arcade-games-2026-10-19 -->
+<!-- BUILD-VERSION: v38-in-app-browser-guard-2026-10-20 -->
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -119,6 +119,16 @@
     </style>
 </head>
 <body class="font-sans text-slate-800 antialiased min-h-screen flex flex-col justify-between selection:bg-amber-200 theme-school" id="app-body">
+    <div id="inapp-banner" class="hidden bg-amber-500 text-white text-xs font-bold px-4 py-3" role="alert">
+        <div class="max-w-5xl mx-auto flex flex-wrap items-center gap-x-3 gap-y-2">
+            <div class="flex-1 min-w-[220px] leading-relaxed">⚠️ أنت فاتح التطبيق من جوه ماسنجر أو فيسبوك. افتحه في Chrome عشان تقدّم طفلك يتحفظ، وعشان كود الاشتراك ما يستهلكش جهاز بالغلط. من القايمة (⋯) اختار «فتح في المتصفح».</div>
+            <div class="flex items-center gap-2">
+                <button onclick="inAppCopyLink()" id="inapp-copy-btn" class="px-3 py-1.5 bg-white text-amber-700 rounded-xl shadow font-black">📋 انسخ الرابط</button>
+                <button onclick="inAppOpenChrome()" id="inapp-chrome-btn" class="hidden px-3 py-1.5 bg-amber-700 text-white rounded-xl shadow font-black">🌐 افتح في Chrome</button>
+                <button onclick="document.getElementById('inapp-banner').classList.add('hidden')" class="text-white/80 hover:text-white text-lg leading-none" aria-label="إغلاق">✕</button>
+            </div>
+        </div>
+    </div>
 
     <header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 border-b border-amber-100 dark:border-slate-800 shadow-sm transition-all duration-300">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-x-2 gap-y-2">
@@ -1867,6 +1877,25 @@
         const VOCAB_PALETTE = [["#fef3c7", "#fde68a"], ["#dbeafe", "#bfdbfe"], ["#fce7f3", "#fbcfe8"], ["#dcfce7", "#bbf7d0"], ["#ede9fe", "#ddd6fe"], ["#ffedd5", "#fed7aa"], ["#ccfbf1", "#99f6e4"], ["#fee2e2", "#fecaca"]];
         let vocabProg = {};   // { bookId: { word: {ok, bad} } }
         let vocabSyncTimer = null;
+        const IN_APP_BROWSER = (function () {
+            try {
+                if (/[?&]allowInApp=1/.test(location.search)) return false;   // للاختبار فقط
+                return /FBAN|FBAV|FB_IAB|FBIOS|FB4A|Messenger|Instagram|Snapchat|musical_ly|BytedanceWebview|TikTok/i.test(navigator.userAgent || '');
+            } catch (e) { return false; }
+        })();
+        window.inAppCopyLink = function () {
+            const url = location.origin + location.pathname;
+            const done = () => { const b = document.getElementById('inapp-copy-btn'); if (b) b.textContent = '✅ اتنسخ، الصقه في Chrome'; };
+            try { navigator.clipboard.writeText(url).then(done, () => { window.prompt('انسخ الرابط ده وافتحه في Chrome:', url); }); }
+            catch (e) { window.prompt('انسخ الرابط ده وافتحه في Chrome:', url); }
+        };
+        window.inAppOpenChrome = function () {
+            location.href = 'intent://' + location.host + location.pathname + '#Intent;scheme=https;package=com.android.chrome;end';
+        };
+        if (IN_APP_BROWSER) {
+            document.getElementById('inapp-banner').classList.remove('hidden');
+            if (/Android/i.test(navigator.userAgent || '')) document.getElementById('inapp-chrome-btn').classList.remove('hidden');
+        }
         let breakFam = { games: 0, child: 0, parent: 0, ties: 0, bestChild: 0 };
         let workbookDone = {};   // { bookId: {builder:[idx], pronoun:[idx], personal:[idx]} }
         let sbActivePageIndex = 0, pgActivePageIndex = 0, ptCorrectSet = new Set();
@@ -4619,6 +4648,11 @@
             const submitBtn = document.getElementById('activation-submit-btn');
 
             errorBox.classList.add('hidden');
+            if (IN_APP_BROWSER) {
+                errorBox.textContent = 'افتح التطبيق من Chrome الأول (مش من جوه ماسنجر أو فيسبوك) عشان الكود ما يستهلكش جهاز بالغلط. اضغط «انسخ الرابط» في الشريط اللي فوق.';
+                errorBox.classList.remove('hidden');
+                return;
+            }
             if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '⏳ بنتحقق من الكود...'; }
 
             const result = await redeemActivationCode(input.value);
@@ -5008,6 +5042,6 @@
             });
         }
     </script>
-<div id="app-version-tag" dir="ltr" style="text-align:center;font-size:10px;opacity:.4;padding:6px 0 10px">v37</div>
+<div id="app-version-tag" dir="ltr" style="text-align:center;font-size:10px;opacity:.4;padding:6px 0 10px">v38</div>
 </body>
 </html>
