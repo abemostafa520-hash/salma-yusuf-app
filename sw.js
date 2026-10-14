@@ -1,4 +1,4 @@
- const CACHE_NAME = 'salma-yusuf-v22';
+ const CACHE_NAME = 'salma-yusuf-v23';
 const CORE_ASSETS = [
   './',
   './index.html',
