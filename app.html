@@ -1,5 +1,5 @@
  <!DOCTYPE html>
-<!-- BUILD-VERSION: v36-header-wrap-no-sideways-scroll-2026-10-18 -->
+<!-- BUILD-VERSION: v37-removed-arcade-games-2026-10-19 -->
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -473,16 +473,6 @@
                         <svg viewBox="0 0 64 64" class="w-16 h-16 mb-2" aria-hidden="true"><defs><linearGradient id="bkg4" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5eead4"/><stop offset="1" stop-color="#38bdf8"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#bkg4)"/><path d="M10 26h9l11-9v30l-11-9h-9z" fill="#fff"/><path d="M38 24q6 8 0 16" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M44 18q12 14 0 28" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".8"/></svg><div class="font-black text-slate-800 dark:text-slate-100">اسمع واختار</div>
                         <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">اسمع الكلمة واختار الصورة الصح من 4 صور</div>
                         <div class="text-xs font-black text-emerald-700 dark:text-emerald-400 mt-3">ابدأ اللعب ←</div>
-                    </button>
-                    <button onclick="breakStart('bolt')" class="text-right p-5 rounded-2xl border-2 border-yellow-300 bg-yellow-50 dark:bg-slate-800 dark:border-yellow-700 hover:scale-[1.02] transition">
-                        <svg viewBox="0 0 64 64" class="w-16 h-16 mb-2" aria-hidden="true"><defs><linearGradient id="bkg5" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#818cf8"/><stop offset="1" stop-color="#4f46e5"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#bkg5)"/><polygon points="36,8 18,36 30,36 26,56 46,26 33,26" fill="#fde047" stroke="#f59e0b" stroke-width="2" stroke-linejoin="round"/></svg><div class="font-black text-slate-800 dark:text-slate-100">تحليق البرق</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">حرّك البرق ودمّر الصورة اللي معناها الكلمة المسموعة، وانتبه من الصور الغلط!</div>
-                        <div class="text-xs font-black text-yellow-700 dark:text-yellow-400 mt-3">ابدأ اللعب ←</div>
-                    </button>
-                    <button onclick="breakStart('run')" class="text-right p-5 rounded-2xl border-2 border-orange-300 bg-orange-50 dark:bg-slate-800 dark:border-orange-700 hover:scale-[1.02] transition">
-                        <svg viewBox="0 0 64 64" class="w-16 h-16 mb-2" aria-hidden="true"><defs><linearGradient id="bkg6" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fda4af"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#bkg6)"/><rect x="14" y="10" width="4" height="46" rx="2" fill="#fff"/><rect x="18" y="12" width="28" height="21" fill="#fff"/><rect x="18" y="12" width="7" height="7" fill="#1e293b"/><rect x="32" y="12" width="7" height="7" fill="#1e293b"/><rect x="25" y="19" width="7" height="7" fill="#1e293b"/><rect x="39" y="19" width="7" height="7" fill="#1e293b"/><rect x="18" y="26" width="7" height="7" fill="#1e293b"/><rect x="32" y="26" width="7" height="7" fill="#1e293b"/></svg><div class="font-black text-slate-800 dark:text-slate-100">سباق المنعطفات</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">اجري بين 3 مسارات واجمع الصورة الصح وتجنّب الصور الغلط والأحجار!</div>
-                        <div class="text-xs font-black text-orange-700 dark:text-orange-400 mt-3">ابدأ اللعب ←</div>
                     </button>
                 </div>
                 <div id="break-stage" class="hidden"></div>
@@ -2864,7 +2854,7 @@
             breakStopAll();
             bkEl('break-hub').classList.add('hidden');
             bkEl('break-stage').classList.remove('hidden');
-            ({ mole: breakMole, memory: breakMemory, family: breakFamily, charades: breakCharades, listen: breakListen, bolt: () => breakArcade('bolt'), run: () => breakArcade('run') })[game]();
+            ({ mole: breakMole, memory: breakMemory, family: breakFamily, charades: breakCharades, listen: breakListen })[game]();
         };
 
         function breakMole() {
@@ -3073,82 +3063,6 @@
                 speakText(v.en);
             }
             show();
-        }
-
-
-        // ⚡ تحليق البرق + 🏁 سباق المنعطفات: محرّك واحد بنمطين، والهدف كلمة إنجليزي مسموعة
-        window.breakStep = dt => { if (breakG) breakG.step(dt); };
-        function breakArcade(mode) {
-            const W = 320, H = 460, vocab = breakVocab(), lanes = [60, 160, 260], st = bkEl('break-stage');
-            st.innerHTML = BK_BACK + '<div class="flex items-center justify-between my-3"><button id="ba-target" class="font-english text-2xl font-black text-indigo-700 dark:text-indigo-300" dir="ltr"></button>' +
-                '<div class="font-black text-sm text-amber-700 dark:text-amber-300"><span id="ba-hearts"></span> &nbsp;⭐ <span id="ba-score">0</span> &nbsp;⏱️ <span id="ba-time">45</span></div></div>' +
-                '<canvas id="ba-canvas" width="320" height="460" class="w-full max-w-xs mx-auto rounded-2xl border-2 border-sky-300 dark:border-sky-700 block" style="touch-action:none;background:linear-gradient(#bfe3ff,#eaf6ff)"></canvas>' +
-                (mode === 'run' ? '<div class="flex justify-center gap-4 mt-3"><button id="ba-l" class="px-8 py-3 rounded-2xl bg-orange-500 text-white text-xl font-black">⬅️</button><button id="ba-r" class="px-8 py-3 rounded-2xl bg-orange-500 text-white text-xl font-black">➡️</button></div>' : '<div class="text-center text-xs text-slate-500 dark:text-slate-400 mt-2">حرّك صباعك يمين وشمال، والبرق بيطلق لوحده</div>') +
-                '<div id="ba-end" class="hidden text-center mt-4"></div>';
-            const cv = bkEl('ba-canvas'), ctx = cv.getContext('2d');
-            const g = breakG = { mode, items: [], bolts: [], px: W / 2, lane: 1, hearts: 3, score: 0, time: 45000, spawn: 300, fire: 0, target: null, over: false };
-            function setTarget() {
-                const o = g.target; g.target = breakShuffle(vocab.filter(v => !o || v.en !== o.en))[0];
-                bkEl('ba-target').textContent = '🔊 ' + g.target.en; speakText(g.target.en);
-            }
-            bkEl('ba-target').onclick = () => speakText(g.target.en);
-            setTarget();
-            const move = d => { g.lane = Math.max(0, Math.min(2, g.lane + d)); };
-            if (mode === 'run') { bkEl('ba-l').onclick = () => move(-1); bkEl('ba-r').onclick = () => move(1); }
-            cv.onpointermove = cv.onpointerdown = e => {
-                const r = cv.getBoundingClientRect(), x = (e.clientX - r.left) / (r.width || W) * W;
-                if (mode === 'bolt') g.px = Math.max(20, Math.min(W - 20, x));
-                else if (e.type === 'pointerdown') move(x < W / 2 ? -1 : 1);
-            };
-            document.addEventListener('keydown', g.key = e => {
-                if (e.key === 'ArrowLeft') { mode === 'bolt' ? g.px = Math.max(20, g.px - 24) : move(-1); }
-                if (e.key === 'ArrowRight') { mode === 'bolt' ? g.px = Math.min(W - 20, g.px + 24) : move(1); }
-            });
-            function draw() {
-                ctx.clearRect(0, 0, W, H); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                if (mode === 'run') { ctx.strokeStyle = 'rgba(100,116,139,.35)'; [110, 210].forEach(x => { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }); }
-                ctx.font = '34px serif'; g.items.forEach(i => ctx.fillText(i.v, i.x, i.y));
-                ctx.font = '18px serif'; g.bolts.forEach(b => ctx.fillText('⚡', b.x, b.y));
-                ctx.font = '40px serif'; ctx.fillText(mode === 'run' ? '🏃' : '🚀', mode === 'run' ? lanes[g.lane] : g.px, H - 40);
-            }
-            function finish() {
-                g.over = true; cancelAnimationFrame(breakRaf);
-                const e = bkEl('ba-end'); e.classList.remove('hidden');
-                e.innerHTML = '<div class="text-2xl font-black text-slate-800 dark:text-slate-100 mb-1">' + (g.score >= 5 ? '🏆 برافو!' : '👏 حلو!') + '</div><div class="text-sm text-slate-600 dark:text-slate-300 mb-3">جمعت ' + g.score + ' كلمة صح</div>' +
-                    '<button onclick="breakStart(\'' + mode + '\')" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl">🔄 العب تاني</button>';
-                if (g.score >= 5) { ptConfetti(); speakText('Great job!'); }
-            }
-            g.step = dt => {
-                if (g.over) return;
-                g.time -= dt; g.spawn -= dt;
-                const vy = mode === 'run' ? 0.12 + g.score * 0.006 : 0.07 + g.score * 0.003;
-                if (g.spawn <= 0) {
-                    g.spawn = mode === 'run' ? 950 : 1100;
-                    const ok = Math.random() < 0.4, v = ok ? g.target : breakShuffle(vocab.filter(x => x.en !== g.target.en))[0];
-                    const rock = mode === 'run' && !ok && Math.random() < 0.25;
-                    g.items.push({ x: mode === 'run' ? lanes[Math.floor(Math.random() * 3)] : 30 + Math.random() * 260, y: -20, v: rock ? '🪨' : v.icon, en: rock ? '' : v.en });
-                }
-                if (mode === 'bolt') {
-                    g.fire -= dt; if (g.fire <= 0) { g.fire = 450; g.bolts.push({ x: g.px, y: H - 60 }); }
-                    g.bolts.forEach(b => { b.y -= 0.55 * dt; }); g.bolts = g.bolts.filter(b => b.y > -10);
-                }
-                g.items.forEach(i => { i.y += vy * dt; });
-                const px = mode === 'run' ? lanes[g.lane] : g.px;
-                [...g.items].forEach(i => {
-                    let hit = false;
-                    if (mode === 'bolt') { const b = g.bolts.find(b => Math.abs(b.x - i.x) < 24 && Math.abs(b.y - i.y) < 24); if (b) { hit = true; g.bolts.splice(g.bolts.indexOf(b), 1); } }
-                    else hit = Math.abs(px - i.x) < 30 && Math.abs((H - 40) - i.y) < 34;
-                    if (hit) { g.items.splice(g.items.indexOf(i), 1); if (i.en === g.target.en) { g.score++; setTarget(); } else g.hearts--; }
-                    else if (i.y > H + 20) g.items.splice(g.items.indexOf(i), 1);
-                });
-                bkEl('ba-hearts').textContent = '❤️'.repeat(Math.max(0, g.hearts)) + '🖤'.repeat(Math.max(0, 3 - g.hearts));
-                bkEl('ba-score').textContent = g.score; bkEl('ba-time').textContent = Math.max(0, Math.ceil(g.time / 1000));
-                draw();
-                if (g.hearts <= 0 || g.time <= 0) finish();
-            };
-            g.step(0);
-            let last = 0;
-            (function loop(ts) { if (breakG !== g || g.over) return; g.step(Math.min(50, last ? ts - last : 16)); last = ts; breakRaf = requestAnimationFrame(loop); })(0);
         }
 
 
@@ -5094,6 +5008,6 @@
             });
         }
     </script>
-<div id="app-version-tag" dir="ltr" style="text-align:center;font-size:10px;opacity:.4;padding:6px 0 10px">v36</div>
+<div id="app-version-tag" dir="ltr" style="text-align:center;font-size:10px;opacity:.4;padding:6px 0 10px">v37</div>
 </body>
 </html>
